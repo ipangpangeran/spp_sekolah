@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+
+<html lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Manajemen Siswa - SISMA</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed-variant": "#005236",
+                        "on-tertiary-fixed": "#002113",
+                        "on-secondary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "surface-bright": "#f7f9fb",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed-dim": "#b4c5ff",
+                        "secondary-fixed-dim": "#c0c6db",
+                        "primary-container": "#2563eb",
+                        "surface-container": "#eceef0",
+                        "on-primary": "#ffffff",
+                        "secondary-container": "#d9dff5",
+                        "surface-tint": "#0053db",
+                        "inverse-on-surface": "#eff1f3",
+                        "on-error-container": "#93000a",
+                        "surface-container-high": "#e6e8ea",
+                        "on-primary-fixed-variant": "#003ea8",
+                        "background": "#f7f9fb",
+                        "tertiary-container": "#007d55",
+                        "secondary-fixed": "#dce2f7",
+                        "outline": "#737686",
+                        "surface": "#f7f9fb",
+                        "on-tertiary-container": "#bdffdb",
+                        "surface-container-low": "#f2f4f6",
+                        "tertiary-fixed-dim": "#4edea3",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-fixed": "#6ffbbe",
+                        "secondary": "#575e70",
+                        "inverse-primary": "#b4c5ff",
+                        "on-primary-container": "#eeefff",
+                        "outline-variant": "#c3c6d7",
+                        "primary": "#004ac6",
+                        "primary-fixed": "#dbe1ff",
+                        "inverse-surface": "#2d3133",
+                        "on-secondary-fixed-variant": "#404758",
+                        "on-surface-variant": "#434655",
+                        "error-container": "#ffdad6",
+                        "on-primary-fixed": "#00174b",
+                        "surface-variant": "#e0e3e5",
+                        "on-surface": "#191c1e",
+                        "on-secondary-container": "#5c6274",
+                        "tertiary": "#006242",
+                        "surface-dim": "#d8dadc",
+                        "on-background": "#191c1e",
+                        "error": "#ba1a1a",
+                        "surface-container-highest": "#e0e3e5",
+                        "on-secondary-fixed": "#141b2b"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gap-sm": "8px",
+                        "gap-xs": "4px",
+                        "base": "8px",
+                        "container-max": "1440px",
+                        "gap-md": "16px",
+                        "gap-lg": "24px",
+                        "margin-page": "32px"
+                    },
+                    "fontFamily": {
+                        "body-sm": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-sm": ["Inter"],
+                        "mono-data": ["JetBrains Mono"],
+                        "headline-lg": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "label-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-sm": ["18px", { "lineHeight": "24px", "fontWeight": "600" }],
+                        "mono-data": ["13px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-lg": ["30px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "label-sm": ["11px", { "lineHeight": "14px", "fontWeight": "500" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #e0e3e5; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #c3c6d7; }
+        
+        .table-row-hover:hover {
+            background-color: #f8fafc;
+            cursor: pointer;
+        }
+        
+        /* Drawer animation */
+        #student-drawer {
+            transform: translateX(100%);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        #student-drawer.open {
+            transform: translateX(0);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-sm overflow-hidden antialiased">
+<div class="flex h-screen w-full relative">
+<!-- SideNavBar -->
+<nav class="bg-on-secondary-fixed dark:bg-on-secondary-fixed fixed left-0 top-0 h-full w-[260px] border-r border-outline-variant dark:border-outline flex flex-col h-full py-base transition-all duration-200 ease-in-out z-50">
+<div class="px-6 py-6 mb-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-primary-container flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined" data-weight="fill" style="font-variation-settings: 'FILL' 1;">school</span>
+</div>
+<div>
+<h1 class="font-headline-md text-headline-md font-bold text-on-secondary">SISMA</h1>
+<p class="font-label-sm text-label-sm text-secondary-fixed-dim">SMA Persiapan Stabat</p>
+</div>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto custom-scrollbar px-3">
+<ul class="space-y-1">
+<li>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary-fixed dark:text-secondary-fixed-dim hover:bg-secondary-fixed/10 hover:text-on-secondary transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined text-lg">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary-fixed dark:text-secondary-fixed-dim hover:bg-secondary-fixed/10 hover:text-on-secondary transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined text-lg">point_of_sale</span>
+<span class="font-body-md text-body-md">POS Pembayaran</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-primary dark:text-primary-fixed-dim bg-secondary-container/10 border-l-4 border-primary transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined text-lg">group</span>
+<span class="font-body-md text-body-md font-medium">Manajemen Siswa</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary-fixed dark:text-secondary-fixed-dim hover:bg-secondary-fixed/10 hover:text-on-secondary transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined text-lg">assessment</span>
+<span class="font-body-md text-body-md">Laporan Keuangan</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary-fixed dark:text-secondary-fixed-dim hover:bg-secondary-fixed/10 hover:text-on-secondary transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined text-lg">manage_accounts</span>
+<span class="font-body-md text-body-md">Pengguna</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary-fixed dark:text-secondary-fixed-dim hover:bg-secondary-fixed/10 hover:text-on-secondary transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined text-lg">settings</span>
+<span class="font-body-md text-body-md">Pengaturan</span>
+</a>
+</li>
+</ul>
+</div>
+<div class="px-3 mt-auto pt-4 border-t border-secondary-fixed/20">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary-fixed dark:text-secondary-fixed-dim hover:bg-secondary-fixed/10 hover:text-on-secondary transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined text-lg">logout</span>
+<span class="font-body-md text-body-md">Keluar</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<div class="flex-1 flex flex-col ml-[260px] h-screen bg-surface-bright">
+<!-- TopNavBar -->
+<header class="bg-surface/80 dark:bg-surface-dim/80 backdrop-blur-md sticky top-0 right-0 z-40 border-b border-outline-variant dark:border-outline flex justify-between items-center h-16 px-margin-page transition-colors duration-150">
+<div class="flex items-center">
+<h2 class="font-headline-sm text-headline-sm font-bold text-on-surface dark:text-on-surface">Manajemen Siswa</h2>
+</div>
+<div class="flex items-center gap-6">
+<div class="text-on-surface-variant font-label-md text-label-md px-3 py-1.5 bg-surface-container-low rounded-md border border-outline-variant/50">
+                        Tahun Ajaran 2023/2024
+                    </div>
+<div class="flex items-center gap-3 border-l border-outline-variant pl-6">
+<button class="w-8 h-8 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-low transition-colors duration-150">
+<span class="material-symbols-outlined text-xl">notifications</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-low transition-colors duration-150">
+<span class="material-symbols-outlined text-xl">chat</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-low transition-colors duration-150">
+<span class="material-symbols-outlined text-xl">dark_mode</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-surface-container-highest border border-outline-variant overflow-hidden ml-2 cursor-pointer flex items-center justify-center text-on-surface font-label-md bg-primary-container text-on-primary">
+<span>AD</span>
+</div>
+</div>
+</div>
+</header>
+<!-- Page Content -->
+<main class="flex-1 overflow-hidden flex flex-col p-6">
+<!-- Toolbar -->
+<div class="flex justify-between items-center mb-6">
+<div class="flex items-center gap-3 flex-1 max-w-2xl">
+<div class="relative w-72">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-sm">search</span>
+<input class="w-full pl-9 pr-3 py-1.5 bg-surface-container-lowest border border-outline-variant rounded-md font-body-sm text-body-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-shadow shadow-sm" placeholder="Cari siswa, NIS, atau NISN..." type="text"/>
+</div>
+<div class="flex items-center gap-2">
+<select class="pl-3 pr-8 py-1.5 bg-surface-container-lowest border border-outline-variant rounded-md font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary appearance-none shadow-sm">
+<option value="">Semua Kelas</option>
+<option value="X">Kelas X</option>
+<option value="XI">Kelas XI</option>
+<option value="XII">Kelas XII</option>
+</select>
+<select class="pl-3 pr-8 py-1.5 bg-surface-container-lowest border border-outline-variant rounded-md font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary appearance-none shadow-sm">
+<option value="">Status: Semua</option>
+<option value="active">Aktif</option>
+<option value="inactive">Non-Aktif</option>
+</select>
+<button class="px-3 py-1.5 bg-surface-container-lowest border border-outline-variant rounded-md font-label-md text-label-md text-on-surface hover:bg-surface-container-low transition-colors flex items-center gap-1.5 shadow-sm">
+<span class="material-symbols-outlined text-[16px]">filter_list</span> Filter
+                            </button>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-2 border-r border-outline-variant pr-3 mr-1">
+<button class="px-3 py-1.5 bg-surface-container-lowest border border-outline-variant rounded-md font-label-md text-label-md text-on-surface hover:bg-surface-container-low transition-colors flex items-center gap-1.5 shadow-sm">
+<span class="material-symbols-outlined text-[16px]">download</span> Ekspor
+                            </button>
+<button class="px-3 py-1.5 bg-surface-container-lowest border border-outline-variant rounded-md font-label-md text-label-md text-on-surface hover:bg-surface-container-low transition-colors flex items-center gap-1.5 shadow-sm">
+<span class="material-symbols-outlined text-[16px]">upload</span> Impor
+                            </button>
+</div>
+<button class="px-4 py-1.5 bg-primary text-on-primary rounded-md font-label-md text-label-md hover:bg-primary/90 transition-colors flex items-center gap-1.5 shadow-sm">
+<span class="material-symbols-outlined text-[16px] font-bold">add</span> Tambah Siswa
+                        </button>
+</div>
+</div>
+<!-- Data Table Container -->
+<div class="flex-1 bg-surface-container-lowest border border-outline-variant rounded-lg overflow-hidden flex flex-col shadow-sm">
+<!-- Table Header -->
+<div class="bg-surface-container-low border-b border-outline-variant sticky top-0 z-10">
+<div class="grid grid-cols-[30px_90px_100px_minmax(180px,1fr)_50px_80px_110px_90px_120px] px-4 py-2 font-label-md text-[11px] uppercase tracking-wider text-secondary">
+<div class="flex items-center justify-center">
+<input class="rounded border-outline-variant text-primary focus:ring-primary w-3.5 h-3.5" type="checkbox"/>
+</div>
+<div class="flex items-center gap-1 cursor-pointer hover:text-on-surface">NIS <span class="material-symbols-outlined text-[14px]">arrow_upward</span></div>
+<div class="flex items-center gap-1 cursor-pointer hover:text-on-surface">NISN <span class="material-symbols-outlined text-[14px] opacity-0 hover:opacity-100">arrow_upward</span></div>
+<div class="flex items-center gap-1 cursor-pointer hover:text-on-surface pl-2">Nama Siswa <span class="material-symbols-outlined text-[14px] opacity-0 hover:opacity-100">arrow_upward</span></div>
+<div class="flex items-center gap-1 cursor-pointer hover:text-on-surface">L/P <span class="material-symbols-outlined text-[14px] opacity-0 hover:opacity-100">arrow_upward</span></div>
+<div class="flex items-center gap-1 cursor-pointer hover:text-on-surface">Kelas <span class="material-symbols-outlined text-[14px] opacity-0 hover:opacity-100">arrow_upward</span></div>
+<div class="flex items-center gap-1 cursor-pointer hover:text-on-surface">No. Telp Wali <span class="material-symbols-outlined text-[14px] opacity-0 hover:opacity-100">arrow_upward</span></div>
+<div class="flex items-center gap-1 cursor-pointer hover:text-on-surface">Status <span class="material-symbols-outlined text-[14px] opacity-0 hover:opacity-100">arrow_upward</span></div>
+<div class="flex items-center gap-1 cursor-pointer hover:text-on-surface justify-end text-right">Tunggakan (Rp) <span class="material-symbols-outlined text-[14px] opacity-0 hover:opacity-100">arrow_upward</span></div>
+</div>
+</div>
+<!-- Table Body -->
+<div class="flex-1 overflow-y-auto custom-scrollbar font-body-sm text-[12px]" id="student-table-body">
+<!-- Rows will be generated by JS -->
+</div>
+<!-- Pagination -->
+<div class="bg-surface-container-lowest border-t border-outline-variant px-4 py-2 flex justify-between items-center bg-surface-container-low/30">
+<div class="text-secondary font-body-sm text-[12px]">
+                            Menampilkan 1-15 dari 342 siswa
+                        </div>
+<div class="flex items-center gap-1">
+<button class="w-7 h-7 flex items-center justify-center rounded border border-outline-variant text-on-surface-variant hover:bg-surface-container-low disabled:opacity-50 bg-surface-container-lowest shadow-sm" disabled="">
+<span class="material-symbols-outlined text-[16px]">chevron_left</span>
+</button>
+<button class="w-7 h-7 flex items-center justify-center rounded border border-primary bg-primary text-on-primary font-medium text-[12px] shadow-sm">1</button>
+<button class="w-7 h-7 flex items-center justify-center rounded border border-outline-variant text-on-surface hover:bg-surface-container-low bg-surface-container-lowest text-[12px] shadow-sm">2</button>
+<button class="w-7 h-7 flex items-center justify-center rounded border border-outline-variant text-on-surface hover:bg-surface-container-low bg-surface-container-lowest text-[12px] shadow-sm">3</button>
+<span class="px-1 text-secondary text-[12px]">...</span>
+<button class="w-7 h-7 flex items-center justify-center rounded border border-outline-variant text-on-surface hover:bg-surface-container-low bg-surface-container-lowest text-[12px] shadow-sm">23</button>
+<button class="w-7 h-7 flex items-center justify-center rounded border border-outline-variant text-on-surface-variant hover:bg-surface-container-low bg-surface-container-lowest shadow-sm">
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Student Details Drawer -->
+<div class="fixed inset-0 bg-on-background/20 backdrop-blur-sm z-[60] hidden opacity-0 transition-opacity duration-300" id="drawer-backdrop"></div>
+<div class="fixed right-0 top-0 h-full w-[480px] bg-surface-container-lowest border-l border-outline-variant shadow-[0_0_40px_rgba(0,0,0,0.1)] z-[70] flex flex-col" id="student-drawer">
+<!-- Drawer Header -->
+<div class="px-6 py-5 border-b border-outline-variant flex justify-between items-start bg-surface-container-lowest sticky top-0 z-10">
+<div>
+<div class="flex items-center gap-3 mb-1">
+<div class="w-10 h-10 rounded-full bg-primary-container text-on-primary font-headline-sm flex items-center justify-center mr-2" id="drawer-initials">AH</div>
+<h3 class="font-headline-sm text-headline-sm font-bold text-on-surface" id="drawer-name">Ahmad Hidayat</h3>
+<span class="px-2 py-0.5 rounded bg-[#ECFDF5] text-[#10B981] font-label-sm text-[10px] border border-[#10B981]/20 font-medium tracking-wide" id="drawer-status">AKTIF</span>
+</div>
+<div class="flex items-center gap-4 text-secondary font-body-sm text-[12px] ml-14">
+<span class="font-mono-data text-mono-data" id="drawer-nis">19201001</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span id="drawer-class">XII IPA 1</span>
+</div>
+</div>
+<button class="w-8 h-8 flex items-center justify-center rounded text-on-surface-variant hover:bg-surface-container-low transition-colors" id="close-drawer">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<!-- Drawer Content -->
+<div class="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-8 bg-surface-bright">
+<!-- Profile Section -->
+<section>
+<h4 class="font-label-md text-[11px] text-secondary uppercase tracking-wider mb-3">Profil Singkat</h4>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-4 grid grid-cols-2 gap-y-4 gap-x-6 shadow-sm">
+<div>
+<p class="font-label-sm text-[11px] text-secondary mb-1">NISN</p>
+<p class="font-mono-data text-[12px] text-on-surface font-medium">0041234567</p>
+</div>
+<div>
+<p class="font-label-sm text-[11px] text-secondary mb-1">Jenis Kelamin</p>
+<p class="font-body-sm text-[12px] text-on-surface font-medium">Laki-laki</p>
+</div>
+<div>
+<p class="font-label-sm text-[11px] text-secondary mb-1">Nama Wali</p>
+<p class="font-body-sm text-[12px] text-on-surface font-medium">Budi Santoso</p>
+</div>
+<div>
+<p class="font-label-sm text-[11px] text-secondary mb-1">Telepon Wali</p>
+<p class="font-mono-data text-[12px] text-on-surface font-medium">0812-3456-7890</p>
+</div>
+<div class="col-span-2">
+<p class="font-label-sm text-[11px] text-secondary mb-1">Alamat</p>
+<p class="font-body-sm text-[12px] text-on-surface font-medium">Jl. Pattimura No. 45, Stabat, Langkat</p>
+</div>
+</div>
+</section>
+<!-- Financial Summary -->
+<section>
+<h4 class="font-label-md text-[11px] text-secondary uppercase tracking-wider mb-3">Ringkasan Keuangan</h4>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-4 shadow-sm">
+<div class="flex justify-between items-center mb-4 pb-4 border-b border-outline-variant/50">
+<p class="font-body-sm text-[12px] text-secondary">Total Tunggakan Aktif</p>
+<p class="font-mono-data text-[16px] font-bold text-error">Rp 1.450.000</p>
+</div>
+<div class="space-y-3">
+<div class="flex justify-between items-center">
+<p class="font-body-sm text-[12px] text-on-surface">SPP (3 Bulan)</p>
+<p class="font-mono-data text-[12px] text-on-surface">Rp 450.000</p>
+</div>
+<div class="flex justify-between items-center">
+<p class="font-body-sm text-[12px] text-on-surface">Uang Pembangunan (Sisa)</p>
+<p class="font-mono-data text-[12px] text-on-surface">Rp 1.000.000</p>
+</div>
+</div>
+<button class="w-full mt-5 py-1.5 bg-surface-container-low border border-outline-variant rounded-md font-label-md text-[12px] text-on-surface hover:bg-surface-container-highest transition-colors flex items-center justify-center gap-1.5 shadow-sm">
+<span class="material-symbols-outlined text-[16px]">point_of_sale</span> Proses Pembayaran
+                        </button>
+</div>
+</section>
+<!-- Payment History -->
+<section>
+<div class="flex justify-between items-center mb-3">
+<h4 class="font-label-md text-[11px] text-secondary uppercase tracking-wider">Riwayat Terakhir</h4>
+<a class="font-label-md text-[11px] text-primary hover:underline" href="#">Lihat Semua</a>
+</div>
+<div class="space-y-2">
+<!-- History Item -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-3 flex justify-between items-center shadow-sm">
+<div class="flex items-center gap-3">
+<div class="w-7 h-7 rounded bg-[#ECFDF5] text-[#10B981] flex items-center justify-center border border-[#10B981]/20">
+<span class="material-symbols-outlined text-[16px]">check</span>
+</div>
+<div>
+<p class="font-label-md text-[12px] text-on-surface">Pembayaran SPP Juli 2023</p>
+<p class="font-label-sm text-[10px] text-secondary mt-0.5">15 Agu 2023 • TRX-9821</p>
+</div>
+</div>
+<p class="font-mono-data text-[12px] text-on-surface font-medium">Rp 150.000</p>
+</div>
+<!-- History Item -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-3 flex justify-between items-center shadow-sm">
+<div class="flex items-center gap-3">
+<div class="w-7 h-7 rounded bg-[#ECFDF5] text-[#10B981] flex items-center justify-center border border-[#10B981]/20">
+<span class="material-symbols-outlined text-[16px]">check</span>
+</div>
+<div>
+<p class="font-label-md text-[12px] text-on-surface">Uang Seragam (Lunas)</p>
+<p class="font-label-sm text-[10px] text-secondary mt-0.5">10 Jul 2023 • TRX-8742</p>
+</div>
+</div>
+<p class="font-mono-data text-[12px] text-on-surface font-medium">Rp 850.000</p>
+</div>
+</div>
+</section>
+</div>
+</div>
+</div>
+<script>
+        // Sample Data Generation for Table
+        const tableBody = document.getElementById('student-table-body');
+        const names = ["Ahmad Hidayat", "Budi Santoso", "Citra Lestari", "Dewi Sartika", "Eko Prasetyo", "Fajar Nugroho", "Gita Gutawa", "Hendra Wijaya", "Indah Permata", "Joko Susilo", "Kartika Putri", "Lestari Ayu", "Muhammad Rizky", "Nadia Vega", "Oka Antara"];
+        
+        function formatRupiah(amount) {
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(amount).replace('Rp', 'Rp ');
+        }
+        
+        function getInitials(name) {
+            return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+        }
+
+        let html = '';
+        names.forEach((name, i) => {
+            const nis = `1920${1001 + i}`;
+            const nisn = `004${Math.floor(1000000 + Math.random() * 9000000)}`;
+            const jk = Math.random() > 0.5 ? 'L' : 'P';
+            const cls = ['X IPA 1', 'X IPS 2', 'XI IPA 1', 'XI IPS 1', 'XII IPA 1', 'XII IPS 2'][Math.floor(Math.random() * 6)];
+            const phone = `0812${Math.floor(10000000 + Math.random() * 90000000)}`;
+            const status = Math.random() > 0.1 ? 'Aktif' : 'Non-Aktif';
+            const statusClass = status === 'Aktif' ? 'bg-[#ECFDF5] text-[#10B981] border-[#10B981]/20 font-medium' : 'bg-surface-container-highest text-secondary border-outline-variant/30 font-medium';
+            const arrears = Math.random() > 0.4 ? Math.floor(Math.random() * 15) * 150000 : 0;
+            const arrearsText = arrears > 0 ? formatRupiah(arrears) : '-';
+            const arrearsColor = arrears > 0 ? (arrears > 500000 ? 'text-error font-medium' : 'text-on-surface') : 'text-secondary';
+            const initials = getInitials(name);
+
+            html += `
+                <div class="grid grid-cols-[30px_90px_100px_minmax(180px,1fr)_50px_80px_110px_90px_120px] px-4 py-1.5 border-b border-outline-variant/50 table-row-hover items-center" onclick="openDrawer('${name}', '${nis}', '${status}', '${cls}', ${arrears}, '${initials}')">
+                    <div class="flex items-center justify-center" onclick="event.stopPropagation()">
+                        <input type="checkbox" class="rounded border-outline-variant text-primary focus:ring-primary w-3.5 h-3.5" />
+                    </div>
+                    <div class="font-mono-data text-secondary">${nis}</div>
+                    <div class="font-mono-data text-secondary">${nisn}</div>
+                    <div class="font-medium text-on-surface truncate pr-2 flex items-center gap-2 pl-2">
+                        <div class="w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center text-[10px] font-bold">${initials}</div>
+                        ${name}
+                    </div>
+                    <div class="text-secondary">${jk}</div>
+                    <div class="text-on-surface">${cls}</div>
+                    <div class="font-mono-data text-secondary">${phone}</div>
+                    <div>
+                        <span class="px-2 py-0.5 rounded ${statusClass} font-label-sm text-[9px] border inline-block uppercase tracking-wide">${status}</span>
+                    </div>
+                    <div class="font-mono-data ${arrearsColor} text-right">${arrearsText}</div>
+                </div>
+            `;
+        });
+        
+        tableBody.innerHTML = html;
+
+        // Drawer Logic
+        const drawer = document.getElementById('student-drawer');
+        const backdrop = document.getElementById('drawer-backdrop');
+        const closeBtn = document.getElementById('close-drawer');
+        
+        function openDrawer(name, nis, status, cls, arrears, initials) {
+            // Update drawer content conceptually
+            document.getElementById('drawer-name').textContent = name;
+            document.getElementById('drawer-nis').textContent = nis;
+            document.getElementById('drawer-class').textContent = cls;
+            document.getElementById('drawer-initials').textContent = initials;
+            
+            const statusEl = document.getElementById('drawer-status');
+            statusEl.textContent = status.toUpperCase();
+            if(status === 'Aktif') {
+                statusEl.className = "px-2 py-0.5 rounded bg-[#ECFDF5] text-[#10B981] font-label-sm text-[10px] border border-[#10B981]/20 font-medium tracking-wide";
+            } else {
+                statusEl.className = "px-2 py-0.5 rounded bg-surface-container-highest text-secondary border-outline-variant/30 font-label-sm text-[10px] border font-medium tracking-wide";
+            }
+
+            backdrop.classList.remove('hidden');
+            // Small delay to allow display block to apply before opacity transition
+            setTimeout(() => {
+                backdrop.classList.remove('opacity-0');
+                backdrop.classList.add('opacity-100');
+                drawer.classList.add('open');
+            }, 10);
+        }
+
+        function closeDrawerFunc() {
+            drawer.classList.remove('open');
+            backdrop.classList.remove('opacity-100');
+            backdrop.classList.add('opacity-0');
+            setTimeout(() => {
+                backdrop.classList.add('hidden');
+            }, 300);
+        }
+
+        closeBtn.addEventListener('click', closeDrawerFunc);
+        backdrop.addEventListener('click', closeDrawerFunc);
+
+    </script>
+</body></html>

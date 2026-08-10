@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+
+<html class="light" lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SISMA - Login</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed-variant": "#005236",
+                        "on-tertiary-fixed": "#002113",
+                        "on-secondary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "surface-bright": "#f7f9fb",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed-dim": "#b4c5ff",
+                        "secondary-fixed-dim": "#c0c6db",
+                        "primary-container": "#2563eb",
+                        "surface-container": "#eceef0",
+                        "on-primary": "#ffffff",
+                        "secondary-container": "#d9dff5",
+                        "surface-tint": "#0053db",
+                        "inverse-on-surface": "#eff1f3",
+                        "on-error-container": "#93000a",
+                        "surface-container-high": "#e6e8ea",
+                        "on-primary-fixed-variant": "#003ea8",
+                        "background": "#f7f9fb",
+                        "tertiary-container": "#007d55",
+                        "secondary-fixed": "#dce2f7",
+                        "outline": "#737686",
+                        "surface": "#f7f9fb",
+                        "on-tertiary-container": "#bdffdb",
+                        "surface-container-low": "#f2f4f6",
+                        "tertiary-fixed-dim": "#4edea3",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-fixed": "#6ffbbe",
+                        "secondary": "#575e70",
+                        "inverse-primary": "#b4c5ff",
+                        "on-primary-container": "#eeefff",
+                        "outline-variant": "#c3c6d7",
+                        "primary": "#004ac6",
+                        "primary-fixed": "#dbe1ff",
+                        "inverse-surface": "#2d3133",
+                        "on-secondary-fixed-variant": "#404758",
+                        "on-surface-variant": "#434655",
+                        "error-container": "#ffdad6",
+                        "on-primary-fixed": "#00174b",
+                        "surface-variant": "#e0e3e5",
+                        "on-surface": "#191c1e",
+                        "on-secondary-container": "#5c6274",
+                        "tertiary": "#006242",
+                        "surface-dim": "#d8dadc",
+                        "on-background": "#191c1e",
+                        "error": "#ba1a1a",
+                        "surface-container-highest": "#e0e3e5",
+                        "on-secondary-fixed": "#141b2b"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gap-sm": "8px",
+                        "gap-xs": "4px",
+                        "base": "8px",
+                        "container-max": "1440px",
+                        "gap-md": "16px",
+                        "gap-lg": "24px",
+                        "margin-page": "32px"
+                    },
+                    "fontFamily": {
+                        "body-sm": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-sm": ["Inter"],
+                        "mono-data": ["JetBrains Mono"],
+                        "headline-lg": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "label-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-sm": ["18px", { "lineHeight": "24px", "fontWeight": "600" }],
+                        "mono-data": ["13px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-lg": ["30px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "label-sm": ["11px", { "lineHeight": "14px", "fontWeight": "500" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+        .dark .glass-panel {
+            background: rgba(45, 49, 51, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .input-glow:focus {
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+        }
+        /* Geometric Pattern Background for Left Side */
+        .bg-pattern {
+            background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.05) 1px, transparent 0);
+            background-size: 24px 24px;
+        }
+    </style>
+</head>
+<body class="bg-surface dark:bg-on-background text-on-surface dark:text-surface antialiased h-screen overflow-hidden flex flex-col md:flex-row transition-colors duration-300">
+<!-- Left Side: Branding & Value Props -->
+<div class="hidden md:flex flex-col justify-between w-1/2 bg-on-primary-fixed relative overflow-hidden p-margin-page">
+<!-- Abstract Decor -->
+<div class="absolute -top-24 -left-24 w-96 h-96 bg-primary/20 rounded-full blur-3xl"></div>
+<div class="absolute bottom-0 right-0 w-[500px] h-[500px] bg-primary-container/10 rounded-tl-full blur-2xl"></div>
+<div class="absolute inset-0 bg-pattern"></div>
+<div class="relative z-10">
+<div class="flex items-center gap-gap-sm mb-gap-lg">
+<img alt="SISMA Logo" class="w-12 h-12 rounded-lg bg-white p-1" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBD8MxGwhnilt4oB_m6oUbE_h5Y3YzxOWBI96y9WlhLTZ5aIHf7-kmhL1hg2ZQfRzZmxBrTq7mWeSRBXqIfegTVexyF_Rr-9yz2iUQaG7GVRfgMKVq2ByemACMjryd1SOa0MdLiVDYyUoyCblOFLG_Nt8q8uybfyG99Xa4BCaEV3Tae07s_30Yyk05dDBSu7v-w2jI5EptULltjzK4hmvobuG1LVSc1ISP4sPE7o7YTJAOxMRPDLYV8zxrlBVeDZPkFFWY"/>
+<div>
+<h1 class="font-headline-sm text-headline-sm text-white m-0">SISMA</h1>
+<p class="font-body-sm text-body-sm text-white/70 m-0">SMA Persiapan Stabat</p>
+</div>
+</div>
+<div class="mt-20 max-w-lg">
+<h2 class="font-headline-lg text-headline-lg text-white mb-gap-sm">Sistem Informasi Keuangan Sekolah</h2>
+<p class="font-body-lg text-body-lg text-primary-fixed-dim">Kelola pembayaran siswa secara mudah, aman, dan transparan.</p>
+</div>
+</div>
+<!-- Feature Badges -->
+<div class="relative z-10 flex flex-wrap gap-gap-sm mt-auto max-w-md">
+<div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/10 px-3 py-2 rounded-lg">
+<span class="material-symbols-outlined text-white text-[18px]">chat</span>
+<span class="font-label-md text-label-md text-white">WhatsApp Notification</span>
+</div>
+<div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/10 px-3 py-2 rounded-lg">
+<span class="material-symbols-outlined text-white text-[18px]">dashboard</span>
+<span class="font-label-md text-label-md text-white">Real-time Dashboard</span>
+</div>
+<div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/10 px-3 py-2 rounded-lg">
+<span class="material-symbols-outlined text-white text-[18px]">receipt_long</span>
+<span class="font-label-md text-label-md text-white">Receipt Printing</span>
+</div>
+<div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/10 px-3 py-2 rounded-lg">
+<span class="material-symbols-outlined text-white text-[18px]">devices</span>
+<span class="font-label-md text-label-md text-white">Responsive</span>
+</div>
+</div>
+</div>
+<!-- Right Side: Login Form -->
+<div class="w-full md:w-1/2 h-full flex flex-col items-center justify-center relative p-6">
+<!-- Dark Mode Toggle (Top Right) -->
+<button class="absolute top-6 right-6 p-2 rounded-full hover:bg-surface-container-low dark:hover:bg-inverse-surface transition-colors" id="theme-toggle">
+<span class="material-symbols-outlined dark:hidden">dark_mode</span>
+<span class="material-symbols-outlined hidden dark:block text-white">light_mode</span>
+</button>
+<div class="w-full max-w-md">
+<!-- Mobile Header (Hidden on Desktop) -->
+<div class="md:hidden flex items-center justify-center gap-gap-sm mb-gap-lg">
+<img alt="SISMA Logo" class="w-10 h-10 rounded-lg" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDyN9RX13wxK5V3Ny5PnaCpqsgMOtOog7vWIkcR9PUUef4wm7H_EliXH5c8jbPhBzinEwAlUNkWGc4bk4Tbl7TLzc0gsOgO2yXUTesF0Fe9V_uQXhpWeiviI_Uxz9vdfOU8K5YdmKkIPUbKirDGaJdDpGrPq9Mny7oFJwY11H4GIHs8wYMNVmBBU3VtgCWs6SWqmzIFYVhgXdg72SvOlxVDrXPZfCcOoLF0At3ZEboVBQojwTH55zJgYM2R6DQL-hIqU6s"/>
+<div>
+<h1 class="font-headline-sm text-headline-sm text-on-surface dark:text-white m-0">SISMA</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant dark:text-surface-dim m-0">SMA Persiapan Stabat</p>
+</div>
+</div>
+<!-- Login Card -->
+<div class="glass-panel rounded-xl p-8 shadow-[0_4px_12px_rgba(0,0,0,0.05)] dark:shadow-none">
+<div class="mb-8">
+<h3 class="font-headline-md text-headline-md text-on-surface dark:text-white mb-2">Selamat Datang</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant dark:text-surface-dim">Silakan masuk ke akun Anda.</p>
+</div>
+<form class="space-y-6">
+<div>
+<label class="block font-label-md text-label-md text-on-surface-variant dark:text-surface-dim mb-2" for="username">Username / Email</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[18px]">person</span>
+<input class="w-full h-10 pl-10 pr-3 rounded-lg border border-outline-variant dark:border-outline bg-white dark:bg-inverse-surface text-on-surface dark:text-white font-body-sm text-body-sm focus:border-primary focus:ring-0 input-glow transition-all" id="username" placeholder="admin@sekolah.sch.id" type="text"/>
+</div>
+</div>
+<div>
+<div class="flex justify-between items-center mb-2">
+<label class="block font-label-md text-label-md text-on-surface-variant dark:text-surface-dim" for="password">Password</label>
+<a class="font-label-sm text-label-sm text-primary hover:text-primary-fixed-variant transition-colors" href="#">Lupa Password?</a>
+</div>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[18px]">lock</span>
+<input class="w-full h-10 pl-10 pr-10 rounded-lg border border-outline-variant dark:border-outline bg-white dark:bg-inverse-surface text-on-surface dark:text-white font-body-sm text-body-sm focus:border-primary focus:ring-0 input-glow transition-all" id="password" placeholder="••••••••" type="password"/>
+<button class="absolute right-3 top-1/2 -translate-y-1/2 text-outline hover:text-on-surface dark:hover:text-white transition-colors" id="toggle-password" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility_off</span>
+</button>
+</div>
+</div>
+<div class="flex items-center">
+<input class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary focus:ring-offset-0 bg-white dark:bg-inverse-surface dark:border-outline" id="remember" type="checkbox"/>
+<label class="ml-2 font-body-sm text-body-sm text-on-surface-variant dark:text-surface-dim" for="remember">Ingat saya</label>
+</div>
+<button class="w-full h-10 flex items-center justify-center gap-2 bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-label-md text-label-md rounded-lg shadow-[inset_0_1px_0_rgba(255,255,255,0.2)] transition-colors" type="submit">
+<span>Masuk</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</form>
+</div>
+<!-- Footer -->
+<div class="mt-8 text-center">
+<p class="font-label-sm text-label-sm text-on-surface-variant dark:text-surface-dim">
+                    © 2024 SISMA - SMA Persiapan Stabat. All rights reserved.
+                </p>
+</div>
+</div>
+</div>
+<script>
+        // Password Toggle
+        const togglePassword = document.getElementById('toggle-password');
+        const passwordInput = document.getElementById('password');
+        
+        togglePassword.addEventListener('click', () => {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            togglePassword.querySelector('span').textContent = type === 'password' ? 'visibility_off' : 'visibility';
+        });
+
+        // Theme Toggle
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const html = document.documentElement;
+
+        themeToggleBtn.addEventListener('click', () => {
+            html.classList.toggle('dark');
+            html.classList.toggle('light');
+        });
+    </script>
+</body></html>

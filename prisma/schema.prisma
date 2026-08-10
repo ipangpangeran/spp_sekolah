@@ -1,0 +1,151 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model TahunAjaran {
+  id              Int               @id @default(autoincrement())
+  tahunAjaran     String            // e.g. "2026/2027"
+  status          String            @default("TIDAK_AKTIF") // "AKTIF" | "TIDAK_AKTIF"
+  jenisPembayaran JenisPembayaran[]
+  users           User[]
+}
+
+model Kelas {
+  id         Int     @id @default(autoincrement())
+  namaKelas  String  // e.g. "X IPA 1"
+  keterangan String?
+  siswa      Siswa[]
+}
+
+model Siswa {
+  id             Int              @id @default(autoincrement())
+  nis            String           @unique
+  nisn           String?
+  namaSiswa      String
+  jenisKelamin   String           @default("L") // "L" | "P"
+  idKelas        Int
+  kelas          Kelas            @relation(fields: [idKelas], references: [id])
+  hpSiswa        String?
+  hpOrtu         String?
+  statusSiswa    String           @default("AKTIF") // "AKTIF" | "LULUS" | "PINDAH" | "ALUMNI"
+  tagihanBulanan TagihanBulanan[]
+  tagihanBebas   TagihanBebas[]
+}
+
+model User {
+  id                Int                 @id @default(autoincrement())
+  username          String              @unique
+  password          String
+  namaLengkap       String
+  level             String              @default("bendahara") // "admin" | "bendahara" | "siswa"
+  idTahunAjaran     Int?
+  tahunAjaran       TahunAjaran?        @relation(fields: [idTahunAjaran], references: [id])
+  pembayaranBulanan PembayaranBulanan[]
+  pembayaranBebas   PembayaranBebas[]
+  kas               Kas[]
+}
+
+model PosBayar {
+  id              Int               @id @default(autoincrement())
+  namaPosBayar    String            // e.g. "SPP", "Uang Gedung"
+  keterangan      String?
+  jenisPembayaran JenisPembayaran[]
+  kas             Kas[]
+}
+
+model JenisPembayaran {
+  id             Int              @id @default(autoincrement())
+  idPosBayar     Int
+  posBayar       PosBayar         @relation(fields: [idPosBayar], references: [id])
+  idTahunAjaran  Int
+  tahunAjaran    TahunAjaran      @relation(fields: [idTahunAjaran], references: [id])
+  tipeBayar      String           @default("bulanan") // "bulanan" | "bebas"
+  tagihanBulanan TagihanBulanan[]
+  tagihanBebas   TagihanBebas[]
+}
+
+model TagihanBulanan {
+  id                Int                 @id @default(autoincrement())
+  idJenisPembayaran Int
+  jenisPembayaran   JenisPembayaran     @relation(fields: [idJenisPembayaran], references: [id], onDelete: Cascade)
+  idSiswa           Int
+  siswa             Siswa               @relation(fields: [idSiswa], references: [id], onDelete: Cascade)
+  bulan             String              // "Juli", "Agustus", ..., "Juni"
+  urutanBulan       Int                 // 1 .. 12
+  tarif             Float               @default(0)
+  statusBayar       String              @default("BELUM_BAYAR") // "BELUM_BAYAR" | "LUNAS"
+  pembayaranBulanan PembayaranBulanan[]
+}
+
+model PembayaranBulanan {
+  id               Int            @id @default(autoincrement())
+  idTagihanBulanan Int
+  tagihanBulanan   TagihanBulanan @relation(fields: [idTagihanBulanan], references: [id], onDelete: Cascade)
+  tglBayar         DateTime       @default(now())
+  jumlahBayar      Float
+  idUser           Int
+  user             User           @relation(fields: [idUser], references: [id])
+  noRef            String         @unique
+}
+
+model TagihanBebas {
+  id                Int               @id @default(autoincrement())
+  idJenisPembayaran Int
+  jenisPembayaran   JenisPembayaran   @relation(fields: [idJenisPembayaran], references: [id], onDelete: Cascade)
+  idSiswa           Int
+  siswa             Siswa             @relation(fields: [idSiswa], references: [id], onDelete: Cascade)
+  totalTagihan      Float             @default(0)
+  terbayar          Float             @default(0)
+  statusBayar       String            @default("BELUM_LUNAS") // "BELUM_LUNAS" | "LUNAS"
+  pembayaranBebas   PembayaranBebas[]
+}
+
+model PembayaranBebas {
+  id             Int          @id @default(autoincrement())
+  idTagihanBebas Int
+  tagihanBebas   TagihanBebas @relation(fields: [idTagihanBebas], references: [id], onDelete: Cascade)
+  tglBayar       DateTime     @default(now())
+  jumlahBayar    Float
+  keterangan     String?
+  idUser         Int
+  user           User         @relation(fields: [idUser], references: [id])
+  noRef          String       @unique
+}
+
+model Kas {
+  id          Int      @id @default(autoincrement())
+  tgl         DateTime @default(now())
+  uraian      String
+  pemasukan   Float    @default(0)
+  pengeluaran Float    @default(0)
+  jenis       String   // "masuk" | "keluar"
+  idUser      Int
+  user        User     @relation(fields: [idUser], references: [id])
+  idPosBayar  Int?
+  posBayar    PosBayar? @relation(fields: [idPosBayar], references: [id])
+}
+
+model Pengaturan {
+  id                   Int     @id @default(1)
+  namaSekolah          String  @default("SMA Swasta Persiapan Stabat")
+  npsn                 String  @default("10201234")
+  alamat               String  @default("Jl. KH. Zainul Arifin No. 12, Stabat")
+  telepon              String  @default("(061) 8912345")
+  email                String  @default("info@smapersiapan-stabat.sch.id")
+  website              String  @default("https://spp-smapersiapan.web.id")
+  kepalaSekolah        String  @default("Drs. H. Ahmad Dahlan, M.Pd")
+  nipKepalaSekolah     String  @default("19680512 199303 1 004")
+  bendahara            String  @default("Siti Rahmah, S.Pd")
+  nipBendahara         String  @default("19750820 200212 2 001")
+  logo                 String  @default("/logo_sisma.png")
+  waApiUrl             String  @default("https://api.whatsapp-gateway.com/send")
+  waApiKey             String  @default("DEMO_WA_API_KEY_SISMA")
+  midtransServerKey    String  @default("SB-Mid-server-DemoKey123")
+  midtransClientKey    String  @default("SB-Mid-client-DemoKey123")
+  midtransIsProduction Boolean @default(false)
+}

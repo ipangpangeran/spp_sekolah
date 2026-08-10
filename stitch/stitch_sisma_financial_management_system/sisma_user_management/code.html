@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SISMA - User Management</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed-variant": "#005236",
+                        "on-tertiary-fixed": "#002113",
+                        "on-secondary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "surface-bright": "#f7f9fb",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed-dim": "#b4c5ff",
+                        "secondary-fixed-dim": "#c0c6db",
+                        "primary-container": "#2563eb",
+                        "surface-container": "#eceef0",
+                        "on-primary": "#ffffff",
+                        "secondary-container": "#d9dff5",
+                        "surface-tint": "#0053db",
+                        "inverse-on-surface": "#eff1f3",
+                        "on-error-container": "#93000a",
+                        "surface-container-high": "#e6e8ea",
+                        "on-primary-fixed-variant": "#003ea8",
+                        "background": "#f7f9fb",
+                        "tertiary-container": "#007d55",
+                        "secondary-fixed": "#dce2f7",
+                        "outline": "#737686",
+                        "surface": "#f7f9fb",
+                        "on-tertiary-container": "#bdffdb",
+                        "surface-container-low": "#f2f4f6",
+                        "tertiary-fixed-dim": "#4edea3",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-fixed": "#6ffbbe",
+                        "secondary": "#575e70",
+                        "inverse-primary": "#b4c5ff",
+                        "on-primary-container": "#eeefff",
+                        "outline-variant": "#c3c6d7",
+                        "primary": "#004ac6",
+                        "primary-fixed": "#dbe1ff",
+                        "inverse-surface": "#2d3133",
+                        "on-secondary-fixed-variant": "#404758",
+                        "on-surface-variant": "#434655",
+                        "error-container": "#ffdad6",
+                        "on-primary-fixed": "#00174b",
+                        "surface-variant": "#e0e3e5",
+                        "on-surface": "#191c1e",
+                        "on-secondary-container": "#5c6274",
+                        "tertiary": "#006242",
+                        "surface-dim": "#d8dadc",
+                        "on-background": "#191c1e",
+                        "error": "#ba1a1a",
+                        "surface-container-highest": "#e0e3e5",
+                        "on-secondary-fixed": "#141b2b"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gap-sm": "8px",
+                        "gap-xs": "4px",
+                        "base": "8px",
+                        "container-max": "1440px",
+                        "gap-md": "16px",
+                        "gap-lg": "24px",
+                        "margin-page": "32px"
+                    },
+                    "fontFamily": {
+                        "body-sm": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-sm": ["Inter"],
+                        "mono-data": ["JetBrains Mono"],
+                        "headline-lg": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "label-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-sm": ["18px", { "lineHeight": "24px", "fontWeight": "600" }],
+                        "mono-data": ["13px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-lg": ["30px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "label-sm": ["11px", { "lineHeight": "14px", "fontWeight": "500" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .icon-fill {
+            font-variation-settings: 'FILL' 1;
+        }
+        
+        /* Custom scrollbar for tables */
+        .custom-scrollbar::-webkit-scrollbar {
+            height: 6px;
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 20px;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md h-screen flex overflow-hidden">
+<!-- SideNavBar -->
+<nav class="bg-on-secondary-fixed dark:bg-on-secondary-fixed font-body-md text-body-md fixed left-0 top-0 h-full w-[260px] border-r border-outline-variant dark:border-outline z-50 flex flex-col h-full py-base">
+<div class="px-gap-lg py-gap-md mb-gap-lg">
+<h1 class="font-headline-md text-headline-md font-bold text-on-secondary">SISMA</h1>
+<p class="text-secondary-fixed text-label-sm font-label-sm mt-1">SMA Persiapan Stabat</p>
+</div>
+<div class="flex-1 overflow-y-auto custom-scrollbar flex flex-col gap-1 px-gap-sm">
+<!-- Inactive -->
+<a class="flex items-center gap-3 px-gap-md py-2.5 rounded-lg text-secondary-fixed dark:text-secondary-fixed-dim hover:bg-secondary-fixed/10 hover:text-on-secondary transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined text-[18px]">dashboard</span>
+<span>Dashboard</span>
+</a>
+<!-- Inactive -->
+<a class="flex items-center gap-3 px-gap-md py-2.5 rounded-lg text-secondary-fixed dark:text-secondary-fixed-dim hover:bg-secondary-fixed/10 hover:text-on-secondary transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined text-[18px]">point_of_sale</span>
+<span>POS Pembayaran</span>
+</a>
+<!-- Inactive -->
+<a class="flex items-center gap-3 px-gap-md py-2.5 rounded-lg text-secondary-fixed dark:text-secondary-fixed-dim hover:bg-secondary-fixed/10 hover:text-on-secondary transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined text-[18px]">group</span>
+<span>Manajemen Siswa</span>
+</a>
+<!-- Inactive -->
+<a class="flex items-center gap-3 px-gap-md py-2.5 rounded-lg text-secondary-fixed dark:text-secondary-fixed-dim hover:bg-secondary-fixed/10 hover:text-on-secondary transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined text-[18px]">assessment</span>
+<span>Laporan Keuangan</span>
+</a>
+<!-- Active -->
+<a class="flex items-center gap-3 px-gap-md py-2.5 rounded-lg text-primary dark:text-primary-fixed-dim bg-secondary-container/10 border-l-4 border-primary transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined text-[18px] icon-fill">manage_accounts</span>
+<span class="font-bold">Pengguna</span>
+</a>
+<!-- Inactive -->
+<a class="flex items-center gap-3 px-gap-md py-2.5 rounded-lg text-secondary-fixed dark:text-secondary-fixed-dim hover:bg-secondary-fixed/10 hover:text-on-secondary transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined text-[18px]">settings</span>
+<span>Pengaturan</span>
+</a>
+</div>
+<div class="mt-auto px-gap-sm pt-gap-md">
+<a class="flex items-center gap-3 px-gap-md py-2.5 rounded-lg text-secondary-fixed dark:text-secondary-fixed-dim hover:bg-secondary-fixed/10 hover:text-on-secondary transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined text-[18px]">logout</span>
+<span>Keluar</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<div class="flex-1 flex flex-col ml-[260px] min-w-0 overflow-hidden relative z-0">
+<!-- TopNavBar -->
+<header class="bg-surface/80 dark:bg-surface-dim/80 backdrop-blur-md font-label-md text-label-md sticky top-0 right-0 z-40 border-b border-outline-variant dark:border-outline flex justify-between items-center h-16 px-margin-page">
+<div class="flex items-center gap-gap-md">
+<span class="text-on-surface-variant font-bold text-label-md px-3 py-1.5 rounded-md bg-surface-container-low border border-outline-variant/30">Tahun Ajaran 2023/2024</span>
+</div>
+<div class="flex items-center gap-gap-md">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-low rounded-full transition-colors duration-150">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-low rounded-full transition-colors duration-150">
+<span class="material-symbols-outlined text-[20px]">chat</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-low rounded-full transition-colors duration-150">
+<span class="material-symbols-outlined text-[20px]">dark_mode</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-primary-container/20 border border-primary/20 overflow-hidden ml-2 flex items-center justify-center text-primary font-bold">
+                    A
+                </div>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="flex-1 overflow-y-auto p-margin-page bg-surface">
+<!-- Page Header & Actions -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-gap-lg gap-gap-md">
+<div>
+<h2 class="font-headline-lg text-headline-lg font-bold text-on-surface">Manajemen Pengguna</h2>
+<p class="text-on-surface-variant font-body-sm text-body-sm mt-1">Kelola akses dan izin staf administrasi sistem.</p>
+</div>
+<div class="flex items-center gap-gap-sm w-full md:w-auto">
+<div class="relative flex-1 md:w-64">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[18px]">search</span>
+<input class="w-full pl-9 pr-3 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg text-body-sm focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none transition-all" placeholder="Cari pengguna..." type="text"/>
+</div>
+<button class="bg-[#2563EB] hover:bg-[#1D4ED8] text-white px-4 py-2 rounded-lg font-label-md text-label-md flex items-center gap-2 shadow-sm border border-transparent transition-colors whitespace-nowrap">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                        Tambah Pengguna
+                    </button>
+</div>
+</div>
+<!-- Stats/Summary Bento -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gap-md mb-gap-lg">
+<div class="bg-surface-container-lowest p-gap-md rounded-xl border border-outline-variant shadow-sm flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">group</span>
+</div>
+<div>
+<p class="text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">Total Pengguna</p>
+<p class="font-headline-md text-headline-md font-bold text-on-surface">24</p>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-gap-md rounded-xl border border-outline-variant shadow-sm flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-[#10B981]/10 flex items-center justify-center text-[#10B981]">
+<span class="material-symbols-outlined">verified_user</span>
+</div>
+<div>
+<p class="text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">Aktif</p>
+<p class="font-headline-md text-headline-md font-bold text-on-surface">22</p>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-gap-md rounded-xl border border-outline-variant shadow-sm flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-[#F59E0B]/10 flex items-center justify-center text-[#F59E0B]">
+<span class="material-symbols-outlined">admin_panel_settings</span>
+</div>
+<div>
+<p class="text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">Admin</p>
+<p class="font-headline-md text-headline-md font-bold text-on-surface">5</p>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-gap-md rounded-xl border border-outline-variant shadow-sm flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-outline-variant/20 flex items-center justify-center text-outline">
+<span class="material-symbols-outlined">block</span>
+</div>
+<div>
+<p class="text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">Nonaktif</p>
+<p class="font-headline-md text-headline-md font-bold text-on-surface">2</p>
+</div>
+</div>
+</div>
+<!-- Users Data Table -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm overflow-hidden flex flex-col">
+<div class="overflow-x-auto custom-scrollbar">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low border-b border-outline-variant">
+<th class="px-4 py-3 font-label-md text-label-md text-on-surface-variant font-semibold w-[25%]">Nama Lengkap / Username</th>
+<th class="px-4 py-3 font-label-md text-label-md text-on-surface-variant font-semibold w-[15%]">Peran</th>
+<th class="px-4 py-3 font-label-md text-label-md text-on-surface-variant font-semibold w-[15%]">Status</th>
+<th class="px-4 py-3 font-label-md text-label-md text-on-surface-variant font-semibold w-[20%]">Login Terakhir</th>
+<th class="px-4 py-3 font-label-md text-label-md text-on-surface-variant font-semibold w-[25%] text-right">Aksi</th>
+</tr>
+</thead>
+<tbody class="font-body-sm text-body-sm text-on-surface divide-y divide-outline-variant/50">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-lowest/50 transition-colors">
+<td class="px-4 py-3">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-primary-container text-on-primary-container flex items-center justify-center font-bold text-label-md">BS</div>
+<div>
+<p class="font-semibold text-on-surface">Budi Santoso</p>
+<p class="text-on-surface-variant text-[11px] font-mono-data text-mono-data mt-0.5">@budis.admin</p>
+</div>
+</div>
+</td>
+<td class="px-4 py-3">
+<span class="inline-flex items-center px-2 py-1 rounded bg-[#2563EB]/10 text-[#2563EB] font-label-sm text-label-sm font-semibold">Super Admin</span>
+</td>
+<td class="px-4 py-3">
+<span class="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-[#ECFDF5] text-[#10B981] border border-[#10B981]/20 font-label-sm text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-[#10B981]"></span>
+                                        Aktif
+                                    </span>
+</td>
+<td class="px-4 py-3 text-on-surface-variant font-mono-data text-mono-data">24 Okt 2023, 08:12</td>
+<td class="px-4 py-3">
+<div class="flex items-center justify-end gap-1">
+<button class="p-1.5 text-on-surface-variant hover:text-primary hover:bg-primary/10 rounded transition-colors" title="Edit Permissions">
+<span class="material-symbols-outlined text-[18px]">key</span>
+</button>
+<button class="p-1.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-variant rounded transition-colors" title="Reset Password">
+<span class="material-symbols-outlined text-[18px]">lock_reset</span>
+</button>
+<button class="p-1.5 text-[#10B981] hover:bg-[#10B981]/10 rounded transition-colors" title="Disable User">
+<span class="material-symbols-outlined text-[18px]">toggle_on</span>
+</button>
+<button class="opacity-50 cursor-not-allowed" disabled="" title="Delete">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="bg-surface-bright hover:bg-surface-container-lowest/50 transition-colors">
+<td class="px-4 py-3">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-secondary-container text-on-secondary-container flex items-center justify-center font-bold text-label-md">SW</div>
+<div>
+<p class="font-semibold text-on-surface">Siti Wahyuni</p>
+<p class="text-on-surface-variant text-[11px] font-mono-data text-mono-data mt-0.5">@siti.keuangan</p>
+</div>
+</div>
+</td>
+<td class="px-4 py-3">
+<span class="inline-flex items-center px-2 py-1 rounded bg-secondary-container/50 text-on-secondary-container font-label-sm text-label-sm font-semibold">Admin</span>
+</td>
+<td class="px-4 py-3">
+<span class="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-[#ECFDF5] text-[#10B981] border border-[#10B981]/20 font-label-sm text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-[#10B981]"></span>
+                                        Aktif
+                                    </span>
+</td>
+<td class="px-4 py-3 text-on-surface-variant font-mono-data text-mono-data">23 Okt 2023, 14:45</td>
+<td class="px-4 py-3">
+<div class="flex items-center justify-end gap-1">
+<button class="p-1.5 text-on-surface-variant hover:text-primary hover:bg-primary/10 rounded transition-colors" title="Edit Permissions">
+<span class="material-symbols-outlined text-[18px]">key</span>
+</button>
+<button class="p-1.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-variant rounded transition-colors" title="Reset Password">
+<span class="material-symbols-outlined text-[18px]">lock_reset</span>
+</button>
+<button class="p-1.5 text-[#10B981] hover:bg-[#10B981]/10 rounded transition-colors" title="Disable User">
+<span class="material-symbols-outlined text-[18px]">toggle_on</span>
+</button>
+<button class="p-1.5 text-error hover:bg-error/10 rounded transition-colors" title="Delete">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-lowest/50 transition-colors opacity-75">
+<td class="px-4 py-3">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-surface-variant text-on-surface-variant flex items-center justify-center font-bold text-label-md">RH</div>
+<div>
+<p class="font-semibold text-on-surface line-through decoration-outline-variant">Rudi Haryanto</p>
+<p class="text-on-surface-variant text-[11px] font-mono-data text-mono-data mt-0.5">@rudi.ops</p>
+</div>
+</div>
+</td>
+<td class="px-4 py-3">
+<span class="inline-flex items-center px-2 py-1 rounded bg-surface-variant text-on-surface-variant font-label-sm text-label-sm font-semibold">Operator</span>
+</td>
+<td class="px-4 py-3">
+<span class="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-surface-variant text-on-surface-variant border border-outline-variant/30 font-label-sm text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span>
+                                        Nonaktif
+                                    </span>
+</td>
+<td class="px-4 py-3 text-on-surface-variant font-mono-data text-mono-data">15 Sep 2023, 09:10</td>
+<td class="px-4 py-3">
+<div class="flex items-center justify-end gap-1">
+<button class="p-1.5 text-on-surface-variant hover:text-primary hover:bg-primary/10 rounded transition-colors" disabled="" title="Edit Permissions">
+<span class="material-symbols-outlined text-[18px]">key</span>
+</button>
+<button class="p-1.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-variant rounded transition-colors" disabled="" title="Reset Password">
+<span class="material-symbols-outlined text-[18px]">lock_reset</span>
+</button>
+<button class="p-1.5 text-on-surface-variant hover:bg-surface-variant rounded transition-colors" title="Enable User">
+<span class="material-symbols-outlined text-[18px]">toggle_off</span>
+</button>
+<button class="p-1.5 text-error hover:bg-error/10 rounded transition-colors" title="Delete">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="bg-surface-bright hover:bg-surface-container-lowest/50 transition-colors">
+<td class="px-4 py-3">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-tertiary-container text-on-tertiary-container flex items-center justify-center font-bold text-label-md">AN</div>
+<div>
+<p class="font-semibold text-on-surface">Anita Ningrum</p>
+<p class="text-on-surface-variant text-[11px] font-mono-data text-mono-data mt-0.5">@anita.audit</p>
+</div>
+</div>
+</td>
+<td class="px-4 py-3">
+<span class="inline-flex items-center px-2 py-1 rounded bg-[#F59E0B]/10 text-[#D97706] font-label-sm text-label-sm font-semibold">Auditor</span>
+</td>
+<td class="px-4 py-3">
+<span class="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-[#ECFDF5] text-[#10B981] border border-[#10B981]/20 font-label-sm text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-[#10B981]"></span>
+                                        Aktif
+                                    </span>
+</td>
+<td class="px-4 py-3 text-on-surface-variant font-mono-data text-mono-data">Hari ini, 07:30</td>
+<td class="px-4 py-3">
+<div class="flex items-center justify-end gap-1">
+<button class="p-1.5 text-on-surface-variant hover:text-primary hover:bg-primary/10 rounded transition-colors" title="Edit Permissions">
+<span class="material-symbols-outlined text-[18px]">key</span>
+</button>
+<button class="p-1.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-variant rounded transition-colors" title="Reset Password">
+<span class="material-symbols-outlined text-[18px]">lock_reset</span>
+</button>
+<button class="p-1.5 text-[#10B981] hover:bg-[#10B981]/10 rounded transition-colors" title="Disable User">
+<span class="material-symbols-outlined text-[18px]">toggle_on</span>
+</button>
+<button class="p-1.5 text-error hover:bg-error/10 rounded transition-colors" title="Delete">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="flex items-center justify-between px-4 py-3 border-t border-outline-variant bg-surface-container-lowest">
+<span class="text-on-surface-variant font-body-sm text-body-sm">Menampilkan 1-4 dari 24 pengguna</span>
+<div class="flex items-center gap-1">
+<button class="p-1 rounded text-on-surface-variant hover:bg-surface-variant disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined text-[20px]">chevron_left</span>
+</button>
+<button class="w-7 h-7 rounded bg-primary text-white font-label-sm flex items-center justify-center">1</button>
+<button class="w-7 h-7 rounded text-on-surface-variant hover:bg-surface-variant font-label-sm flex items-center justify-center">2</button>
+<button class="w-7 h-7 rounded text-on-surface-variant hover:bg-surface-variant font-label-sm flex items-center justify-center">3</button>
+<span class="text-on-surface-variant px-1">...</span>
+<button class="p-1 rounded text-on-surface-variant hover:bg-surface-variant">
+<span class="material-symbols-outlined text-[20px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Example Floating Modal overlay (Hidden by default, shown here for design completeness as requested in prompt) -->
+<div class="mt-8 border border-outline-variant rounded-xl bg-surface-container-lowest p-6 max-w-2xl relative shadow-lg">
+<div class="absolute top-4 right-4 p-1 cursor-pointer text-on-surface-variant hover:text-on-surface">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm font-bold text-on-surface mb-2">Konfigurasi Hak Akses</h3>
+<p class="text-on-surface-variant font-body-sm text-body-sm mb-6">Atur izin spesifik untuk peran <strong class="text-on-surface">Operator</strong>. Perubahan akan berlaku pada login berikutnya.</p>
+<div class="space-y-6">
+<!-- Module Group 1 -->
+<div>
+<div class="flex items-center justify-between border-b border-outline-variant pb-2 mb-3">
+<h4 class="font-label-md text-label-md font-semibold text-on-surface uppercase tracking-wide">POS Pembayaran</h4>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-9 h-5 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<div class="grid grid-cols-2 gap-3 pl-2">
+<label class="flex items-center gap-2 cursor-pointer">
+<input checked="" class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary/20" type="checkbox"/>
+<span class="font-body-sm text-body-sm text-on-surface">Terima Pembayaran SPP</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer">
+<input checked="" class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary/20" type="checkbox"/>
+<span class="font-body-sm text-body-sm text-on-surface">Cetak Bukti Bayar</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer">
+<input class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary/20" type="checkbox"/>
+<span class="font-body-sm text-body-sm text-on-surface">Batalkan Transaksi</span>
+</label>
+</div>
+</div>
+<!-- Module Group 2 -->
+<div>
+<div class="flex items-center justify-between border-b border-outline-variant pb-2 mb-3">
+<h4 class="font-label-md text-label-md font-semibold text-on-surface uppercase tracking-wide">Laporan Keuangan</h4>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox" value=""/>
+<div class="w-9 h-5 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<div class="grid grid-cols-2 gap-3 pl-2 opacity-50 pointer-events-none">
+<label class="flex items-center gap-2 cursor-pointer">
+<input class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary/20" type="checkbox"/>
+<span class="font-body-sm text-body-sm text-on-surface">Lihat Rekap Harian</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer">
+<input class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary/20" type="checkbox"/>
+<span class="font-body-sm text-body-sm text-on-surface">Ekspor Data (Excel/PDF)</span>
+</label>
+</div>
+</div>
+</div>
+<div class="mt-8 flex justify-end gap-3 pt-4 border-t border-outline-variant">
+<button class="px-4 py-2 bg-surface hover:bg-surface-variant border border-outline-variant rounded-lg font-label-md text-label-md text-on-surface transition-colors">Batal</button>
+<button class="px-4 py-2 bg-primary hover:bg-[#1D4ED8] text-white rounded-lg font-label-md text-label-md transition-colors shadow-sm">Simpan Izin</button>
+</div>
+</div>
+</main>
+</div>
+</body></html>

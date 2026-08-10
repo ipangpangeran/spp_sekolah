@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+
+<html class="light" lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Dashboard Eksekutif - SISMA</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed-variant": "#005236",
+                        "on-tertiary-fixed": "#002113",
+                        "on-secondary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "surface-bright": "#f7f9fb",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed-dim": "#b4c5ff",
+                        "secondary-fixed-dim": "#c0c6db",
+                        "primary-container": "#2563eb",
+                        "surface-container": "#eceef0",
+                        "on-primary": "#ffffff",
+                        "secondary-container": "#d9dff5",
+                        "surface-tint": "#0053db",
+                        "inverse-on-surface": "#eff1f3",
+                        "on-error-container": "#93000a",
+                        "surface-container-high": "#e6e8ea",
+                        "on-primary-fixed-variant": "#003ea8",
+                        "background": "#f7f9fc",
+                        "tertiary-container": "#007d55",
+                        "secondary-fixed": "#dce2f7",
+                        "outline": "#737686",
+                        "surface": "#f7f9fb",
+                        "on-tertiary-container": "#bdffdb",
+                        "surface-container-low": "#f2f4f6",
+                        "tertiary-fixed-dim": "#4edea3",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-fixed": "#6ffbbe",
+                        "secondary": "#575e70",
+                        "inverse-primary": "#b4c5ff",
+                        "on-primary-container": "#eeefff",
+                        "outline-variant": "#c3c6d7",
+                        "primary": "#004ac6",
+                        "primary-fixed": "#dbe1ff",
+                        "inverse-surface": "#2d3133",
+                        "on-secondary-fixed-variant": "#404758",
+                        "on-surface-variant": "#434655",
+                        "error-container": "#ffdad6",
+                        "on-primary-fixed": "#00174b",
+                        "surface-variant": "#e0e3e5",
+                        "on-surface": "#191c1e",
+                        "on-secondary-container": "#5c6274",
+                        "tertiary": "#006242",
+                        "surface-dim": "#d8dadc",
+                        "on-background": "#191c1e",
+                        "error": "#ba1a1a",
+                        "surface-container-highest": "#e0e3e5",
+                        "on-secondary-fixed": "#141b2b",
+                        "stripe-dark": "#0a2540",
+                        "stripe-gray": "#f6f9fc",
+                        "stripe-border": "#e3e8ee",
+                        "stripe-blue": "#635bff",
+                        "stripe-blue-hover": "#0a2540",
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px",
+                        "2xl": "1rem"
+                    },
+                    "spacing": {
+                        "gap-sm": "8px",
+                        "gap-xs": "4px",
+                        "base": "8px",
+                        "container-max": "1440px",
+                        "gap-md": "16px",
+                        "gap-lg": "24px",
+                        "margin-page": "32px"
+                    },
+                    "fontFamily": {
+                        "body-sm": ["Inter", "sans-serif"],
+                        "headline-md": ["Inter", "sans-serif"],
+                        "body-md": ["Inter", "sans-serif"],
+                        "headline-sm": ["Inter", "sans-serif"],
+                        "mono-data": ["JetBrains Mono", "monospace"],
+                        "headline-lg": ["Inter", "sans-serif"],
+                        "body-lg": ["Inter", "sans-serif"],
+                        "label-sm": ["Inter", "sans-serif"],
+                        "label-md": ["Inter", "sans-serif"]
+                    },
+                    "fontSize": {
+                        "body-sm": ["13px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-md": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-sm": ["16px", { "lineHeight": "24px", "fontWeight": "600" }],
+                        "mono-data": ["13px", { "lineHeight": "20px", "fontWeight": "500", "letterSpacing": "-0.01em" }],
+                        "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "500", "letterSpacing": "0.01em" }],
+                        "label-md": ["13px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500" }]
+                    },
+                    "boxShadow": {
+                        "sm": "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
+                        "stripe": "0 2px 5px -1px rgba(50, 50, 93, 0.05), 0 1px 3px -1px rgba(0, 0, 0, 0.05)",
+                        "stripe-hover": "0 4px 6px -1px rgba(50, 50, 93, 0.11), 0 1px 3px -1px rgba(0, 0, 0, 0.08)",
+                        "premium": "0 1px 3px rgba(0,0,0,0.05), 0 4px 12px rgba(0,0,0,0.05)"
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-[#f7f9fc] text-slate-900 font-body-md antialiased overflow-x-hidden min-h-screen flex selection:bg-stripe-blue selection:text-white">
+<!-- SideNavBar -->
+<aside class="hidden md:flex bg-[#0a2540] fixed left-0 top-0 h-full w-[260px] flex-col py-8 z-50">
+<div class="px-8 mb-10">
+<h1 class="font-headline-md text-xl font-bold text-white tracking-tight flex items-center gap-2">
+<span class="material-symbols-outlined text-stripe-blue text-[24px]">school</span>
+            SISMA
+        </h1>
+<p class="font-label-sm text-slate-400 mt-1 opacity-80">SMA Persiapan Stabat</p>
+</div>
+<nav class="flex-1 flex flex-col gap-1.5 px-4 font-label-md">
+<a class="text-white bg-white/10 flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200 ease-in-out font-medium" href="#">
+<span class="material-symbols-outlined text-[20px] text-white/90" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+                Dashboard
+            </a>
+<a class="text-slate-300 hover:bg-white/5 hover:text-white flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined text-[20px] text-slate-400 group-hover:text-white/90">point_of_sale</span>
+                POS Pembayaran
+            </a>
+<a class="text-slate-300 hover:bg-white/5 hover:text-white flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined text-[20px] text-slate-400 group-hover:text-white/90">group</span>
+                Manajemen Siswa
+            </a>
+<a class="text-slate-300 hover:bg-white/5 hover:text-white flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined text-[20px] text-slate-400 group-hover:text-white/90">assessment</span>
+                Laporan Keuangan
+            </a>
+<a class="text-slate-300 hover:bg-white/5 hover:text-white flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined text-[20px] text-slate-400 group-hover:text-white/90">manage_accounts</span>
+                Pengguna
+            </a>
+<a class="text-slate-300 hover:bg-white/5 hover:text-white flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined text-[20px] text-slate-400 group-hover:text-white/90">settings</span>
+                Pengaturan
+            </a>
+</nav>
+<div class="mt-auto px-4 pt-4">
+<a class="text-slate-300 hover:bg-white/5 hover:text-white flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined text-[20px] text-slate-400 group-hover:text-white/90">logout</span>
+                Keluar
+            </a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<div class="flex-1 flex flex-col md:ml-[260px] min-h-screen">
+<!-- TopNavBar -->
+<header class="bg-white/90 backdrop-blur-md sticky top-0 right-0 z-40 border-b border-slate-200 flex justify-between items-center h-[72px] px-8">
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-md border border-slate-200 shadow-sm">
+<span class="material-symbols-outlined text-slate-400 text-[18px]">calendar_today</span>
+<span class="font-label-sm text-slate-600 font-medium">Tahun Ajaran 2023/2024</span>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-slate-400 hover:text-slate-700 transition-colors duration-200">
+<span class="material-symbols-outlined text-[22px]">notifications</span>
+</button>
+<button class="text-slate-400 hover:text-slate-700 transition-colors duration-200">
+<span class="material-symbols-outlined text-[22px]">chat</span>
+</button>
+<div class="w-px h-6 bg-slate-200 mx-2"></div>
+<div class="flex items-center gap-3 cursor-pointer group">
+<div class="text-right hidden sm:block">
+<p class="font-label-sm font-semibold text-slate-700 group-hover:text-stripe-blue transition-colors">Admin Siswa</p>
+<p class="text-[11px] text-slate-500 font-medium">Tata Usaha</p>
+</div>
+<div class="h-9 w-9 rounded-full bg-slate-100 border border-slate-200 text-slate-600 flex items-center justify-center group-hover:border-stripe-blue group-hover:text-stripe-blue transition-colors">
+<span class="material-symbols-outlined text-[20px] font-medium">person</span>
+</div>
+</div>
+</div>
+</header>
+<!-- Dashboard Canvas -->
+<main class="flex-1 p-8 max-w-[1440px] mx-auto w-full">
+<!-- Header & Quick Actions -->
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-6">
+<div>
+<h2 class="font-headline-lg text-slate-900 tracking-tight">Ikhtisar Keuangan</h2>
+<p class="font-body-sm text-slate-500 mt-1.5">Status pembayaran dan arus kas hari ini.</p>
+</div>
+<div class="flex flex-wrap gap-3">
+<button class="bg-white text-slate-700 font-label-md px-4 py-2.5 rounded-lg border border-slate-200 flex items-center gap-2 hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm">
+<span class="material-symbols-outlined text-[18px] text-slate-500">download</span>
+                        Laporan
+                    </button>
+<button class="bg-white text-slate-700 font-label-md px-4 py-2.5 rounded-lg border border-slate-200 flex items-center gap-2 hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm">
+<span class="material-symbols-outlined text-[18px] text-slate-500">upload_file</span>
+                        Import Siswa
+                    </button>
+<button class="bg-[#635bff] text-white font-label-md px-5 py-2.5 rounded-lg flex items-center gap-2 hover:bg-[#0a2540] transition-all shadow-sm font-medium">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                        Terima Pembayaran
+                    </button>
+</div>
+</div>
+<!-- KPI Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6 mb-8">
+<!-- KPI 1 -->
+<div class="bg-white border border-slate-200 rounded-2xl p-6 xl:col-span-2 shadow-premium relative overflow-hidden flex flex-col justify-between group hover:border-slate-300 transition-all duration-300">
+<div>
+<div class="flex justify-between items-start mb-6">
+<span class="font-label-sm text-slate-500 uppercase tracking-widest font-semibold">Total Pendapatan (Bulan Ini)</span>
+<span class="material-symbols-outlined text-emerald-600 bg-emerald-50 p-1.5 rounded-md text-[20px]">trending_up</span>
+</div>
+<div class="font-headline-lg text-[32px] leading-none text-slate-900 font-mono-data tracking-tight font-semibold">Rp 145.250.000</div>
+</div>
+<div class="flex items-center gap-1.5 mt-8 text-emerald-600 bg-emerald-50/50 self-start px-2 py-1 rounded-md">
+<span class="material-symbols-outlined text-[16px] font-bold">arrow_upward</span>
+<span class="font-label-sm font-semibold">+12.5% vs bulan lalu</span>
+</div>
+<div class="absolute bottom-0 left-0 w-full h-1 bg-slate-100">
+<div class="h-full bg-emerald-500 w-[75%] rounded-r-full transition-all duration-1000"></div>
+</div>
+</div>
+<!-- KPI 2 -->
+<div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-premium flex flex-col justify-between group hover:border-slate-300 transition-all duration-300">
+<div>
+<div class="flex justify-between items-start mb-4">
+<span class="font-label-sm text-slate-500 uppercase tracking-widest font-semibold">Kas Hari Ini</span>
+<span class="material-symbols-outlined text-blue-600 bg-blue-50 p-1.5 rounded-md text-[20px]">payments</span>
+</div>
+<div class="font-headline-md text-2xl text-slate-900 font-mono-data font-semibold">Rp 4.500.000</div>
+</div>
+<div class="font-label-sm text-slate-500 mt-6 flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px]">receipt_long</span>
+                15 Transaksi
+            </div>
+</div>
+<!-- KPI 3 -->
+<div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-premium flex flex-col justify-between group hover:border-slate-300 transition-all duration-300">
+<div>
+<div class="flex justify-between items-start mb-4">
+<span class="font-label-sm text-slate-500 uppercase tracking-widest font-semibold">Tunggakan Aktif</span>
+<span class="material-symbols-outlined text-rose-600 bg-rose-50 p-1.5 rounded-md text-[20px]">warning</span>
+</div>
+<div class="font-headline-md text-2xl text-rose-600 font-mono-data font-semibold">Rp 28.400.000</div>
+</div>
+<div class="font-label-sm text-slate-500 mt-6 flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px]">person_off</span>
+                42 Siswa
+            </div>
+</div>
+<!-- KPI 4 -->
+<div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-premium flex flex-col justify-between group hover:border-slate-300 transition-all duration-300">
+<div>
+<div class="flex justify-between items-start mb-4">
+<span class="font-label-sm text-slate-500 uppercase tracking-widest font-semibold">Kolektibilitas</span>
+<span class="material-symbols-outlined text-slate-600 bg-slate-100 p-1.5 rounded-md text-[20px]">pie_chart</span>
+</div>
+<div class="font-headline-md text-2xl text-slate-900 font-mono-data font-semibold">87.5%</div>
+</div>
+<div class="w-full bg-slate-100 h-1.5 rounded-full mt-6 overflow-hidden">
+<div class="bg-[#635bff] h-full rounded-full transition-all duration-1000" style="width: 87.5%"></div>
+</div>
+</div>
+<!-- KPI 5 -->
+<div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-premium flex flex-col justify-between group hover:border-slate-300 transition-all duration-300">
+<div>
+<div class="flex justify-between items-start mb-4">
+<span class="font-label-sm text-slate-500 uppercase tracking-widest font-semibold">Total Siswa Aktif</span>
+<span class="material-symbols-outlined text-slate-600 bg-slate-100 p-1.5 rounded-md text-[20px]">groups</span>
+</div>
+<div class="font-headline-md text-2xl text-slate-900 font-mono-data font-semibold">856</div>
+</div>
+<div class="font-label-sm text-slate-500 mt-6 flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px]">school</span>
+                Tersebar di 24 Kelas
+            </div>
+</div>
+</div>
+<!-- Complex Layout Grid -->
+<div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+<!-- Recent Payments Table (Col span 2) -->
+<div class="xl:col-span-2 bg-white border border-slate-200 rounded-2xl shadow-premium overflow-hidden flex flex-col">
+<div class="px-6 py-5 border-b border-slate-200 flex justify-between items-center bg-white">
+<h3 class="font-headline-sm text-slate-900">Transaksi Terbaru</h3>
+<a class="font-label-sm text-stripe-blue hover:text-[#0a2540] font-semibold transition-colors flex items-center gap-1" href="#">
+                    Lihat Semua
+                    <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</a>
+</div>
+<div class="overflow-x-auto flex-1">
+<table class="w-full text-left border-collapse min-w-[700px]">
+<thead>
+<tr class="bg-slate-50/80 border-b border-slate-200">
+<th class="px-6 py-3.5 font-label-sm text-slate-500 font-semibold uppercase tracking-wider text-xs">Siswa</th>
+<th class="px-6 py-3.5 font-label-sm text-slate-500 font-semibold uppercase tracking-wider text-xs">Kelas</th>
+<th class="px-6 py-3.5 font-label-sm text-slate-500 font-semibold uppercase tracking-wider text-xs">Jenis Pembayaran</th>
+<th class="px-6 py-3.5 font-label-sm text-slate-500 font-semibold uppercase tracking-wider text-xs text-right">Jumlah</th>
+<th class="px-6 py-3.5 font-label-sm text-slate-500 font-semibold uppercase tracking-wider text-xs text-center">Status</th>
+</tr>
+</thead>
+<tbody class="font-body-sm text-body-sm divide-y divide-slate-100">
+<tr class="hover:bg-slate-50/50 transition-colors group cursor-pointer">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="h-8 w-8 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center font-medium text-xs border border-slate-200">
+                                            BS
+                                        </div>
+<span class="font-medium text-slate-900 group-hover:text-stripe-blue transition-colors">Budi Santoso</span>
+</div>
+</td>
+<td class="px-6 py-4 text-slate-500 font-medium text-[13px]">X-IPA 1</td>
+<td class="px-6 py-4 text-slate-600">SPP Juli 2023</td>
+<td class="px-6 py-4 text-right font-mono-data text-slate-900 font-semibold text-[14px]">Rp 350.000</td>
+<td class="px-6 py-4 text-center">
+<span class="inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/50 shadow-sm">Sukses</span>
+</td>
+</tr>
+<tr class="hover:bg-slate-50/50 transition-colors group cursor-pointer">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="h-8 w-8 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center font-medium text-xs border border-slate-200">
+                                            SA
+                                        </div>
+<span class="font-medium text-slate-900 group-hover:text-stripe-blue transition-colors">Siti Aminah</span>
+</div>
+</td>
+<td class="px-6 py-4 text-slate-500 font-medium text-[13px]">XI-IPS 2</td>
+<td class="px-6 py-4 text-slate-600">Uang Pangkal</td>
+<td class="px-6 py-4 text-right font-mono-data text-slate-900 font-semibold text-[14px]">Rp 1.500.000</td>
+<td class="px-6 py-4 text-center">
+<span class="inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/50 shadow-sm">Sukses</span>
+</td>
+</tr>
+<tr class="hover:bg-slate-50/50 transition-colors group cursor-pointer">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="h-8 w-8 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center font-medium text-xs border border-slate-200">
+                                            AF
+                                        </div>
+<span class="font-medium text-slate-900 group-hover:text-stripe-blue transition-colors">Ahmad Fauzi</span>
+</div>
+</td>
+<td class="px-6 py-4 text-slate-500 font-medium text-[13px]">XII-IPA 3</td>
+<td class="px-6 py-4 text-slate-600">Buku Paket Sem 1</td>
+<td class="px-6 py-4 text-right font-mono-data text-slate-900 font-semibold text-[14px]">Rp 450.000</td>
+<td class="px-6 py-4 text-center">
+<span class="inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-semibold bg-amber-50 text-amber-700 border border-amber-200/50 shadow-sm">Pending</span>
+</td>
+</tr>
+<tr class="hover:bg-slate-50/50 transition-colors group cursor-pointer">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="h-8 w-8 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center font-medium text-xs border border-slate-200">
+                                            DL
+                                        </div>
+<span class="font-medium text-slate-900 group-hover:text-stripe-blue transition-colors">Dewi Lestari</span>
+</div>
+</td>
+<td class="px-6 py-4 text-slate-500 font-medium text-[13px]">X-IPA 2</td>
+<td class="px-6 py-4 text-slate-600">SPP Juni 2023</td>
+<td class="px-6 py-4 text-right font-mono-data text-slate-900 font-semibold text-[14px]">Rp 350.000</td>
+<td class="px-6 py-4 text-center">
+<span class="inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-semibold bg-rose-50 text-rose-700 border border-rose-200/50 shadow-sm">Gagal</span>
+</td>
+</tr>
+<tr class="hover:bg-slate-50/50 transition-colors group cursor-pointer">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="h-8 w-8 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center font-medium text-xs border border-slate-200">
+                                            IH
+                                        </div>
+<span class="font-medium text-slate-900 group-hover:text-stripe-blue transition-colors">Iqbal Hakim</span>
+</div>
+</td>
+<td class="px-6 py-4 text-slate-500 font-medium text-[13px]">XI-IPA 1</td>
+<td class="px-6 py-4 text-slate-600">Study Tour</td>
+<td class="px-6 py-4 text-right font-mono-data text-slate-900 font-semibold text-[14px]">Rp 1.200.000</td>
+<td class="px-6 py-4 text-center">
+<span class="inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/50 shadow-sm">Sukses</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Top Outstanding Students (Col span 1) -->
+<div class="bg-white border border-slate-200 rounded-2xl shadow-premium overflow-hidden flex flex-col">
+<div class="px-6 py-5 border-b border-slate-200 bg-white">
+<h3 class="font-headline-sm text-slate-900">Tunggakan Tertinggi</h3>
+<p class="font-label-sm text-slate-500 mt-1">Berdasarkan total nominal</p>
+</div>
+<div class="flex-1 p-0 flex flex-col">
+<ul class="divide-y divide-slate-100 flex-1">
+<li class="px-6 py-5 flex justify-between items-center hover:bg-slate-50/50 transition-colors cursor-pointer group">
+<div class="flex items-center gap-3">
+<div class="h-8 w-8 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center font-medium text-xs border border-rose-100">
+                                        RP
+                                    </div>
+<div>
+<p class="font-body-sm font-semibold text-slate-900 group-hover:text-stripe-blue transition-colors">Rizky Putra</p>
+<p class="font-label-sm text-[11px] text-slate-500 mt-0.5">XII-IPS 1 • 3 Bulan SPP</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-mono-data text-[14px] font-semibold text-rose-600">Rp 1.050.000</p>
+<button class="font-label-sm text-[11px] font-semibold text-stripe-blue hover:text-[#0a2540] transition-colors mt-1">Kirim Tagihan</button>
+</div>
+</li>
+<li class="px-6 py-5 flex justify-between items-center hover:bg-slate-50/50 transition-colors cursor-pointer group">
+<div class="flex items-center gap-3">
+<div class="h-8 w-8 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center font-medium text-xs border border-rose-100">
+                                        NA
+                                    </div>
+<div>
+<p class="font-body-sm font-semibold text-slate-900 group-hover:text-stripe-blue transition-colors">Nisa Amelia</p>
+<p class="font-label-sm text-[11px] text-slate-500 mt-0.5">XI-IPA 2 • Uang Gedung</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-mono-data text-[14px] font-semibold text-rose-600">Rp 800.000</p>
+<button class="font-label-sm text-[11px] font-semibold text-stripe-blue hover:text-[#0a2540] transition-colors mt-1">Kirim Tagihan</button>
+</div>
+</li>
+<li class="px-6 py-5 flex justify-between items-center hover:bg-slate-50/50 transition-colors cursor-pointer group">
+<div class="flex items-center gap-3">
+<div class="h-8 w-8 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center font-medium text-xs border border-rose-100">
+                                        FN
+                                    </div>
+<div>
+<p class="font-body-sm font-semibold text-slate-900 group-hover:text-stripe-blue transition-colors">Fajar Nugraha</p>
+<p class="font-label-sm text-[11px] text-slate-500 mt-0.5">X-IPS 3 • 2 Bulan SPP</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-mono-data text-[14px] font-semibold text-rose-600">Rp 700.000</p>
+<button class="font-label-sm text-[11px] font-semibold text-stripe-blue hover:text-[#0a2540] transition-colors mt-1">Kirim Tagihan</button>
+</div>
+</li>
+</ul>
+<div class="px-6 py-4 border-t border-slate-200 bg-slate-50/80 text-center mt-auto">
+<a class="font-label-sm text-stripe-blue hover:text-[#0a2540] font-semibold transition-colors flex items-center justify-center gap-1" href="#">
+                        Lihat Semua Tunggakan
+                    </a>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>
