@@ -217,7 +217,7 @@ function LoginContent() {
           )}
 
           {/* Form */}
-          <form onSubmit={handleLogin} className="space-y-4">
+          <form onSubmit={handleLogin} autoComplete="off" className="space-y-4">
             <div>
               <label className="block text-xs font-semibold text-slate-300 mb-1.5">
                 Username
@@ -225,9 +225,10 @@ function LoginContent() {
               <input
                 type="text"
                 required
+                autoComplete="off"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                placeholder="Masukkan username (misal: admin, bendahara, operator)"
+                placeholder="Masukkan username"
                 className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
               />
             </div>
@@ -239,6 +240,7 @@ function LoginContent() {
               <input
                 type="password"
                 required
+                autoComplete="new-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Masukkan password"
