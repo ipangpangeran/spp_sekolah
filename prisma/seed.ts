@@ -52,13 +52,13 @@ async function main() {
   await prisma.user.upsert({
     where: { username: 'admin' },
     update: {
-      password: 'Stabat#2026!Sisma',
+      password: 'Stabat2026Sisma',
       namaLengkap: 'Administrator Utama',
       level: 'admin',
     },
     create: {
       username: 'admin',
-      password: 'Stabat#2026!Sisma',
+      password: 'Stabat2026Sisma',
       namaLengkap: 'Administrator Utama',
       level: 'admin',
       idTahunAjaran: taActive.id,
