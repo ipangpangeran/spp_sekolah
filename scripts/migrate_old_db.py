@@ -144,10 +144,10 @@ def migrate():
         status_siswa = status_map.get(status_raw, 'AKTIF')
 
         if not raw_nis or raw_nis in seen_nis:
-            final_nis = f"SISWA-{sid}"
+            final_nis = None
         else:
             final_nis = raw_nis
-        seen_nis.add(final_nis)
+            seen_nis.add(final_nis)
 
         sq_cur.execute("""
             INSERT INTO Siswa (id, nis, nisn, namaSiswa, jenisKelamin, idKelas, hpSiswa, hpOrtu, statusSiswa)

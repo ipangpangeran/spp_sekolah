@@ -1,12 +1,14 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Shield, Plus, X, UserCheck, Trash2, Key } from 'lucide-react';
+import { Shield, Plus, X, UserCheck, Trash2, Key, Edit2 } from 'lucide-react';
 
 export default function MasterUsersPage() {
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [editUser, setEditUser] = useState<any>(null);
+
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [namaLengkap, setNamaLengkap] = useState('');
@@ -29,23 +31,65 @@ export default function MasterUsersPage() {
     loadData();
   }, []);
 
+  const openAddModal = () => {
+    setEditUser(null);
+    setUsername('');
+    setPassword('');
+    setNamaLengkap('');
+    setLevel('bendahara');
+    setShowModal(true);
+  };
+
+  const openEditModal = (u: any) => {
+    setEditUser(u);
+    setUsername(u.username);
+    setPassword(''); // leave blank if not changing
+    setNamaLengkap(u.namaLengkap);
+    setLevel(u.level);
+    setShowModal(true);
+  };
+
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await fetch('/api/master/users', {
-        method: 'POST',
+      const url = '/api/master/users';
+      const method = editUser ? 'PUT' : 'POST';
+      const body: any = {
+        id: editUser?.id,
+        username,
+        namaLengkap,
+        level,
+      };
+
+      if (password) body.password = password;
+      if (!editUser && !password) throw new Error('Password wajib diisi untuk user baru');
+
+      const res = await fetch(url, {
+        method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password, namaLengkap, level }),
+        body: JSON.stringify(body),
       });
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Gagal menyimpan user');
 
       setShowModal(false);
-      setUsername('');
-      setPassword('');
-      setNamaLengkap('');
-      setLevel('bendahara');
+      loadData();
+    } catch (e: any) {
+      alert(e.message || 'Terjadi kesalahan');
+    }
+  };
+
+  const handleDelete = async (id: number, uname: string) => {
+    if (!confirm(`Apakah Anda yakin ingin menghapus user '${uname}'?`)) return;
+
+    try {
+      const res = await fetch(`/api/master/users?id=${id}`, {
+        method: 'DELETE',
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Gagal menghapus user');
+
       loadData();
     } catch (e: any) {
       alert(e.message || 'Terjadi kesalahan');
@@ -69,7 +113,7 @@ export default function MasterUsersPage() {
         </div>
 
         <button
-          onClick={() => setShowModal(true)}
+          onClick={openAddModal}
           className="bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold px-4 py-2 rounded-xl shadow-sm flex items-center gap-1.5 transition-all"
         >
           <Plus className="w-4 h-4" />
@@ -85,6 +129,7 @@ export default function MasterUsersPage() {
               <th className="p-3.5">Username</th>
               <th className="p-3.5">Nama Lengkap</th>
               <th className="p-3.5">Role / Level</th>
+              <th className="p-3.5 text-right">Aksi Management</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100 dark:divide-slate-700/60">
@@ -109,18 +154,36 @@ export default function MasterUsersPage() {
                     {u.level === 'admin' ? 'Administrator Utama' : u.level === 'bendahara' ? 'Bendahara Sekolah' : 'Operator Sekolah'}
                   </span>
                 </td>
+                <td className="p-3.5 text-right space-x-1">
+                  <button
+                    onClick={() => openEditModal(u)}
+                    className="p-1.5 rounded bg-blue-50 text-blue-600 hover:bg-blue-100 dark:bg-blue-900/40 dark:text-blue-300 transition-colors"
+                    title="Edit User"
+                  >
+                    <Edit2 className="w-3.5 h-3.5" />
+                  </button>
+                  <button
+                    onClick={() => handleDelete(u.id, u.username)}
+                    className="p-1.5 rounded bg-rose-50 text-rose-600 hover:bg-rose-100 dark:bg-rose-900/40 dark:text-rose-300 transition-colors"
+                    title="Hapus User"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
 
-      {/* Modal Tambah User Baru */}
+      {/* Modal Edit / Tambah User */}
       {showModal && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 max-w-md w-full p-6 space-y-4">
             <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
-              <h3 className="text-sm font-bold text-slate-900 dark:text-white m-0">Tambah User Baru</h3>
+              <h3 className="text-sm font-bold text-slate-900 dark:text-white m-0">
+                {editUser ? `Edit User '${editUser.username}'` : 'Tambah User Baru'}
+              </h3>
               <button onClick={() => setShowModal(false)} className="text-slate-400 hover:text-slate-600">
                 <X className="w-4 h-4" />
               </button>
@@ -152,13 +215,15 @@ export default function MasterUsersPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-500 mb-1">Password *</label>
+                <label className="block text-xs font-semibold text-slate-500 mb-1">
+                  Password {editUser ? '(Kosongkan jika tidak diubah)' : '*'}
+                </label>
                 <input
                   type="password"
-                  required
+                  required={!editUser}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Masukkan password user"
+                  placeholder={editUser ? 'Sama seperti sebelumnya' : 'Masukkan password user'}
                   className="w-full px-3.5 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-xs text-slate-900 dark:text-white"
                 />
               </div>
@@ -170,9 +235,9 @@ export default function MasterUsersPage() {
                   onChange={(e) => setLevel(e.target.value)}
                   className="w-full px-3.5 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-xs font-semibold text-slate-900 dark:text-white"
                 >
-                  <option value="bendahara">Bendahara / Kasir</option>
+                  <option value="admin">Administrator Utama (Akses Penuh)</option>
+                  <option value="bendahara">Bendahara Sekolah</option>
                   <option value="operator">Operator Sekolah</option>
-                  <option value="admin">Administrator Utama</option>
                 </select>
               </div>
 

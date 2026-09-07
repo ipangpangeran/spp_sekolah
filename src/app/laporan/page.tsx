@@ -11,6 +11,9 @@ import {
   AlertCircle,
   Users,
   Search,
+  BookOpen,
+  DollarSign,
+  TrendingUp,
 } from 'lucide-react';
 import * as XLSX from 'xlsx';
 
@@ -27,7 +30,8 @@ export default function LaporanKeuanganPage() {
       .then((res) => res.json())
       .then((data) => {
         setKelasList(data.kelasList || []);
-        if (data.kelasList?.[0]) setSelectedClass(data.kelasList[0].id);
+        // Default to "" (Semua Kelas)
+        setSelectedClass('');
       })
       .catch((e) => console.error(e));
   }, []);
@@ -54,7 +58,7 @@ export default function LaporanKeuanganPage() {
 
     if (activeTab === 'tunggakan' && reportData?.report) {
       exportRows = reportData.report.map((r: any) => ({
-        NIS: r.nis,
+        NIS: r.nis || '-',
         'Nama Siswa': r.namaSiswa,
         Kelas: r.kelas,
         'Bulan Tunggakan SPP': r.unpaidMonths?.join(', ') || '-',
@@ -66,12 +70,20 @@ export default function LaporanKeuanganPage() {
       exportRows = reportData.siswaList.map((s: any) => {
         const monthsPaid = s.tagihanBulanan?.filter((t: any) => t.statusBayar === 'LUNAS').map((t: any) => t.bulan).join(', ');
         return {
-          NIS: s.nis,
+          NIS: s.nis || '-',
           'Nama Siswa': s.namaSiswa,
-          Kelas: s.kelas?.namaKelas,
+          Kelas: s.kelas?.namaKelas || '-',
           'Bulan Lunas': monthsPaid || 'Belum ada',
         };
       });
+    } else if (activeTab === 'rekap' && reportData?.kasEntries) {
+      exportRows = reportData.kasEntries.map((k: any) => ({
+        Tanggal: new Date(k.tgl).toLocaleDateString('id-ID'),
+        Uraian: k.uraian,
+        Jenis: k.jenis === 'masuk' ? 'Pemasukan' : 'Pengeluaran',
+        Pemasukan: k.pemasukan,
+        Pengeluaran: k.pengeluaran,
+      }));
     }
 
     const worksheet = XLSX.utils.json_to_sheet(exportRows);
@@ -147,7 +159,7 @@ export default function LaporanKeuanganPage() {
               : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100'
           }`}
         >
-          Rekap Kas Pemasukan Harian
+          Rekap Kas &amp; Total Pemasukan
         </button>
       </div>
 
@@ -177,7 +189,7 @@ export default function LaporanKeuanganPage() {
         <div className="hidden print:block text-center border-b-2 border-slate-900 pb-4 mb-4">
           <h2 className="text-lg font-bold uppercase m-0">SMA SWASTA PERSIAPAN STABAT</h2>
           <p className="text-xs m-0">Jl. KH. Zainul Arifin No. 12, Stabat, Kab. Langkat | NPSN: 10201234</p>
-          <p className="text-xs font-bold m-0 mt-1 uppercase">LAPORAN PEMASUKAN KEUANGAN SEKOLAH</p>
+          <p className="text-xs font-bold m-0 mt-1 uppercase">LAPORAN KEUANGAN SEKOLAH</p>
         </div>
 
         {/* TAB 1: Matriks Per Kelas */}
@@ -189,18 +201,18 @@ export default function LaporanKeuanganPage() {
                   <th className="p-2.5">NIS</th>
                   <th className="p-2.5">Nama Siswa</th>
                   <th className="p-2.5">Kelas</th>
-                  <th className="p-2.5">Jul</th>
-                  <th className="p-2.5">Agu</th>
-                  <th className="p-2.5">Sep</th>
-                  <th className="p-2.5">Okt</th>
-                  <th className="p-2.5">Nov</th>
-                  <th className="p-2.5">Des</th>
-                  <th className="p-2.5">Jan</th>
-                  <th className="p-2.5">Feb</th>
-                  <th className="p-2.5">Mar</th>
-                  <th className="p-2.5">Apr</th>
-                  <th className="p-2.5">Mei</th>
-                  <th className="p-2.5">Jun</th>
+                  <th className="p-2.5 text-center">Jul</th>
+                  <th className="p-2.5 text-center">Agu</th>
+                  <th className="p-2.5 text-center">Sep</th>
+                  <th className="p-2.5 text-center">Okt</th>
+                  <th className="p-2.5 text-center">Nov</th>
+                  <th className="p-2.5 text-center">Des</th>
+                  <th className="p-2.5 text-center">Jan</th>
+                  <th className="p-2.5 text-center">Feb</th>
+                  <th className="p-2.5 text-center">Mar</th>
+                  <th className="p-2.5 text-center">Apr</th>
+                  <th className="p-2.5 text-center">Mei</th>
+                  <th className="p-2.5 text-center">Jun</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-700/60">
@@ -214,9 +226,9 @@ export default function LaporanKeuanganPage() {
 
                   return (
                     <tr key={s.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/30">
-                      <td className="p-2.5 font-mono">{s.nis}</td>
+                      <td className="p-2.5 font-mono">{s.nis || '-'}</td>
                       <td className="p-2.5 font-bold text-slate-900 dark:text-white">{s.namaSiswa}</td>
-                      <td className="p-2.5 font-medium text-slate-500">{s.kelas?.namaKelas}</td>
+                      <td className="p-2.5 font-medium text-slate-500">{s.kelas?.namaKelas || '-'}</td>
                       {bulanList.map((b) => (
                         <td key={b} className="p-2.5 text-center">
                           {bMap[b] ? (
@@ -253,7 +265,7 @@ export default function LaporanKeuanganPage() {
               <tbody className="divide-y divide-slate-100 dark:divide-slate-700/60">
                 {reportData?.report?.map((r: any) => (
                   <tr key={r.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/30">
-                    <td className="p-3 font-mono font-bold text-blue-600">{r.nis}</td>
+                    <td className="p-3 font-mono font-bold text-blue-600">{r.nis || '-'}</td>
                     <td className="p-3 font-bold text-slate-900 dark:text-white">{r.namaSiswa}</td>
                     <td className="p-3 font-medium">{r.kelas}</td>
                     <td className="p-3 font-medium text-rose-600">
@@ -284,15 +296,57 @@ export default function LaporanKeuanganPage() {
           </div>
         )}
 
-        {/* TAB 3: Rekap Kas Pemasukan */}
+        {/* TAB 3: Rekap Kas & Total Pemasukan */}
         {activeTab === 'rekap' && (
-          <div className="space-y-4">
-            <div className="p-6 bg-emerald-50 dark:bg-emerald-950/40 rounded-2xl border border-emerald-200 text-center">
-              <span className="text-xs text-emerald-600 font-semibold block">Total Akumulasi Pemasukan Kas</span>
-              <span className="text-2xl font-bold font-mono text-emerald-600">
-                {formatRp(reportData?.totalPemasukan || 0)}
-              </span>
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="p-5 bg-blue-50 dark:bg-blue-950/40 rounded-2xl border border-blue-200 dark:border-blue-800">
+                <span className="text-xs text-blue-600 dark:text-blue-400 font-semibold block">Total Pemasukan SPP Bulanan</span>
+                <span className="text-xl font-bold font-mono text-blue-700 dark:text-blue-300">
+                  {formatRp(reportData?.totalSppPemasukan || 0)}
+                </span>
+              </div>
+              <div className="p-5 bg-emerald-50 dark:bg-emerald-950/40 rounded-2xl border border-emerald-200 dark:border-emerald-800">
+                <span className="text-xs text-emerald-600 dark:text-emerald-400 font-semibold block">Total Kas &amp; Penerimaan Lain</span>
+                <span className="text-xl font-bold font-mono text-emerald-700 dark:text-emerald-300">
+                  {formatRp(reportData?.totalKasPemasukan || 0)}
+                </span>
+              </div>
+              <div className="p-5 bg-indigo-600 text-white rounded-2xl shadow-md">
+                <span className="text-xs text-indigo-200 font-semibold block">Total Akumulasi Pemasukan Keuangan</span>
+                <span className="text-2xl font-black font-mono">
+                  {formatRp(reportData?.totalPemasukan || 0)}
+                </span>
+              </div>
             </div>
+
+            {reportData?.kasEntries?.length > 0 && (
+              <div className="overflow-x-auto">
+                <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-2">Rincian Catatan Buku Kas</h3>
+                <table className="w-full text-left border-collapse text-xs">
+                  <thead className="bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-300 font-bold border-b">
+                    <tr>
+                      <th className="p-3">Tanggal</th>
+                      <th className="p-3">Uraian / Keterangan</th>
+                      <th className="p-3">Jenis</th>
+                      <th className="p-3">Jumlah (Rp)</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 dark:divide-slate-700/60">
+                    {reportData.kasEntries.map((k: any) => (
+                      <tr key={k.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/30">
+                        <td className="p-3 font-mono">{new Date(k.tgl).toLocaleDateString('id-ID')}</td>
+                        <td className="p-3 font-semibold text-slate-900 dark:text-white">{k.uraian}</td>
+                        <td className="p-3 font-bold uppercase">{k.jenis}</td>
+                        <td className="p-3 font-mono font-bold text-emerald-600">
+                          {formatRp(k.jenis === 'masuk' ? k.pemasukan : k.pengeluaran)}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
         )}
       </div>

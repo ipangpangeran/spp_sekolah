@@ -24,7 +24,7 @@ model Kelas {
 
 model Siswa {
   id             Int              @id @default(autoincrement())
-  nis            String           @unique
+  nis            String?          @unique
   nisn           String?
   namaSiswa      String
   jenisKelamin   String           @default("L") // "L" | "P"

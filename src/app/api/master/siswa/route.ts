@@ -39,24 +39,26 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { nis, nisn, namaSiswa, jenisKelamin, idKelas, hpSiswa, hpOrtu, statusSiswa } = body;
 
-    if (!nis || !namaSiswa || !idKelas) {
-      return NextResponse.json({ error: 'NIS, Nama Siswa, dan Kelas wajib diisi' }, { status: 400 });
+    if (!namaSiswa || !idKelas) {
+      return NextResponse.json({ error: 'Nama Siswa dan Kelas wajib diisi' }, { status: 400 });
     }
 
-    const existing = await prisma.siswa.findUnique({ where: { nis } });
-    if (existing) {
-      return NextResponse.json({ error: `Siswa dengan NIS ${nis} sudah ada` }, { status: 400 });
+    if (nis) {
+      const existing = await prisma.siswa.findUnique({ where: { nis } });
+      if (existing) {
+        return NextResponse.json({ error: `Siswa dengan NIS ${nis} sudah ada` }, { status: 400 });
+      }
     }
 
     const siswa = await prisma.siswa.create({
       data: {
-        nis,
-        nisn,
+        nis: nis || null,
+        nisn: nisn || null,
         namaSiswa,
         jenisKelamin: jenisKelamin || 'L',
         idKelas: parseInt(idKelas),
-        hpSiswa,
-        hpOrtu,
+        hpSiswa: hpSiswa || null,
+        hpOrtu: hpOrtu || null,
         statusSiswa: statusSiswa || 'AKTIF',
       },
       include: { kelas: true },
@@ -108,13 +110,13 @@ export async function PUT(request: Request) {
     const siswa = await prisma.siswa.update({
       where: { id: parseInt(id) },
       data: {
-        nis,
-        nisn,
+        nis: nis || null,
+        nisn: nisn || null,
         namaSiswa,
         jenisKelamin,
         idKelas: parseInt(idKelas),
-        hpSiswa,
-        hpOrtu,
+        hpSiswa: hpSiswa || null,
+        hpOrtu: hpOrtu || null,
         statusSiswa,
       },
       include: { kelas: true },

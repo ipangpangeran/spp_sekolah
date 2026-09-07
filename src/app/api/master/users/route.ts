@@ -47,3 +47,56 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+
+export async function PUT(request: Request) {
+  try {
+    const body = await request.json();
+    const { id, username, password, namaLengkap, level } = body;
+
+    if (!id) {
+      return NextResponse.json({ error: 'ID User wajib diisi' }, { status: 400 });
+    }
+
+    const updateData: any = {
+      username,
+      namaLengkap,
+      level,
+    };
+
+    if (password) {
+      updateData.password = password;
+    }
+
+    const user = await prisma.user.update({
+      where: { id: parseInt(id) },
+      data: updateData,
+    });
+
+    return NextResponse.json({ user });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
+export async function DELETE(request: Request) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get('id');
+
+    if (!id) {
+      return NextResponse.json({ error: 'ID User wajib diisi' }, { status: 400 });
+    }
+
+    const targetId = parseInt(id);
+    // Prevent deleting the main admin account (id 1 or admin) if last user
+    const totalUsers = await prisma.user.count();
+    if (totalUsers <= 1) {
+      return NextResponse.json({ error: 'Tidak dapat menghapus satu-satunya akun pengguna' }, { status: 400 });
+    }
+
+    await prisma.user.delete({ where: { id: targetId } });
+    return NextResponse.json({ success: true });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}

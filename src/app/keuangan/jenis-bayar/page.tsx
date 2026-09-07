@@ -1,13 +1,14 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Receipt, Plus, X } from 'lucide-react';
+import { Receipt, Plus, X, Edit2, Trash2 } from 'lucide-react';
 
 export default function JenisBayarPage() {
   const [jenisList, setJenisList] = useState<any[]>([]);
   const [posList, setPosList] = useState<any[]>([]);
   const [taList, setTaList] = useState<any[]>([]);
   const [showModal, setShowModal] = useState(false);
+  const [editItem, setEditItem] = useState<any>(null);
 
   const [idPosBayar, setIdPosBayar] = useState('');
   const [idTahunAjaran, setIdTahunAjaran] = useState('');
@@ -39,20 +40,66 @@ export default function JenisBayarPage() {
     loadData();
   }, []);
 
+  const openAddModal = () => {
+    setEditItem(null);
+    if (posList[0]) setIdPosBayar(posList[0].id);
+    const activeTa = taList.find((t: any) => t.status === 'AKTIF');
+    if (activeTa) setIdTahunAjaran(activeTa.id);
+    setTipeBayar('bulanan');
+    setShowModal(true);
+  };
+
+  const openEditModal = (item: any) => {
+    setEditItem(item);
+    setIdPosBayar(item.idPosBayar);
+    setIdTahunAjaran(item.idTahunAjaran);
+    setTipeBayar(item.tipeBayar);
+    setShowModal(true);
+  };
+
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await fetch('/api/keuangan/jenis-bayar', {
-        method: 'POST',
+      const url = '/api/keuangan/jenis-bayar';
+      const method = editItem ? 'PUT' : 'POST';
+      const body = {
+        id: editItem?.id,
+        idPosBayar,
+        idTahunAjaran,
+        tipeBayar,
+      };
+
+      const res = await fetch(url, {
+        method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ idPosBayar, idTahunAjaran, tipeBayar }),
+        body: JSON.stringify(body),
       });
+
       if (res.ok) {
         setShowModal(false);
         loadData();
+      } else {
+        const data = await res.json();
+        alert(data.error || 'Gagal menyimpan Jenis Pembayaran');
       }
     } catch (e) {
       console.error(e);
+    }
+  };
+
+  const handleDelete = async (id: number, namaPos: string) => {
+    if (!confirm(`Apakah Anda yakin ingin menghapus Jenis Pembayaran '${namaPos}'?`)) return;
+
+    try {
+      const res = await fetch(`/api/keuangan/jenis-bayar?id=${id}`, {
+        method: 'DELETE',
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Gagal menghapus Jenis Pembayaran');
+
+      loadData();
+    } catch (e: any) {
+      alert(e.message || 'Terjadi kesalahan');
     }
   };
 
@@ -72,7 +119,7 @@ export default function JenisBayarPage() {
         </div>
 
         <button
-          onClick={() => setShowModal(true)}
+          onClick={openAddModal}
           className="bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold px-4 py-2 rounded-xl shadow-sm flex items-center gap-1.5 transition-all"
         >
           <Plus className="w-4 h-4" />
@@ -84,26 +131,45 @@ export default function JenisBayarPage() {
         {jenisList.map((j) => (
           <div
             key={j.id}
-            className="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-2"
+            className="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-3 flex flex-col justify-between"
           >
-            <div className="flex items-center justify-between">
-              <span className="text-base font-bold text-slate-900 dark:text-white">
-                {j.posBayar?.namaPosBayar}
-              </span>
-              <span
-                className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase ${
-                  j.tipeBayar === 'bulanan'
-                    ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300'
-                    : 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300'
-                }`}
-              >
-                {j.tipeBayar}
-              </span>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-base font-bold text-slate-900 dark:text-white">
+                  {j.posBayar?.namaPosBayar}
+                </span>
+                <span
+                  className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase ${
+                    j.tipeBayar === 'bulanan'
+                      ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300'
+                      : 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300'
+                  }`}
+                >
+                  {j.tipeBayar}
+                </span>
+              </div>
+
+              <p className="text-xs text-slate-500 dark:text-slate-400 m-0">
+                Tahun Ajaran: <span className="font-semibold text-slate-700 dark:text-slate-300">{j.tahunAjaran?.tahunAjaran}</span>
+              </p>
             </div>
 
-            <p className="text-xs text-slate-500 dark:text-slate-400 m-0">
-              Tahun Ajaran: <span className="font-semibold text-slate-700 dark:text-slate-300">{j.tahunAjaran?.tahunAjaran}</span>
-            </p>
+            <div className="flex items-center justify-end gap-1.5 pt-2 border-t border-slate-100 dark:border-slate-700/60">
+              <button
+                onClick={() => openEditModal(j)}
+                className="px-2.5 py-1 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 text-xs font-semibold flex items-center gap-1 transition-colors"
+              >
+                <Edit2 className="w-3.5 h-3.5" />
+                <span>Edit</span>
+              </button>
+              <button
+                onClick={() => handleDelete(j.id, j.posBayar?.namaPosBayar)}
+                className="px-2.5 py-1 rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-100 text-xs font-semibold flex items-center gap-1 transition-colors"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+                <span>Hapus</span>
+              </button>
+            </div>
           </div>
         ))}
       </div>
@@ -112,7 +178,9 @@ export default function JenisBayarPage() {
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 max-w-md w-full p-6 space-y-4">
             <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
-              <h3 className="text-sm font-bold text-slate-900 dark:text-white m-0">Setting Jenis Pembayaran</h3>
+              <h3 className="text-sm font-bold text-slate-900 dark:text-white m-0">
+                {editItem ? 'Edit Jenis Pembayaran' : 'Setting Jenis Pembayaran'}
+              </h3>
               <button onClick={() => setShowModal(false)} className="text-slate-400 hover:text-slate-600">
                 <X className="w-4 h-4" />
               </button>

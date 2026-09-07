@@ -338,7 +338,7 @@ export default function MasterSiswaPage() {
                 siswaList.map((s) => (
                   <tr key={s.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
                     <td className="p-3 font-mono font-semibold">
-                      <span className="text-blue-600 dark:text-blue-400">{s.nis}</span>
+                      <span className="text-blue-600 dark:text-blue-400">{s.nis || '-'}</span>
                       <span className="block text-[10px] text-slate-400 font-normal">
                         {s.nisn || '-'}
                       </span>
@@ -410,10 +410,9 @@ export default function MasterSiswaPage() {
             <form onSubmit={handleSaveStudent} className="space-y-3">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-500 mb-1">NIS *</label>
+                  <label className="block text-xs font-semibold text-slate-500 mb-1">NIS (Opsional)</label>
                   <input
                     type="text"
-                    required
                     value={formNis}
                     onChange={(e) => setFormNis(e.target.value)}
                     placeholder="misal: 14813"
