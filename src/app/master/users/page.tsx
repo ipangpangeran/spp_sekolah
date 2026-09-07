@@ -75,6 +75,7 @@ export default function MasterUsersPage() {
 
       setShowModal(false);
       loadData();
+      alert('Pengguna berhasil disimpan!');
     } catch (e: any) {
       alert(e.message || 'Terjadi kesalahan');
     }
@@ -151,7 +152,7 @@ export default function MasterUsersPage() {
                         : 'bg-amber-100 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-200 dark:border-amber-800'
                     }`}
                   >
-                    {u.level === 'admin' ? 'Administrator Utama' : u.level === 'bendahara' ? 'Bendahara Sekolah' : 'Operator Sekolah'}
+                    {u.level === 'admin' ? 'Administrator' : u.level === 'bendahara' ? 'Bendahara Sekolah' : 'Operator Sekolah'}
                   </span>
                 </td>
                 <td className="p-3.5 text-right space-x-1">
@@ -235,7 +236,7 @@ export default function MasterUsersPage() {
                   onChange={(e) => setLevel(e.target.value)}
                   className="w-full px-3.5 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-xs font-semibold text-slate-900 dark:text-white"
                 >
-                  <option value="admin">Administrator Utama (Akses Penuh)</option>
+                  <option value="admin">Administrator (Akses Penuh)</option>
                   <option value="bendahara">Bendahara Sekolah</option>
                   <option value="operator">Operator Sekolah</option>
                 </select>

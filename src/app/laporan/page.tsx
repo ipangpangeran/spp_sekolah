@@ -30,7 +30,6 @@ export default function LaporanKeuanganPage() {
       .then((res) => res.json())
       .then((data) => {
         setKelasList(data.kelasList || []);
-        // Default to "" (Semua Kelas)
         setSelectedClass('');
       })
       .catch((e) => console.error(e));
@@ -59,6 +58,7 @@ export default function LaporanKeuanganPage() {
     if (activeTab === 'tunggakan' && reportData?.report) {
       exportRows = reportData.report.map((r: any) => ({
         NIS: r.nis || '-',
+        NISN: r.nisn || '-',
         'Nama Siswa': r.namaSiswa,
         Kelas: r.kelas,
         'Bulan Tunggakan SPP': r.unpaidMonths?.join(', ') || '-',
@@ -71,6 +71,7 @@ export default function LaporanKeuanganPage() {
         const monthsPaid = s.tagihanBulanan?.filter((t: any) => t.statusBayar === 'LUNAS').map((t: any) => t.bulan).join(', ');
         return {
           NIS: s.nis || '-',
+          NISN: s.nisn || '-',
           'Nama Siswa': s.namaSiswa,
           Kelas: s.kelas?.namaKelas || '-',
           'Bulan Lunas': monthsPaid || 'Belum ada',
@@ -86,10 +87,18 @@ export default function LaporanKeuanganPage() {
       }));
     }
 
+    let classLabel = 'Semua_Kelas';
+    if (selectedClass) {
+      const kObj = kelasList.find((k) => k.id === parseInt(selectedClass));
+      if (kObj) {
+        classLabel = kObj.namaKelas.replace(/[^a-zA-Z0-9]/g, '_').replace(/_+/g, '_');
+      }
+    }
+
     const worksheet = XLSX.utils.json_to_sheet(exportRows);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, `Laporan_${activeTab}`);
-    XLSX.writeFile(workbook, `Laporan_SISMA_${activeTab}.xlsx`);
+    XLSX.writeFile(workbook, `Laporan_Keuangan_${classLabel}_${activeTab}.xlsx`);
   };
 
   const formatRp = (n: number) =>
@@ -199,6 +208,7 @@ export default function LaporanKeuanganPage() {
               <thead className="bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-300 font-bold border-b">
                 <tr>
                   <th className="p-2.5">NIS</th>
+                  <th className="p-2.5">NISN</th>
                   <th className="p-2.5">Nama Siswa</th>
                   <th className="p-2.5">Kelas</th>
                   <th className="p-2.5 text-center">Jul</th>
@@ -227,6 +237,7 @@ export default function LaporanKeuanganPage() {
                   return (
                     <tr key={s.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/30">
                       <td className="p-2.5 font-mono">{s.nis || '-'}</td>
+                      <td className="p-2.5 font-mono text-slate-500">{s.nisn || '-'}</td>
                       <td className="p-2.5 font-bold text-slate-900 dark:text-white">{s.namaSiswa}</td>
                       <td className="p-2.5 font-medium text-slate-500">{s.kelas?.namaKelas || '-'}</td>
                       {bulanList.map((b) => (
@@ -255,6 +266,7 @@ export default function LaporanKeuanganPage() {
               <thead className="bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-300 font-bold border-b">
                 <tr>
                   <th className="p-3">NIS</th>
+                  <th className="p-3">NISN</th>
                   <th className="p-3">Nama Siswa</th>
                   <th className="p-3">Kelas</th>
                   <th className="p-3">Bulan SPP Menunggak</th>
@@ -266,6 +278,7 @@ export default function LaporanKeuanganPage() {
                 {reportData?.report?.map((r: any) => (
                   <tr key={r.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/30">
                     <td className="p-3 font-mono font-bold text-blue-600">{r.nis || '-'}</td>
+                    <td className="p-3 font-mono text-slate-500">{r.nisn || '-'}</td>
                     <td className="p-3 font-bold text-slate-900 dark:text-white">{r.namaSiswa}</td>
                     <td className="p-3 font-medium">{r.kelas}</td>
                     <td className="p-3 font-medium text-rose-600">

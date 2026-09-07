@@ -20,15 +20,18 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { namaPosBayar, keterangan } = body;
 
-    if (!namaPosBayar) {
+    if (!namaPosBayar || !namaPosBayar.trim()) {
       return NextResponse.json({ error: 'Nama Pos Bayar wajib diisi' }, { status: 400 });
     }
 
     const pos = await prisma.posBayar.create({
-      data: { namaPosBayar, keterangan },
+      data: {
+        namaPosBayar: namaPosBayar.trim(),
+        keterangan: keterangan ? keterangan.trim() : null,
+      },
     });
 
-    return NextResponse.json({ pos });
+    return NextResponse.json({ success: true, pos });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

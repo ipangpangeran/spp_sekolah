@@ -63,6 +63,7 @@ export async function GET(request: Request) {
         return {
           id: s.id,
           nis: s.nis || '-',
+          nisn: s.nisn || '-',
           namaSiswa: s.namaSiswa,
           kelas: s.kelas?.namaKelas || '-',
           hpOrtu: s.hpOrtu,

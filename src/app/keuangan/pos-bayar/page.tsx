@@ -63,6 +63,7 @@ export default function PosBayarPage() {
         setNamaPosBayar('');
         setKeterangan('');
         loadData();
+        alert('Pos Bayar berhasil disimpan!');
       } else {
         const data = await res.json();
         alert(data.error || 'Gagal menyimpan Pos Bayar');

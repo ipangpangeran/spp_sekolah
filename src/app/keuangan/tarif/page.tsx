@@ -110,6 +110,7 @@ export default function SettingTarifPage() {
             onChange={(e) => setIdKelas(e.target.value)}
             className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-xs text-slate-900 dark:text-white font-semibold"
           >
+            <option value="all">-- SEMUA KELAS (Terapkan ke Seluruh Siswa Rombel) --</option>
             {kelasList.map((k) => (
               <option key={k.id} value={k.id}>
                 {k.namaKelas} ({k._count?.siswa || 0} Siswa)
@@ -132,7 +133,7 @@ export default function SettingTarifPage() {
               className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-xs font-mono font-bold text-slate-900 dark:text-white"
             />
             <p className="text-[11px] text-slate-400 m-0 mt-1">
-              Sistem akan otomatis membuat 12 record tagihan SPP (Juli s.d Juni) untuk seluruh siswa di kelas ini.
+              Sistem akan otomatis membuat/memperbarui 12 record tagihan SPP (Juli s.d Juni) untuk seluruh siswa di target kelas.
             </p>
           </div>
         ) : (
@@ -157,7 +158,7 @@ export default function SettingTarifPage() {
             disabled={loading}
             className="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold shadow-lg shadow-blue-600/20 transition-all flex items-center justify-center gap-2"
           >
-            <span>{loading ? 'Memproses Generasi Tarif...' : 'Simpan Tarif &amp; Generate Tagihan'}</span>
+            <span>{loading ? 'Memproses Generasi Tarif...' : 'Simpan Tarif & Generate Tagihan'}</span>
           </button>
         </div>
       </form>

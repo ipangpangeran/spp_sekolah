@@ -45,11 +45,15 @@ export default function PengaturanPage() {
         body: JSON.stringify(settings),
       });
 
+      const data = await res.json();
       if (res.ok) {
         setMsg('Pengaturan sistem berhasil diperbarui!');
+        alert('Pengaturan sistem berhasil disimpan!');
+      } else {
+        throw new Error(data.error || 'Gagal menyimpan pengaturan');
       }
-    } catch (e) {
-      console.error(e);
+    } catch (e: any) {
+      alert(e.message || 'Terjadi kesalahan');
     } finally {
       setSaving(false);
     }

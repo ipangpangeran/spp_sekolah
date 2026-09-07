@@ -24,6 +24,10 @@ export async function POST(request: Request) {
       targetStudents = await prisma.siswa.findMany({
         where: { id: { in: idSiswaList.map((id: any) => parseInt(id)) }, statusSiswa: 'AKTIF' },
       });
+    } else if (idKelas === 'all') {
+      targetStudents = await prisma.siswa.findMany({
+        where: { statusSiswa: 'AKTIF' },
+      });
     } else if (idKelas) {
       targetStudents = await prisma.siswa.findMany({
         where: { idKelas: parseInt(idKelas), statusSiswa: 'AKTIF' },
