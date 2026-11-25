@@ -19,7 +19,15 @@ export function middleware(request: NextRequest) {
   }
 
   const sessionCookie = request.cookies.get('sisma_session');
-  const isAuthenticated = Boolean(sessionCookie?.value);
+  let sessionUser: { level?: string } | null = null;
+  if (sessionCookie?.value) {
+    try {
+      sessionUser = JSON.parse(sessionCookie.value);
+    } catch {
+      sessionUser = null;
+    }
+  }
+  const isAuthenticated = Boolean(sessionUser);
 
   // If requesting API endpoint without valid session cookie -> return 401 Unauthorized
   if (pathname.startsWith('/api/')) {
@@ -29,14 +37,27 @@ export function middleware(request: NextRequest) {
         { status: 401 }
       );
     }
+
+    // Restrict /api/pengaturan* strictly to admin role
+    if (pathname.startsWith('/api/pengaturan') && sessionUser?.level !== 'admin') {
+      return NextResponse.json(
+        { error: 'Akses ditolak. Hanya Administrator yang dapat mengakses pengaturan sistem.' },
+        { status: 403 }
+      );
+    }
+
     return NextResponse.next();
   }
 
-  // If requesting application page without valid session cookie -> redirect to /login
+  // If requesting application page without valid session cookie -> redirect cleanly to /login
   if (!isAuthenticated) {
     const loginUrl = new URL('/login', request.url);
-    loginUrl.searchParams.set('timeout', '1');
     return NextResponse.redirect(loginUrl);
+  }
+
+  // Restrict /pengaturan page strictly to admin role
+  if (pathname.startsWith('/pengaturan') && sessionUser?.level !== 'admin') {
+    return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 
   return NextResponse.next();

@@ -1,53 +1,53 @@
 ---
 name: Sisma Enterprise Design System
 colors:
-  surface: '#f7f9fb'
-  surface-dim: '#d8dadc'
-  surface-bright: '#f7f9fb'
+  surface: '#faf8ff'
+  surface-dim: '#d8d9e7'
+  surface-bright: '#faf8ff'
   surface-container-lowest: '#ffffff'
-  surface-container-low: '#f2f4f6'
-  surface-container: '#eceef0'
-  surface-container-high: '#e6e8ea'
-  surface-container-highest: '#e0e3e5'
-  on-surface: '#191c1e'
-  on-surface-variant: '#434655'
-  inverse-surface: '#2d3133'
-  inverse-on-surface: '#eff1f3'
-  outline: '#737686'
-  outline-variant: '#c3c6d7'
-  surface-tint: '#0053db'
-  primary: '#004ac6'
+  surface-container-low: '#f2f3ff'
+  surface-container: '#ecedfb'
+  surface-container-high: '#e6e7f5'
+  surface-container-highest: '#e1e1ef'
+  on-surface: '#191b25'
+  on-surface-variant: '#3d494d'
+  inverse-surface: '#2d303a'
+  inverse-on-surface: '#eff0fe'
+  outline: '#6d797e'
+  outline-variant: '#bcc8ce'
+  surface-tint: '#00677e'
+  primary: '#00677e'
   on-primary: '#ffffff'
-  primary-container: '#2563eb'
-  on-primary-container: '#eeefff'
-  inverse-primary: '#b4c5ff'
-  secondary: '#575e70'
+  primary-container: '#08a6c9'
+  on-primary-container: '#003643'
+  inverse-primary: '#5bd5fa'
+  secondary: '#05677e'
   on-secondary: '#ffffff'
-  secondary-container: '#d9dff5'
-  on-secondary-container: '#5c6274'
-  tertiary: '#006242'
+  secondary-container: '#9ce4ff'
+  on-secondary-container: '#07687f'
+  tertiary: '#4b5c91'
   on-tertiary: '#ffffff'
-  tertiary-container: '#007d55'
-  on-tertiary-container: '#bdffdb'
+  tertiary-container: '#8697d0'
+  on-tertiary-container: '#1c2e61'
   error: '#ba1a1a'
   on-error: '#ffffff'
   error-container: '#ffdad6'
   on-error-container: '#93000a'
-  primary-fixed: '#dbe1ff'
-  primary-fixed-dim: '#b4c5ff'
-  on-primary-fixed: '#00174b'
-  on-primary-fixed-variant: '#003ea8'
-  secondary-fixed: '#dce2f7'
-  secondary-fixed-dim: '#c0c6db'
-  on-secondary-fixed: '#141b2b'
-  on-secondary-fixed-variant: '#404758'
-  tertiary-fixed: '#6ffbbe'
-  tertiary-fixed-dim: '#4edea3'
-  on-tertiary-fixed: '#002113'
-  on-tertiary-fixed-variant: '#005236'
-  background: '#f7f9fb'
-  on-background: '#191c1e'
-  surface-variant: '#e0e3e5'
+  primary-fixed: '#b5ebff'
+  primary-fixed-dim: '#5bd5fa'
+  on-primary-fixed: '#001f28'
+  on-primary-fixed-variant: '#004e60'
+  secondary-fixed: '#b6ebff'
+  secondary-fixed-dim: '#87d1eb'
+  on-secondary-fixed: '#001f28'
+  on-secondary-fixed-variant: '#004e60'
+  tertiary-fixed: '#dbe1ff'
+  tertiary-fixed-dim: '#b4c5ff'
+  on-tertiary-fixed: '#01174a'
+  on-tertiary-fixed-variant: '#334478'
+  background: '#faf8ff'
+  on-background: '#191b25'
+  surface-variant: '#e1e1ef'
 typography:
   headline-lg:
     fontFamily: Inter
@@ -128,14 +128,14 @@ The personality is **authoritative yet efficient**. It prioritizes information d
 
 ## Colors
 
-The palette is anchored by **Enterprise Blue**, a color that evokes stability and trust. This is contrasted against a deep "Slate 950" sidebar to provide a strong architectural anchor for navigation.
+The palette is anchored by **Vibrant Cyan**, a color that evokes clarity and modern efficiency. This is contrasted against a deep "Teal/Slate" secondary tone to provide a strong architectural anchor for navigation and components.
 
-- **Primary:** Used for the main brand touchpoints, primary actions, and active navigation states.
-- **Sidebar Background:** A high-contrast dark mode foundation (#111827) used even in light mode to differentiate navigation from workspace.
-- **Surface & Borders:** Layering relies on the transition from the background (#F8FAFC) to white cards (#FFFFFF) defined by thin, low-contrast borders (#E2E8F0).
+- **Primary:** Used for the main brand touchpoints, primary actions, and active navigation states (`#08a6c9`).
+- **Sidebar Background:** A high-contrast dark mode foundation (`#318098`) used to differentiate navigation from workspace.
+- **Surface & Borders:** Layering relies on the transition from the background (`#747682` neutral scale) to white cards (`#FFFFFF`) defined by thin, low-contrast borders.
 - **Functional Colors:** Success, Warning, and Danger colors are used strictly for status indicators and destructive actions.
 
-**Dark Mode Support:** In dark mode, surfaces should shift to `#0F172A`, borders to `#1E293B`, and primary text to `#F8FAFC`.
+**Dark Mode Support:** In dark mode, surfaces should shift appropriately, maintaining readability against the new fruit salad color variant palette.
 
 ## Typography
 
@@ -160,43 +160,42 @@ The layout follows a **Fixed Grid** philosophy for content areas, ensuring data 
 
 To maintain a "flat but layered" enterprise aesthetic, the design system avoids heavy shadows in favor of **Tonal Layers** and **Low-Contrast Outlines**.
 
-- **Level 0 (Background):** #F8FAFC. The canvas.
-- **Level 1 (Card/Surface):** White background with a 1px solid border (#E2E8F0). No shadow.
-- **Level 2 (Dropdowns/Modals):** White background with a subtle, diffused ambient shadow: `0px 4px 12px rgba(0, 0, 0, 0.05)` and a 1px border.
-- **Interactions:** Buttons use a 1px "inner" border or a slight 1px bottom shadow to feel tactile (Stripe-inspired).
+- **Level 0 (Background):** Canvas base.
+- **Level 1 (Card/Surface):** White background with a 1px solid border. No shadow.
+- **Level 2 (Dropdowns/Modals):** White background with a subtle, diffused ambient shadow and a 1px border.
+- **Interactions:** Buttons use a 1px "inner" border or a slight 1px bottom shadow to feel tactile.
 - **Sticky Elements:** Use a subtle backdrop-blur (12px) on the header to indicate it sits above the scrolling content.
 
 ## Shapes
 
-The design system uses a sophisticated **Rounded** language (8px default) to soften the enterprise environment without appearing "toy-like."
+The design system uses a sophisticated **Rounded** language to soften the enterprise environment without appearing "toy-like."
 
-- **Cards & Containers:** Always use `rounded-lg` (12px) as specified in the requirements.
-- **Inputs & Buttons:** Use `rounded-md` (8px) for a precise, professional look.
+- **Cards & Containers:** Always use `rounded-lg` (1rem) as specified in the requirements.
+- **Inputs & Buttons:** Use `rounded-md` (0.75rem) for a precise, professional look.
 - **Status Badges:** Use `rounded-full` (pill) to distinguish them from interactive buttons.
-- **Icon Enclosures:** Small utility icons should sit in 8px rounded containers.
+- **Icon Enclosures:** Small utility icons should sit in rounded containers.
 
 ## Components
 
 ### Buttons
-- **Primary:** Solid #2563EB with white text. 8px radius.
-- **Secondary:** White surface, #E2E8F0 border, #111827 text.
+- **Primary:** Solid primary accent with white text. Rounded corners.
+- **Secondary:** White surface with subtle border.
 - **Ghost:** No background/border, used for low-priority actions in sidebars or table rows.
 
 ### Tables (Financial Focus)
 - **Headers:** `label-md` style, grey text, sticky position.
 - **Currency Rows:** Right-aligned columns for `Rp` values. Use tabular figures.
-- **Striping:** Subtle zebra striping (every second row #F8FAFC) is recommended for large data sets.
+- **Striping:** Subtle zebra striping is recommended for large data sets.
 
 ### Form Fields
-- **Inputs:** 1px border (#E2E8F0), 12px horizontal padding. On focus, border changes to #2563EB with a 2px outer glow of the same color at 10% opacity.
+- **Inputs:** 1px border, 12px horizontal padding. On focus, border highlights with a primary accent glow.
 - **Validation:** Clear, 12px text below the field for errors.
 
 ### Status Indicators
 - **Chips:** Soft background (10% opacity of the status color) with high-contrast text of the same color. 
-- **Example:** Success chip = Background #ECFDF5, Text #10B981.
 
 ### Navigation
-- **Sidebar Items:** High-contrast hover states. Active items receive a subtle left-hand "pill" indicator in Primary Blue.
+- **Sidebar Items:** High-contrast hover states. Active items receive a subtle left-hand indicator.
 - **Breadcrumbs:** Used on all sub-pages for clear pathfinding in deep administrative hierarchies.
 
 ### Icons

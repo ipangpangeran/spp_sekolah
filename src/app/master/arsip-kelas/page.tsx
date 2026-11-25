@@ -5,7 +5,6 @@ import {
   Archive,
   Trash2,
   AlertTriangle,
-  CheckCircle2,
   GraduationCap,
   Users,
   X,
@@ -18,12 +17,10 @@ export default function ArsipKelasPage() {
   const [selectedClass, setSelectedClass] = useState('');
   const [loading, setLoading] = useState(true);
 
-  // Clear All Modal
   const [showClearAllModal, setShowClearAllModal] = useState(false);
   const [confirmInput, setConfirmInput] = useState('');
   const [clearing, setClearing] = useState(false);
 
-  // Archive Class Modal
   const [showArchiveClassModal, setShowArchiveClassModal] = useState(false);
   const [archiving, setArchiving] = useState(false);
 
@@ -103,59 +100,64 @@ export default function ArsipKelasPage() {
   return (
     <div className="space-y-6 max-w-6xl mx-auto">
       {/* Header Bar */}
-      <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-card p-5 rounded-2xl border border-line shadow-[0_1px_2px_rgba(15,23,42,0.03)] flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <Archive className="w-5 h-5 text-blue-600" />
-            <h1 className="text-xl font-bold text-slate-900 dark:text-white m-0">
+            <Archive className="w-5 h-5 text-brand" />
+            <h1 className="text-xl font-bold text-slate-800 m-0">
               Arsip Kelas &amp; Pembersihan Data Siswa
             </h1>
           </div>
-          <p className="text-xs text-slate-500 dark:text-slate-400 m-0">
+          <p className="text-xs text-slate-500 m-0 mt-0.5">
             Proses pengarsipan kelas kenaikan/kelulusan serta pembersihan data induk siswa untuk persiapan tahun ajaran baru.
           </p>
         </div>
 
         <button
           onClick={loadData}
-          className="p-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 rounded-xl text-xs font-semibold flex items-center gap-1.5"
+          disabled={loading}
+          className="px-3.5 py-2 bg-subtle hover:bg-[#e2e8f2] border border-line text-slate-700 rounded-xl text-xs font-semibold flex items-center gap-1.5"
         >
-          <RefreshCw className="w-4 h-4 text-blue-500" />
+          <RefreshCw className="w-4 h-4 text-brand" />
           <span>Refresh Data</span>
         </button>
       </div>
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between">
+        <div className="bg-card p-5 rounded-2xl border border-line shadow-[0_1px_2px_rgba(15,23,42,0.03)] flex items-center justify-between">
           <div>
             <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">Total Rombel Kelas</span>
-            <span className="text-2xl font-black text-slate-900 dark:text-white font-mono-data">
+            <span className="text-2xl font-black text-slate-800 font-mono-data">
               {kelasList.length} Kelas
             </span>
           </div>
-          <GraduationCap className="w-10 h-10 text-indigo-500/30" />
+          <div className="w-11 h-11 rounded-2xl bg-brand-soft text-brand flex items-center justify-center">
+            <GraduationCap className="w-6 h-6" />
+          </div>
         </div>
 
-        <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between">
+        <div className="bg-card p-5 rounded-2xl border border-line shadow-[0_1px_2px_rgba(15,23,42,0.03)] flex items-center justify-between">
           <div>
             <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">Total Siswa Terdaftar</span>
-            <span className="text-2xl font-black text-slate-900 dark:text-white font-mono-data">
+            <span className="text-2xl font-black text-slate-800 font-mono-data">
               {siswaCount} Siswa
             </span>
           </div>
-          <Users className="w-10 h-10 text-blue-500/30" />
+          <div className="w-11 h-11 rounded-2xl bg-sage-soft text-sage flex items-center justify-center">
+            <Users className="w-6 h-6" />
+          </div>
         </div>
       </div>
 
       {/* Action Section 1: Arsip Per Kelas */}
-      <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-4">
-        <div className="flex items-center gap-3 border-b border-slate-100 dark:border-slate-700 pb-3">
-          <div className="w-9 h-9 rounded-xl bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold">
+      <div className="bg-card p-6 rounded-2xl border border-line shadow-[0_1px_2px_rgba(15,23,42,0.03)] space-y-4">
+        <div className="flex items-center gap-3 border-b border-line pb-3">
+          <div className="w-9 h-9 rounded-xl bg-brand-soft text-brand border border-brand-border flex items-center justify-center font-bold">
             1
           </div>
           <div>
-            <h2 className="text-sm font-bold text-slate-900 dark:text-white m-0">
+            <h2 className="text-sm font-bold text-slate-800 m-0">
               Arsip &amp; Kelulusan Per Kelas
             </h2>
             <p className="text-xs text-slate-500 m-0">
@@ -168,7 +170,7 @@ export default function ArsipKelasPage() {
           <select
             value={selectedClass}
             onChange={(e) => setSelectedClass(e.target.value)}
-            className="flex-1 w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-xs text-slate-900 dark:text-white font-semibold"
+            className="flex-1 w-full px-3.5 py-2.5 bg-subtle border border-line rounded-xl text-xs text-slate-800 font-semibold focus:outline-none focus:bg-card focus:border-brand"
           >
             <option value="">-- Pilih Kelas yang Akan Diarsip --</option>
             {kelasList.map((k) => (
@@ -184,7 +186,7 @@ export default function ArsipKelasPage() {
               setShowArchiveClassModal(true);
             }}
             disabled={!selectedClass}
-            className="w-full sm:w-auto px-5 py-2.5 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white rounded-xl text-xs font-bold shadow-sm transition-all flex items-center justify-center gap-2"
+            className="w-full sm:w-auto px-5 py-2.5 bg-brand hover:bg-brand-hover disabled:opacity-50 text-white rounded-xl text-xs font-bold shadow-sm transition-all flex items-center justify-center gap-2"
           >
             <Archive className="w-4 h-4" />
             <span>Proses Arsip Kelas</span>
@@ -192,29 +194,29 @@ export default function ArsipKelasPage() {
         </div>
       </div>
 
-      {/* Action Section 2: Reset / Delete All Students for New Academic Batch */}
-      <div className="bg-rose-50/50 dark:bg-rose-950/20 p-6 rounded-2xl border border-rose-200 dark:border-rose-900/60 shadow-sm space-y-4">
-        <div className="flex items-center gap-3 border-b border-rose-200 dark:border-rose-900/60 pb-3">
-          <div className="w-9 h-9 rounded-xl bg-rose-100 dark:bg-rose-900/50 text-rose-600 dark:text-rose-400 flex items-center justify-center font-bold">
+      {/* Action Section 2: Reset / Delete All Students */}
+      <div className="bg-brick-soft/60 p-6 rounded-2xl border border-brick-border shadow-[0_1px_2px_rgba(15,23,42,0.03)] space-y-4">
+        <div className="flex items-center gap-3 border-b border-brick-border pb-3">
+          <div className="w-9 h-9 rounded-xl bg-card text-brick border border-brick-border flex items-center justify-center font-bold">
             2
           </div>
           <div>
-            <h2 className="text-sm font-bold text-rose-900 dark:text-rose-200 m-0">
+            <h2 className="text-sm font-bold text-brick-text m-0">
               Pembersihan Total: Hapus Semua Data Siswa (Fresh Batch Import)
             </h2>
-            <p className="text-xs text-rose-700 dark:text-rose-300/80 m-0">
+            <p className="text-xs text-slate-600 m-0">
               Memudahkan persiapan penginputan batch baru siswa secara bersih tanpa menyisakan data lama.
             </p>
           </div>
         </div>
 
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="text-xs text-rose-800 dark:text-rose-300 space-y-1">
+          <div className="text-xs text-brick-text space-y-1">
             <p className="font-semibold m-0 flex items-center gap-1.5">
-              <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0" />
+              <AlertTriangle className="w-4 h-4 text-brick shrink-0" />
               <span>Tindakan ini akan menghapus seluruh {siswaCount} data siswa beserta seluruh tagihannya!</span>
             </p>
-            <p className="m-0 text-[11px] text-rose-600 dark:text-rose-400">
+            <p className="m-0 text-[11px] text-slate-600">
               Dibutuhkan ketikan pesan konfirmasi sebelum tindakan dieksekusi.
             </p>
           </div>
@@ -224,7 +226,7 @@ export default function ArsipKelasPage() {
               setConfirmInput('');
               setShowClearAllModal(true);
             }}
-            className="w-full sm:w-auto px-5 py-2.5 bg-rose-600 hover:bg-rose-500 text-white rounded-xl text-xs font-bold shadow-md transition-all flex items-center justify-center gap-2 shrink-0"
+            className="w-full sm:w-auto px-5 py-2.5 bg-brick hover:bg-brick-hover text-white rounded-xl text-xs font-bold shadow-sm transition-all flex items-center justify-center gap-2 shrink-0"
           >
             <Trash2 className="w-4 h-4" />
             <span>Hapus Semua Data Siswa</span>
@@ -234,10 +236,10 @@ export default function ArsipKelasPage() {
 
       {/* MODAL 1: Archive Class Confirmation */}
       {showArchiveClassModal && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 max-w-md w-full p-6 space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
-              <h3 className="text-sm font-bold text-slate-900 dark:text-white m-0">
+        <div className="fixed inset-0 z-50 bg-slate-700/35 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-card rounded-2xl shadow-xl border border-line max-w-md w-full p-6 space-y-4">
+            <div className="flex items-center justify-between border-b border-line pb-3">
+              <h3 className="text-sm font-bold text-slate-800 m-0">
                 Konfirmasi Arsip Kelas
               </h3>
               <button onClick={() => setShowArchiveClassModal(false)} className="text-slate-400 hover:text-slate-600">
@@ -245,16 +247,16 @@ export default function ArsipKelasPage() {
               </button>
             </div>
 
-            <div className="space-y-3 text-xs text-slate-600 dark:text-slate-300">
+            <div className="space-y-3 text-xs text-slate-600">
               <p className="m-0">
-                Apakah Anda yakin ingin mengarsip seluruh siswa di kelas pilihan ini? Status siswa akan diubah menjadi <span className="font-bold text-blue-600">LULUS</span> dan tagihan lama akan dibersihkan.
+                Apakah Anda yakin ingin mengarsip seluruh siswa di kelas pilihan ini? Status siswa akan diubah menjadi <span className="font-bold text-brand">LULUS</span> dan tagihan lama akan dibersihkan.
               </p>
 
               <div className="pt-2 flex items-center justify-end gap-2">
                 <button
                   type="button"
                   onClick={() => setShowArchiveClassModal(false)}
-                  className="px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-semibold"
+                  className="px-4 py-2 bg-subtle hover:bg-[#e2e8f2] border border-line text-slate-700 rounded-xl text-xs font-semibold"
                 >
                   Batal
                 </button>
@@ -262,7 +264,7 @@ export default function ArsipKelasPage() {
                   type="button"
                   onClick={handleArchiveClass}
                   disabled={archiving}
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold shadow-sm"
+                  className="px-4 py-2 bg-brand hover:bg-brand-hover text-white rounded-xl text-xs font-bold shadow-sm"
                 >
                   {archiving ? 'Memproses...' : 'Ya, Arsipkan Kelas'}
                 </button>
@@ -274,12 +276,12 @@ export default function ArsipKelasPage() {
 
       {/* MODAL 2: Clear All Students Confirmation */}
       {showClearAllModal && (
-        <div className="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-rose-200 dark:border-rose-900 max-w-md w-full p-6 space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+        <div className="fixed inset-0 z-50 bg-slate-700/35 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-card rounded-2xl shadow-xl border border-brick-border max-w-md w-full p-6 space-y-4">
+            <div className="flex items-center justify-between border-b border-line pb-3">
               <div className="flex items-center gap-2">
-                <AlertTriangle className="w-5 h-5 text-rose-600" />
-                <h3 className="text-sm font-bold text-rose-600 dark:text-rose-400 m-0">
+                <AlertTriangle className="w-5 h-5 text-brick" />
+                <h3 className="text-sm font-bold text-brick-text m-0">
                   Konfirmasi Hapus Semua Data Siswa
                 </h3>
               </div>
@@ -288,17 +290,17 @@ export default function ArsipKelasPage() {
               </button>
             </div>
 
-            <form onSubmit={handleClearAllStudents} className="space-y-4 text-xs text-slate-600 dark:text-slate-300">
+            <form onSubmit={handleClearAllStudents} className="space-y-4 text-xs text-slate-600">
               <p className="m-0 leading-relaxed">
-                Ketikkan kata kunci di bawah ini untuk mengonfirmasi penghapusan permanen seluruh <span className="font-bold text-rose-600">{siswaCount} siswa</span>:
+                Ketikkan kata kunci di bawah ini untuk mengonfirmasi penghapusan permanen seluruh <span className="font-bold text-brick">{siswaCount} siswa</span>:
               </p>
 
-              <div className="p-3 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/50 rounded-xl font-mono text-center font-bold text-rose-700 dark:text-rose-300 text-xs select-all">
+              <div className="p-3 bg-brick-soft border border-brick-border rounded-xl font-mono text-center font-bold text-brick-text text-xs select-all">
                 HAPUS SEMUA DATA SISWA
               </div>
 
               <div>
-                <label className="block text-[11px] font-semibold text-slate-500 mb-1">
+                <label className="block text-[11px] font-semibold text-slate-600 mb-1">
                   Ketikkan teks konfirmasi:
                 </label>
                 <input
@@ -307,7 +309,7 @@ export default function ArsipKelasPage() {
                   value={confirmInput}
                   onChange={(e) => setConfirmInput(e.target.value)}
                   placeholder="Ketik HAPUS SEMUA DATA SISWA"
-                  className="w-full px-3.5 py-2 bg-slate-50 dark:bg-slate-950 border border-rose-300 dark:border-rose-800 rounded-xl text-xs font-mono font-bold text-slate-900 dark:text-white"
+                  className="w-full px-3.5 py-2 bg-subtle border border-brick-border rounded-xl text-xs font-mono font-bold text-slate-800 focus:outline-none focus:bg-card"
                 />
               </div>
 
@@ -315,14 +317,14 @@ export default function ArsipKelasPage() {
                 <button
                   type="button"
                   onClick={() => setShowClearAllModal(false)}
-                  className="px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-semibold"
+                  className="px-4 py-2 bg-subtle hover:bg-[#e2e8f2] border border-line text-slate-700 rounded-xl text-xs font-semibold"
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
                   disabled={clearing || confirmInput !== 'HAPUS SEMUA DATA SISWA'}
-                  className="px-4 py-2 bg-rose-600 hover:bg-rose-500 disabled:opacity-50 text-white rounded-xl text-xs font-bold shadow-md"
+                  className="px-4 py-2 bg-brick hover:bg-brick-hover disabled:opacity-50 text-white rounded-xl text-xs font-bold shadow-sm"
                 >
                   {clearing ? 'Menghapus...' : 'Hapus Permanen Sekarang'}
                 </button>

@@ -8,16 +8,11 @@ import {
   User,
   CreditCard,
   CheckCircle2,
-  AlertCircle,
   Printer,
   MessageSquare,
-  RotateCcw,
   CheckSquare,
   Square,
   X,
-  FileText,
-  DollarSign,
-  ChevronRight,
   ShieldAlert,
 } from 'lucide-react';
 
@@ -36,12 +31,10 @@ function PembayaranSiswaContent() {
   const searchInputRef = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState(urlNis || '');
   const [student, setStudent] = useState<any>(null);
-  const [searchResults, setSearchResults] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
   const [selectedMonths, setSelectedMonths] = useState<number[]>([]);
 
-  // State to track if user has performed a search attempt
   const [hasSearched, setHasSearched] = useState(false);
   const [lastSearchedQuery, setLastSearchedQuery] = useState('');
 
@@ -61,7 +54,6 @@ function PembayaranSiswaContent() {
   const [showUndoModal, setShowUndoModal] = useState(false);
   const [undoTarget, setUndoTarget] = useState<any>(null);
 
-  // Dynamic user session for logged-in petugas name
   const [currentUser, setCurrentUser] = useState<any>(null);
 
   useEffect(() => {
@@ -77,7 +69,6 @@ function PembayaranSiswaContent() {
 
   const activePetugasName = currentUser?.namaLengkap || 'Administrator';
 
-  // Auto focus cursor on search input for barcode scanner readiness
   useEffect(() => {
     if (searchInputRef.current) {
       searchInputRef.current.focus();
@@ -132,24 +123,23 @@ function PembayaranSiswaContent() {
     }
   };
 
-  const handlePaySelectedSPP = async () => {
-    if (selectedMonths.length === 0) return;
+  const handlePaySelectedSPP = async (overrideIds?: number[]) => {
+    const targetIds = overrideIds || selectedMonths;
+    if (targetIds.length === 0) return;
     setActionLoading(true);
 
     try {
       const res = await fetch('/api/pembayaran/bulanan', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ids: selectedMonths }),
+        body: JSON.stringify({ ids: targetIds }),
       });
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Gagal memproses pembayaran');
 
-      // Refresh student data
-      await fetchStudentData(student.nis);
+      await fetchStudentData(student.nis || student.namaSiswa);
 
-      // Open receipt modal
       const paidItems = data.processedPayments || [];
       const totalPaid = paidItems.reduce((s: number, i: any) => s + i.tarif, 0);
 
@@ -198,7 +188,7 @@ function PembayaranSiswaContent() {
       setBebasAmount('');
       setBebasKet('');
 
-      await fetchStudentData(student.nis);
+      await fetchStudentData(student.nis || student.namaSiswa);
 
       setReceiptData({
         noRef: data.noRef,
@@ -238,7 +228,7 @@ function PembayaranSiswaContent() {
 
       setShowUndoModal(false);
       setUndoTarget(null);
-      await fetchStudentData(student.nis);
+      await fetchStudentData(student.nis || student.namaSiswa);
     } catch (err: any) {
       alert(err.message || 'Gagal membatalkan');
     } finally {
@@ -252,19 +242,19 @@ function PembayaranSiswaContent() {
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
       {/* Search Header */}
-      <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-card p-5 rounded-2xl border border-line shadow-[0_1px_2px_rgba(15,23,42,0.03)] flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl font-bold text-slate-900 dark:text-white m-0">
+          <h1 className="text-xl font-bold text-slate-800 m-0">
             Loket Pembayaran SPP &amp; Keuangan Siswa
           </h1>
-          <p className="text-xs text-slate-500 dark:text-slate-400 m-0">
+          <p className="text-xs text-slate-500 m-0 mt-0.5">
             Cari siswa berdasarkan NIS atau Nama untuk melihat tagihan &amp; memproses transaksi.
           </p>
         </div>
 
         <form onSubmit={handleSearchSubmit} className="flex items-center gap-2 w-full md:w-auto">
           <div className="relative flex-1 md:w-80">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
             <input
               ref={searchInputRef}
               autoFocus
@@ -272,12 +262,12 @@ function PembayaranSiswaContent() {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Scan barcode kartu siswa / Ketik NIS/Nama..."
-              className="w-full pl-9 pr-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white focus:outline-none focus:border-blue-500 font-medium"
+              className="w-full pl-9 pr-3 py-2 bg-subtle border border-line rounded-xl text-xs text-slate-800 focus:outline-none focus:bg-card focus:border-brand font-medium input-glow"
             />
           </div>
           <button
             type="submit"
-            className="bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold px-4 py-2 rounded-xl shadow-sm transition-all"
+            className="bg-brand hover:bg-brand-hover text-white text-xs font-semibold px-4 py-2 rounded-xl shadow-sm transition-all"
           >
             Cari
           </button>
@@ -288,63 +278,63 @@ function PembayaranSiswaContent() {
         <div className="p-12 text-center text-xs text-slate-500">Mencari data tagihan siswa...</div>
       )}
 
-      {/* State 1: Halaman Awal / Belum Mencari (Petunjuk Scan Barcode / Ketik NIS) */}
+      {/* State 1: Initial Empty State */}
       {!loading && !student && !hasSearched && (
-        <div className="bg-white dark:bg-slate-800/80 p-12 rounded-2xl border border-slate-200 dark:border-slate-700/80 text-center space-y-4 shadow-sm">
-          <div className="w-16 h-16 rounded-full bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 flex items-center justify-center mx-auto border border-blue-200 dark:border-blue-800/60 shadow-sm">
+        <div className="bg-card p-12 rounded-2xl border border-line text-center space-y-4 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
+          <div className="w-16 h-16 rounded-2xl bg-brand-soft text-brand flex items-center justify-center mx-auto border border-brand-border">
             <CreditCard className="w-8 h-8" />
           </div>
           <div className="space-y-1.5 max-w-md mx-auto">
-            <h2 className="text-base font-bold text-slate-800 dark:text-slate-100 m-0">
+            <h2 className="text-base font-bold text-slate-800 m-0">
               Scan Kartu Siswa / Ketik NIS
             </h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400 m-0 leading-relaxed">
+            <p className="text-xs text-slate-500 m-0 leading-relaxed">
               Kursor telah aktif otomatis. Silakan langsung scan barcode kartu siswa atau ketikkan NIS/Nama pada kolom pencarian di atas.
             </p>
           </div>
         </div>
       )}
 
-      {/* State 2: Jika Pencarian Berhasil Dilakukan Tapi Siswa Tidak Ditemukan */}
+      {/* State 2: Not Found */}
       {!loading && !student && hasSearched && (
-        <div className="bg-white dark:bg-slate-800/80 p-10 rounded-2xl border border-rose-200 dark:border-rose-950/60 text-center space-y-3 shadow-sm">
-          <User className="w-10 h-10 text-rose-500 dark:text-rose-400 mx-auto" />
-          <h2 className="text-sm font-bold text-slate-800 dark:text-slate-100 m-0">
+        <div className="bg-card p-10 rounded-2xl border border-brick-border text-center space-y-3 shadow-sm">
+          <User className="w-10 h-10 text-brick mx-auto" />
+          <h2 className="text-sm font-bold text-slate-800 m-0">
             Data Siswa Tidak Ditemukan
           </h2>
-          <p className="text-xs text-slate-500 dark:text-slate-400 m-0">
-            NIS / Nama &quot;<span className="font-semibold text-slate-700 dark:text-slate-300">{lastSearchedQuery}</span>&quot; tidak terdaftar. Silakan periksa kembali barcode kartu atau NIS siswa.
+          <p className="text-xs text-slate-500 m-0">
+            NIS / Nama &quot;<span className="font-semibold text-slate-700">{lastSearchedQuery}</span>&quot; tidak terdaftar. Silakan periksa kembali barcode kartu atau NIS siswa.
           </p>
         </div>
       )}
 
       {!loading && student && (
         <div className="space-y-6">
-          {/* Student Profile Bar */}
-          <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-indigo-950 p-6 rounded-2xl text-white shadow-lg flex flex-col md:flex-row md:items-center justify-between gap-6 border border-slate-800">
+          {/* Stitch Cyan-Teal Student Profile Bar */}
+          <div className="bg-card p-6 rounded-2xl text-slate-900 shadow-premium flex flex-col md:flex-row md:items-center justify-between gap-6 border border-slate-200 border-t-4 border-t-[#00677e]">
             <div className="flex items-center gap-4">
-              <div className="w-14 h-14 rounded-2xl bg-blue-600 text-white flex items-center justify-center font-bold text-xl shadow-md border-2 border-white/20">
+              <div className="w-14 h-14 rounded-full bg-[#e6f6fc] text-[#004e60] border border-[#b5ebff] flex items-center justify-center font-bold text-xl">
                 {student.namaSiswa.charAt(0)}
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <h2 className="text-xl font-bold tracking-tight m-0">{student.namaSiswa}</h2>
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                    {student.statusSiswa}
+                  <h2 className="text-xl font-bold tracking-tight text-slate-900 m-0">{student.namaSiswa}</h2>
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#dbe1ff] text-[#324478]">
+                    • {student.statusSiswa}
                   </span>
                 </div>
-                <p className="text-xs text-slate-300 m-0 mt-1">
-                  NIS: <span className="font-mono text-blue-300">{student.nis}</span> | NISN:{' '}
-                  <span className="font-mono">{student.nisn || '-'}</span> | Kelas:{' '}
-                  <span className="font-semibold text-white">{student.kelas?.namaKelas}</span>
+                <p className="text-xs text-slate-600 m-0 mt-1">
+                  NIS: <span className="font-mono font-semibold text-[#00677e]">{student.nis || '-'}</span> | NISN:{' '}
+                  <span className="font-mono text-slate-700">{student.nisn || '-'}</span> | Kelas:{' '}
+                  <span className="font-bold text-slate-900">{student.kelas?.namaKelas}</span>
                 </p>
               </div>
             </div>
 
-            <div className="flex items-center gap-4 text-right">
+            <div className="flex items-center gap-4 md:text-right bg-slate-50 px-4 py-2.5 rounded-xl border border-slate-200">
               <div>
-                <span className="text-[11px] text-slate-400 block">No. HP Orang Tua / WA</span>
-                <span className="text-xs font-mono text-emerald-400 font-semibold">
+                <span className="text-[11px] text-slate-500 block">No. HP Orang Tua / WA</span>
+                <span className="text-xs font-mono text-[#00677e] font-bold">
                   {student.hpOrtu || 'Belum diisi'}
                 </span>
               </div>
@@ -352,22 +342,22 @@ function PembayaranSiswaContent() {
           </div>
 
           {/* SPP 12-Month Grid Card */}
-          <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700/60 pb-4">
+          <div className="bg-card p-6 rounded-2xl border border-line shadow-[0_1px_2px_rgba(15,23,42,0.03)] space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-line pb-4 gap-3">
               <div>
-                <h3 className="text-base font-bold text-slate-900 dark:text-white m-0">
+                <h3 className="text-base font-bold text-slate-800 m-0">
                   Matrix SPP Bulanan (12 Bulan: Juli 2026 - Juni 2027)
                 </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400 m-0">
+                <p className="text-xs text-slate-500 m-0 mt-0.5">
                   Pilih satu atau beberapa bulan sekaligus untuk diproses bayar.
                 </p>
               </div>
 
               {selectedMonths.length > 0 && (
                 <button
-                  onClick={handlePaySelectedSPP}
+                  onClick={() => handlePaySelectedSPP()}
                   disabled={actionLoading}
-                  className="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-lg shadow-emerald-600/20 transition-all flex items-center gap-2"
+                  className="bg-sage hover:bg-sage-hover text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-sm transition-all flex items-center gap-2"
                 >
                   <CreditCard className="w-4 h-4" />
                   <span>Bayar {selectedMonths.length} Bulan Terpilih</span>
@@ -385,25 +375,26 @@ function PembayaranSiswaContent() {
                 return (
                   <div
                     key={t.id}
-                    className={`p-3.5 rounded-xl border transition-all flex flex-col justify-between relative ${isPaid
-                        ? 'bg-emerald-50/60 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-800/60'
+                    className={`p-3.5 rounded-xl border transition-all flex flex-col justify-between relative ${
+                      isPaid
+                        ? 'bg-sage-soft/55 border-sage-border'
                         : isSelected
-                          ? 'bg-blue-50 dark:bg-blue-950/40 border-blue-500 shadow-md ring-1 ring-blue-500'
-                          : 'bg-slate-50/50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-700 hover:border-blue-400'
-                      }`}
+                        ? 'bg-brand-soft border-brand ring-1 ring-brand/40 shadow-sm'
+                        : 'bg-subtle/75 border-line hover:border-brand/50 hover:bg-subtle'
+                    }`}
                   >
                     <div>
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-xs font-bold text-slate-800 dark:text-slate-100">
+                        <span className="text-xs font-bold text-slate-800">
                           {t.bulan}
                         </span>
                         {!isPaid && (
                           <button
                             onClick={() => toggleMonthSelection(t.id)}
-                            className="text-slate-400 hover:text-blue-600"
+                            className="text-slate-400 hover:text-brand"
                           >
                             {isSelected ? (
-                              <CheckSquare className="w-4 h-4 text-blue-600" />
+                              <CheckSquare className="w-4 h-4 text-brand" />
                             ) : (
                               <Square className="w-4 h-4" />
                             )}
@@ -411,7 +402,7 @@ function PembayaranSiswaContent() {
                         )}
                       </div>
 
-                      <div className="text-sm font-bold font-mono-data mb-2 text-slate-900 dark:text-white">
+                      <div className="text-sm font-bold font-mono-data mb-2 text-slate-800">
                         {formatRp(t.tarif)}
                       </div>
                     </div>
@@ -419,10 +410,10 @@ function PembayaranSiswaContent() {
                     <div>
                       {isPaid ? (
                         <div className="space-y-1">
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-700 dark:text-emerald-300">
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-sage-soft text-sage-text border border-sage-border">
                             <CheckCircle2 className="w-3 h-3" /> LUNAS
                           </span>
-                          <p className="text-[10px] text-slate-500 dark:text-slate-400 m-0">
+                          <p className="text-[10px] text-slate-500 m-0">
                             {new Date(pDetail?.tglBayar || Date.now()).toLocaleDateString('id-ID')}
                           </p>
                           <button
@@ -430,7 +421,7 @@ function PembayaranSiswaContent() {
                               setUndoTarget({ idPembayaranBulanan: pDetail?.id });
                               setShowUndoModal(true);
                             }}
-                            className="text-[10px] text-rose-600 hover:underline block font-semibold"
+                            className="text-[10px] text-brick hover:underline block font-semibold"
                           >
                             Batalkan Bayar
                           </button>
@@ -439,10 +430,10 @@ function PembayaranSiswaContent() {
                         <button
                           onClick={() => {
                             setSelectedMonths([t.id]);
-                            handlePaySelectedSPP();
+                            handlePaySelectedSPP([t.id]);
                           }}
                           disabled={actionLoading}
-                          className="w-full py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-semibold shadow-sm transition-all"
+                          className="w-full py-1.5 bg-brand hover:bg-brand-hover text-white rounded-lg text-xs font-semibold shadow-sm transition-all"
                         >
                           Bayar
                         </button>
@@ -455,12 +446,12 @@ function PembayaranSiswaContent() {
           </div>
 
           {/* Tagihan Bebas Section */}
-          <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-4">
-            <div className="border-b border-slate-100 dark:border-slate-700/60 pb-3">
-              <h3 className="text-base font-bold text-slate-900 dark:text-white m-0">
+          <div className="bg-card p-6 rounded-2xl border border-line shadow-[0_1px_2px_rgba(15,23,42,0.03)] space-y-4">
+            <div className="border-b border-line pb-3">
+              <h3 className="text-base font-bold text-slate-800 m-0">
                 Tagihan Bebas / Non-SPP (Cicilan Pembangunan &amp; Seragam)
               </h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 m-0">
+              <p className="text-xs text-slate-500 m-0 mt-0.5">
                 Daftar kewajiban non-bulanan yang dapat dicicil dengan nominal bebas.
               </p>
             </div>
@@ -473,17 +464,18 @@ function PembayaranSiswaContent() {
                 return (
                   <div
                     key={tb.id}
-                    className="p-4 rounded-xl bg-slate-50/70 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 space-y-3"
+                    className="p-4 rounded-xl bg-subtle/80 border border-line space-y-3"
                   >
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-slate-900 dark:text-white">
+                      <span className="text-xs font-bold text-slate-800">
                         {tb.jenisPembayaran?.posBayar?.namaPosBayar}
                       </span>
                       <span
-                        className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${tb.statusBayar === 'LUNAS'
-                            ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300'
-                            : 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300'
-                          }`}
+                        className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${
+                          tb.statusBayar === 'LUNAS'
+                            ? 'bg-sage-soft text-sage-text border-sage-border'
+                            : 'bg-[#f8efd9] text-[#8a5b13] border-[#e7d2a3]'
+                        }`}
                       >
                         {tb.statusBayar}
                       </span>
@@ -492,19 +484,18 @@ function PembayaranSiswaContent() {
                     <div className="space-y-1">
                       <div className="flex justify-between text-xs font-mono-data">
                         <span className="text-slate-500">Terbayar: {formatRp(tb.terbayar)}</span>
-                        <span className="font-bold text-slate-800 dark:text-slate-200">
+                        <span className="font-bold text-slate-800">
                           Total: {formatRp(tb.totalTagihan)}
                         </span>
                       </div>
 
-                      {/* Progress bar */}
-                      <div className="w-full bg-slate-200 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
+                      <div className="w-full bg-line h-2 rounded-full overflow-hidden">
                         <div
-                          className="bg-blue-600 h-full transition-all duration-300"
+                          className="bg-brand h-full transition-all duration-300"
                           style={{ width: `${percent}%` }}
                         ></div>
                       </div>
-                      <div className="text-[11px] text-right font-mono text-slate-400">
+                      <div className="text-[11px] text-right font-mono text-slate-500">
                         Sisa: {formatRp(sisa)} ({percent}%)
                       </div>
                     </div>
@@ -515,33 +506,32 @@ function PembayaranSiswaContent() {
                           setSelectedBebas(tb);
                           setShowBebasModal(true);
                         }}
-                        className="w-full py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-semibold shadow-sm transition-all"
+                        className="w-full py-2 bg-brand hover:bg-brand-hover text-white rounded-lg text-xs font-semibold shadow-sm transition-all"
                       >
                         + Input Pembayaran Partial / Cicilan
                       </button>
                     )}
 
-                    {/* History */}
                     {tb.pembayaranBebas && tb.pembayaranBebas.length > 0 && (
-                      <div className="pt-2 border-t border-slate-200 dark:border-slate-700 space-y-1">
+                      <div className="pt-2 border-t border-line space-y-1">
                         <span className="text-[10px] font-bold text-slate-400 uppercase">Riwayat Cicilan:</span>
                         <div className="space-y-1 max-h-28 overflow-y-auto">
                           {tb.pembayaranBebas.map((pb: any) => (
                             <div
                               key={pb.id}
-                              className="text-[11px] flex items-center justify-between text-slate-600 dark:text-slate-300"
+                              className="text-[11px] flex items-center justify-between text-slate-600"
                             >
                               <span>
                                 {new Date(pb.tglBayar).toLocaleDateString('id-ID')} ({pb.keterangan || 'Cicilan'})
                               </span>
                               <div className="flex items-center gap-2">
-                                <span className="font-bold font-mono">{formatRp(pb.jumlahBayar)}</span>
+                                <span className="font-bold font-mono text-slate-800">{formatRp(pb.jumlahBayar)}</span>
                                 <button
                                   onClick={() => {
                                     setUndoTarget({ idPembayaranBebas: pb.id });
                                     setShowUndoModal(true);
                                   }}
-                                  className="text-rose-600 hover:underline text-[10px]"
+                                  className="text-brick hover:underline text-[10px] font-semibold"
                                 >
                                   Batal
                                 </button>
@@ -561,12 +551,12 @@ function PembayaranSiswaContent() {
 
       {/* MODAL 1: Receipt Print Modal */}
       {showReceiptModal && receiptData && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 max-w-md w-full overflow-hidden">
-            <div className="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-slate-800/50">
+        <div className="fixed inset-0 z-50 bg-slate-700/35 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-card rounded-2xl shadow-xl border border-line max-w-md w-full overflow-hidden">
+            <div className="p-4 border-b border-line flex items-center justify-between bg-panel">
               <div className="flex items-center gap-2">
-                <Printer className="w-5 h-5 text-blue-600" />
-                <h3 className="text-sm font-bold text-slate-900 dark:text-white m-0">
+                <Printer className="w-5 h-5 text-brand" />
+                <h3 className="text-sm font-bold text-slate-800 m-0">
                   Bukti Pembayaran / Kwitansi
                 </h3>
               </div>
@@ -575,19 +565,18 @@ function PembayaranSiswaContent() {
               </button>
             </div>
 
-            {/* Receipt Printable Content */}
-            <div className="p-6 space-y-4 printable-area text-slate-800 dark:text-slate-200 text-xs">
-              <div className="text-center border-b border-slate-200 dark:border-slate-700 pb-3">
+            <div className="p-6 space-y-4 printable-area text-slate-800 text-xs">
+              <div className="text-center border-b border-line pb-3">
                 <div className="w-10 h-10 mx-auto mb-1">
                   <Image src="/logo_sisma.png" alt="Logo" width={40} height={40} className="object-contain" />
                 </div>
-                <h4 className="font-bold text-sm text-slate-900 dark:text-white uppercase m-0">
+                <h4 className="font-bold text-sm text-slate-800 uppercase m-0">
                   SMA SWASTA PERSIAPAN STABAT
                 </h4>
                 <p className="text-[10px] text-slate-500 m-0">
-                  Jl. KH. Zainul Arifin No. 12, Stabat, Kab. Langkat
+                  Jl. HIB Tembeleng, Kec. Stabat, Kab. Langkat
                 </p>
-                <p className="text-[10px] font-mono text-blue-600 dark:text-blue-400 font-bold m-0 mt-1">
+                <p className="text-[10px] font-mono text-brand font-bold m-0 mt-1">
                   KWITANSI / SLIP PEMBAYARAN SPP
                 </p>
               </div>
@@ -603,30 +592,29 @@ function PembayaranSiswaContent() {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-slate-500">Nama Siswa:</span>
-                  <span className="font-bold text-slate-900 dark:text-white">
+                  <span className="font-bold text-slate-800">
                     {receiptData.siswa?.namaSiswa}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-slate-500">NIS / Kelas:</span>
                   <span>
-                    {receiptData.siswa?.nis} ({receiptData.siswa?.kelas?.namaKelas})
+                    {receiptData.siswa?.nis || '-'} ({receiptData.siswa?.kelas?.namaKelas})
                   </span>
                 </div>
               </div>
 
-              {/* Items table */}
-              <div className="border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden">
+              <div className="border border-line rounded-lg overflow-hidden">
                 <table className="w-full text-left border-collapse text-[11px]">
-                  <thead className="bg-slate-100 dark:bg-slate-800 font-bold">
+                  <thead className="bg-subtle font-bold text-slate-700">
                     <tr>
-                      <th className="p-2 border-b">Uraian Pembayaran</th>
-                      <th className="p-2 border-b text-right">Jumlah</th>
+                      <th className="p-2 border-b border-line">Uraian Pembayaran</th>
+                      <th className="p-2 border-b border-line text-right">Jumlah</th>
                     </tr>
                   </thead>
                   <tbody>
                     {receiptData.items?.map((it: any, idx: number) => (
-                      <tr key={idx} className="border-b last:border-0">
+                      <tr key={idx} className="border-b border-line/60 last:border-0">
                         <td className="p-2">
                           {it.posBayar || 'SPP'} Bulan {it.bulan}
                         </td>
@@ -639,9 +627,9 @@ function PembayaranSiswaContent() {
                 </table>
               </div>
 
-              <div className="flex justify-between items-center text-sm font-bold pt-1 border-t border-slate-200 dark:border-slate-700">
+              <div className="flex justify-between items-center text-sm font-bold pt-1 border-t border-line">
                 <span>TOTAL DIBAYAR:</span>
-                <span className="text-emerald-600 font-mono">{formatRp(receiptData.totalPaid)}</span>
+                <span className="text-sage font-mono">{formatRp(receiptData.totalPaid)}</span>
               </div>
 
               <div className="text-[10px] text-center text-slate-400 pt-2">
@@ -649,23 +637,22 @@ function PembayaranSiswaContent() {
               </div>
             </div>
 
-            {/* Action buttons */}
-            <div className="p-4 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center gap-2 no-print">
+            <div className="p-4 bg-panel border-t border-line flex flex-col sm:flex-row items-center gap-2 no-print">
               <button
                 onClick={() => {
                   setShowReceiptModal(false);
                   setReceiptData(null);
                 }}
-                className="w-full sm:w-auto py-2.5 px-3.5 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all"
+                className="w-full sm:w-auto py-2.5 px-3.5 bg-subtle hover:bg-[#e2e8f2] text-slate-700 border border-line rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all"
                 title="Selesai tanpa cetak & tanpa kirim WA"
               >
-                <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                <CheckCircle2 className="w-4 h-4 text-sage" />
                 <span>Catat Pembayaran</span>
               </button>
 
               <button
                 onClick={() => window.print()}
-                className="w-full sm:flex-1 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-sm transition-all"
+                className="w-full sm:flex-1 py-2.5 bg-brand hover:bg-brand-hover text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-sm transition-all"
               >
                 <Printer className="w-4 h-4" />
                 <span>Cetak</span>
@@ -676,7 +663,7 @@ function PembayaranSiswaContent() {
                   setShowReceiptModal(false);
                   setShowWaModal(true);
                 }}
-                className="w-full sm:w-auto py-2.5 px-4 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-sm transition-all"
+                className="w-full sm:w-auto py-2.5 px-4 bg-sage hover:bg-sage-hover text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-sm transition-all"
               >
                 <MessageSquare className="w-4 h-4" />
                 <span>Kirim WA</span>
@@ -688,12 +675,12 @@ function PembayaranSiswaContent() {
 
       {/* MODAL 2: WhatsApp Notification Modal */}
       {showWaModal && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 max-w-md w-full p-6 space-y-4">
+        <div className="fixed inset-0 z-50 bg-slate-700/35 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-card rounded-2xl shadow-xl border border-line max-w-md w-full p-6 space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <MessageSquare className="w-5 h-5 text-emerald-600" />
-                <h3 className="text-sm font-bold text-slate-900 dark:text-white m-0">
+                <MessageSquare className="w-5 h-5 text-sage" />
+                <h3 className="text-sm font-bold text-slate-800 m-0">
                   Notifikasi WhatsApp Kwitansi
                 </h3>
               </div>
@@ -703,12 +690,12 @@ function PembayaranSiswaContent() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-500 mb-1">Pesan WhatsApp:</label>
+              <label className="block text-xs font-semibold text-slate-600 mb-1">Pesan WhatsApp:</label>
               <textarea
                 rows={4}
                 value={waMessage}
                 onChange={(e) => setWaMessage(e.target.value)}
-                className="w-full p-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-xs text-slate-900 dark:text-white focus:outline-none"
+                className="w-full p-3 bg-subtle border border-line rounded-xl text-xs text-slate-800 focus:outline-none focus:bg-card focus:border-brand"
               ></textarea>
             </div>
 
@@ -719,7 +706,7 @@ function PembayaranSiswaContent() {
                 )}`}
                 target="_blank"
                 rel="noreferrer"
-                className="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold text-center flex items-center justify-center gap-2 shadow-sm"
+                className="flex-1 py-2.5 bg-sage hover:bg-sage-hover text-white rounded-xl text-xs font-bold text-center flex items-center justify-center gap-2 shadow-sm"
               >
                 <span>Kirim via WhatsApp Web</span>
               </a>
@@ -728,7 +715,7 @@ function PembayaranSiswaContent() {
                   navigator.clipboard.writeText(waMessage);
                   alert('Pesan berhasil disalin!');
                 }}
-                className="py-2.5 px-4 bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200 rounded-xl text-xs font-semibold"
+                className="py-2.5 px-4 bg-subtle hover:bg-[#e2e8f2] border border-line text-slate-700 rounded-xl text-xs font-semibold"
               >
                 Salin Teks
               </button>
@@ -739,10 +726,10 @@ function PembayaranSiswaContent() {
 
       {/* MODAL 3: Flexible Tagihan Bebas Modal */}
       {showBebasModal && selectedBebas && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 max-w-md w-full p-6 space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
-              <h3 className="text-sm font-bold text-slate-900 dark:text-white m-0">
+        <div className="fixed inset-0 z-50 bg-slate-700/35 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-card rounded-2xl shadow-xl border border-line max-w-md w-full p-6 space-y-4">
+            <div className="flex items-center justify-between border-b border-line pb-3">
+              <h3 className="text-sm font-bold text-slate-800 m-0">
                 Input Pembayaran {selectedBebas.jenisPembayaran?.posBayar?.namaPosBayar}
               </h3>
               <button onClick={() => setShowBebasModal(false)} className="text-slate-400 hover:text-slate-600">
@@ -752,7 +739,7 @@ function PembayaranSiswaContent() {
 
             <form onSubmit={handlePayBebasSubmit} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-500 mb-1">
+                <label className="block text-xs font-semibold text-slate-600 mb-1">
                   Nominal Pembayaran (Rp):
                 </label>
                 <input
@@ -761,12 +748,12 @@ function PembayaranSiswaContent() {
                   value={bebasAmount}
                   onChange={(e) => setBebasAmount(e.target.value)}
                   placeholder="misal: 250000"
-                  className="w-full px-3.5 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-xs font-mono font-bold text-slate-900 dark:text-white"
+                  className="w-full px-3.5 py-2 bg-subtle border border-line rounded-xl text-xs font-mono font-bold text-slate-800 focus:outline-none focus:bg-card focus:border-brand"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-500 mb-1">
+                <label className="block text-xs font-semibold text-slate-600 mb-1">
                   Keterangan (opsional):
                 </label>
                 <input
@@ -774,7 +761,7 @@ function PembayaranSiswaContent() {
                   value={bebasKet}
                   onChange={(e) => setBebasKet(e.target.value)}
                   placeholder="misal: Cicilan ke-2 Uang Pembangunan"
-                  className="w-full px-3.5 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-xs text-slate-900 dark:text-white"
+                  className="w-full px-3.5 py-2 bg-subtle border border-line rounded-xl text-xs text-slate-800 focus:outline-none focus:bg-card focus:border-brand"
                 />
               </div>
 
@@ -782,7 +769,7 @@ function PembayaranSiswaContent() {
                 <button
                   type="submit"
                   disabled={actionLoading}
-                  className="flex-1 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold shadow-sm"
+                  className="flex-1 py-2.5 bg-brand hover:bg-brand-hover text-white rounded-xl text-xs font-bold shadow-sm"
                 >
                   Proses Simpan Pembayaran
                 </button>
@@ -794,31 +781,31 @@ function PembayaranSiswaContent() {
 
       {/* MODAL 4: Undo Payment Modal */}
       {showUndoModal && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 max-w-sm w-full p-6 space-y-4 text-center">
-            <ShieldAlert className="w-12 h-12 text-rose-500 mx-auto" />
+        <div className="fixed inset-0 z-50 bg-slate-700/35 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-card rounded-2xl shadow-xl border border-line max-w-sm w-full p-6 space-y-4 text-center">
+            <ShieldAlert className="w-12 h-12 text-brick mx-auto" />
             <div>
-              <h3 className="text-base font-bold text-slate-900 dark:text-white m-0">
-                Konfirmasi Pembatalan
+              <h3 className="text-base font-bold text-slate-800 m-0">
+                Batalkan Pembayaran?
               </h3>
-              <p className="text-xs text-slate-500 m-0 mt-1">
-                Apakah Anda yakin ingin membatalkan transaksi pembayaran ini? Status tagihan akan dikembalikan menjadi BELUM BAYAR dan saldo kas dikurangi.
+              <p className="text-xs text-slate-500 mt-1">
+                Status tagihan akan dikembalikan ke Belum Bayar dan jurnal kas pemasukan akan dikurangi otomatis.
               </p>
             </div>
 
             <div className="flex items-center gap-2 pt-2">
               <button
-                onClick={handleConfirmUndo}
-                disabled={actionLoading}
-                className="flex-1 py-2 bg-rose-600 hover:bg-rose-500 text-white rounded-xl text-xs font-bold"
+                onClick={() => setShowUndoModal(false)}
+                className="flex-1 py-2 bg-subtle hover:bg-[#e2e8f2] border border-line text-slate-700 rounded-xl text-xs font-semibold"
               >
-                Ya, Batalkan Transaksi
+                Tutup
               </button>
               <button
-                onClick={() => setShowUndoModal(false)}
-                className="py-2 px-4 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-semibold"
+                onClick={handleConfirmUndo}
+                disabled={actionLoading}
+                className="flex-1 py-2 bg-brick hover:bg-brick-hover text-white rounded-xl text-xs font-bold shadow-sm"
               >
-                Batal
+                Ya, Batalkan
               </button>
             </div>
           </div>

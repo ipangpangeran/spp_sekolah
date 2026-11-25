@@ -1,19 +1,11 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
 import {
   FileSpreadsheet,
   Printer,
   MessageSquare,
   Filter,
-  CheckCircle2,
-  AlertCircle,
-  Users,
-  Search,
-  BookOpen,
-  DollarSign,
-  TrendingUp,
 } from 'lucide-react';
 import * as XLSX from 'xlsx';
 
@@ -107,15 +99,15 @@ export default function LaporanKeuanganPage() {
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
       {/* Header Bar */}
-      <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-card p-5 rounded-2xl border border-line shadow-[0_1px_2px_rgba(15,23,42,0.03)] flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <FileSpreadsheet className="w-5 h-5 text-blue-600" />
-            <h1 className="text-xl font-bold text-slate-900 dark:text-white m-0">
+            <FileSpreadsheet className="w-5 h-5 text-brand" />
+            <h1 className="text-xl font-bold text-slate-800 m-0">
               Laporan Keuangan &amp; Rekapitulasi SPP
             </h1>
           </div>
-          <p className="text-xs text-slate-500 dark:text-slate-400 m-0">
+          <p className="text-xs text-slate-500 m-0 mt-0.5">
             Export laporan rekap per kelas, laporan tunggakan siswa, dan rekap penerimaan kas.
           </p>
         </div>
@@ -123,29 +115,29 @@ export default function LaporanKeuanganPage() {
         <div className="flex items-center gap-2">
           <button
             onClick={handleExportExcel}
-            className="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-4 py-2 rounded-xl shadow-sm flex items-center gap-1.5 transition-all"
+            className="bg-sage hover:bg-sage-hover text-white text-xs font-bold px-4 py-2 rounded-xl shadow-sm flex items-center gap-1.5 transition-all"
           >
             <FileSpreadsheet className="w-4 h-4" />
             <span>Download Excel (.xlsx)</span>
           </button>
           <button
             onClick={() => window.print()}
-            className="bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 text-xs font-semibold px-4 py-2 rounded-xl flex items-center gap-1.5 transition-all"
+            className="bg-subtle hover:bg-[#e2e8f2] border border-line text-slate-700 text-xs font-semibold px-4 py-2 rounded-xl flex items-center gap-1.5 transition-all"
           >
-            <Printer className="w-4 h-4 text-blue-600" />
+            <Printer className="w-4 h-4 text-brand" />
             <span>Cetak PDF</span>
           </button>
         </div>
       </div>
 
       {/* Report Tabs */}
-      <div className="flex items-center gap-2 border-b border-slate-200 dark:border-slate-700 pb-2">
+      <div className="flex flex-wrap items-center gap-2 border-b border-line pb-2.5">
         <button
           onClick={() => setActiveTab('kelas')}
           className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
             activeTab === 'kelas'
-              ? 'bg-blue-600 text-white shadow-md'
-              : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100'
+              ? 'bg-brand text-white shadow-sm'
+              : 'bg-card text-slate-600 border border-line hover:bg-subtle'
           }`}
         >
           Laporan SPP Per Kelas
@@ -154,8 +146,8 @@ export default function LaporanKeuanganPage() {
           onClick={() => setActiveTab('tunggakan')}
           className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
             activeTab === 'tunggakan'
-              ? 'bg-blue-600 text-white shadow-md'
-              : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100'
+              ? 'bg-brand text-white shadow-sm'
+              : 'bg-card text-slate-600 border border-line hover:bg-subtle'
           }`}
         >
           Laporan Tunggakan Siswa
@@ -164,8 +156,8 @@ export default function LaporanKeuanganPage() {
           onClick={() => setActiveTab('rekap')}
           className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
             activeTab === 'rekap'
-              ? 'bg-blue-600 text-white shadow-md'
-              : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100'
+              ? 'bg-brand text-white shadow-sm'
+              : 'bg-card text-slate-600 border border-line hover:bg-subtle'
           }`}
         >
           Rekap Kas &amp; Total Pemasukan
@@ -174,13 +166,13 @@ export default function LaporanKeuanganPage() {
 
       {/* Filter Select */}
       {activeTab !== 'rekap' && (
-        <div className="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center gap-3">
+        <div className="bg-card p-4 rounded-xl border border-line shadow-[0_1px_2px_rgba(15,23,42,0.03)] flex items-center gap-3">
           <Filter className="w-4 h-4 text-slate-400" />
-          <span className="text-xs font-semibold text-slate-500">Pilih Kelas:</span>
+          <span className="text-xs font-semibold text-slate-600">Pilih Kelas:</span>
           <select
             value={selectedClass}
             onChange={(e) => setSelectedClass(e.target.value)}
-            className="py-1.5 px-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white"
+            className="py-1.5 px-3 bg-subtle border border-line rounded-xl text-xs text-slate-800 focus:outline-none focus:border-brand"
           >
             <option value="">Semua Kelas Rombel</option>
             {kelasList.map((k) => (
@@ -193,19 +185,22 @@ export default function LaporanKeuanganPage() {
       )}
 
       {/* Printable Area with Kop Surat */}
-      <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-4 printable-area">
-        {/* Kop Surat for Print layout */}
-        <div className="hidden print:block text-center border-b-2 border-slate-900 pb-4 mb-4">
+      <div className="bg-card p-6 rounded-2xl border border-line shadow-[0_1px_2px_rgba(15,23,42,0.03)] space-y-4 printable-area">
+        <div className="hidden print:block text-center border-b-2 border-slate-800 pb-4 mb-4">
           <h2 className="text-lg font-bold uppercase m-0">SMA SWASTA PERSIAPAN STABAT</h2>
-          <p className="text-xs m-0">Jl. KH. Zainul Arifin No. 12, Stabat, Kab. Langkat | NPSN: 10201234</p>
+          <p className="text-xs m-0">Jl. HIB Tembeleng, Kec. Stabat, Kab. Langkat | NPSN: 10201322</p>
           <p className="text-xs font-bold m-0 mt-1 uppercase">LAPORAN KEUANGAN SEKOLAH</p>
         </div>
 
+        {loading && (
+          <div className="p-8 text-center text-xs text-slate-500">Memuat data laporan...</div>
+        )}
+
         {/* TAB 1: Matriks Per Kelas */}
-        {activeTab === 'kelas' && (
+        {!loading && activeTab === 'kelas' && (
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse text-xs">
-              <thead className="bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-300 font-bold border-b">
+              <thead className="bg-subtle text-slate-600 font-bold border-b border-line">
                 <tr>
                   <th className="p-2.5">NIS</th>
                   <th className="p-2.5">NISN</th>
@@ -225,7 +220,7 @@ export default function LaporanKeuanganPage() {
                   <th className="p-2.5 text-center">Jun</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-slate-700/60">
+              <tbody className="divide-y divide-line/70">
                 {reportData?.siswaList?.map((s: any) => {
                   const bMap: any = {};
                   s.tagihanBulanan?.forEach((t: any) => {
@@ -235,19 +230,19 @@ export default function LaporanKeuanganPage() {
                   const bulanList = ['Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember', 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni'];
 
                   return (
-                    <tr key={s.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/30">
-                      <td className="p-2.5 font-mono">{s.nis || '-'}</td>
+                    <tr key={s.id} className="hover:bg-subtle/70">
+                      <td className="p-2.5 font-mono text-slate-700">{s.nis || '-'}</td>
                       <td className="p-2.5 font-mono text-slate-500">{s.nisn || '-'}</td>
-                      <td className="p-2.5 font-bold text-slate-900 dark:text-white">{s.namaSiswa}</td>
+                      <td className="p-2.5 font-bold text-slate-800">{s.namaSiswa}</td>
                       <td className="p-2.5 font-medium text-slate-500">{s.kelas?.namaKelas || '-'}</td>
                       {bulanList.map((b) => (
                         <td key={b} className="p-2.5 text-center">
                           {bMap[b] ? (
-                            <span className="inline-block w-4 h-4 rounded-full bg-emerald-500 text-white font-bold text-[10px] leading-4">
+                            <span className="inline-block w-4 h-4 rounded-full bg-sage text-white font-bold text-[10px] leading-4">
                               ✓
                             </span>
                           ) : (
-                            <span className="text-slate-300 dark:text-slate-600">x</span>
+                            <span className="text-slate-300">•</span>
                           )}
                         </td>
                       ))}
@@ -260,10 +255,10 @@ export default function LaporanKeuanganPage() {
         )}
 
         {/* TAB 2: Tunggakan */}
-        {activeTab === 'tunggakan' && (
+        {!loading && activeTab === 'tunggakan' && (
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse text-xs">
-              <thead className="bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-300 font-bold border-b">
+              <thead className="bg-subtle text-slate-600 font-bold border-b border-line">
                 <tr>
                   <th className="p-3">NIS</th>
                   <th className="p-3">NISN</th>
@@ -274,17 +269,17 @@ export default function LaporanKeuanganPage() {
                   <th className="p-3">Aksi WA Reminder</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-slate-700/60">
+              <tbody className="divide-y divide-line/70">
                 {reportData?.report?.map((r: any) => (
-                  <tr key={r.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/30">
-                    <td className="p-3 font-mono font-bold text-blue-600">{r.nis || '-'}</td>
+                  <tr key={r.id} className="hover:bg-subtle/70">
+                    <td className="p-3 font-mono font-bold text-brand">{r.nis || '-'}</td>
                     <td className="p-3 font-mono text-slate-500">{r.nisn || '-'}</td>
-                    <td className="p-3 font-bold text-slate-900 dark:text-white">{r.namaSiswa}</td>
-                    <td className="p-3 font-medium">{r.kelas}</td>
-                    <td className="p-3 font-medium text-rose-600">
+                    <td className="p-3 font-bold text-slate-800">{r.namaSiswa}</td>
+                    <td className="p-3 font-medium text-slate-600">{r.kelas}</td>
+                    <td className="p-3 font-medium text-brick-text">
                       {r.unpaidMonths?.join(', ') || 'Lunas SPP'}
                     </td>
-                    <td className="p-3 font-mono font-bold text-rose-600">{formatRp(r.totalTunggakan)}</td>
+                    <td className="p-3 font-mono font-bold text-brick">{formatRp(r.totalTunggakan)}</td>
                     <td className="p-3">
                       {r.hpOrtu && (
                         <a
@@ -295,7 +290,7 @@ export default function LaporanKeuanganPage() {
                           )}`}
                           target="_blank"
                           rel="noreferrer"
-                          className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-[11px] font-bold inline-flex items-center gap-1"
+                          className="px-2.5 py-1 bg-sage hover:bg-sage-hover text-white rounded-lg text-[11px] font-bold inline-flex items-center gap-1"
                         >
                           <MessageSquare className="w-3 h-3" />
                           <span>Kirim WA Billing</span>
@@ -310,24 +305,24 @@ export default function LaporanKeuanganPage() {
         )}
 
         {/* TAB 3: Rekap Kas & Total Pemasukan */}
-        {activeTab === 'rekap' && (
+        {!loading && activeTab === 'rekap' && (
           <div className="space-y-6">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="p-5 bg-blue-50 dark:bg-blue-950/40 rounded-2xl border border-blue-200 dark:border-blue-800">
-                <span className="text-xs text-blue-600 dark:text-blue-400 font-semibold block">Total Pemasukan SPP Bulanan</span>
-                <span className="text-xl font-bold font-mono text-blue-700 dark:text-blue-300">
+              <div className="p-5 bg-brand-soft/65 rounded-2xl border border-brand-border">
+                <span className="text-xs text-brand-text font-semibold block">Total Pemasukan SPP Bulanan</span>
+                <span className="text-xl font-bold font-mono text-slate-800 mt-1 block">
                   {formatRp(reportData?.totalSppPemasukan || 0)}
                 </span>
               </div>
-              <div className="p-5 bg-emerald-50 dark:bg-emerald-950/40 rounded-2xl border border-emerald-200 dark:border-emerald-800">
-                <span className="text-xs text-emerald-600 dark:text-emerald-400 font-semibold block">Total Kas &amp; Penerimaan Lain</span>
-                <span className="text-xl font-bold font-mono text-emerald-700 dark:text-emerald-300">
+              <div className="p-5 bg-sage-soft/75 rounded-2xl border border-sage-border">
+                <span className="text-xs text-sage-text font-semibold block">Total Kas &amp; Penerimaan Lain</span>
+                <span className="text-xl font-bold font-mono text-slate-800 mt-1 block">
                   {formatRp(reportData?.totalKasPemasukan || 0)}
                 </span>
               </div>
-              <div className="p-5 bg-indigo-600 text-white rounded-2xl shadow-md">
-                <span className="text-xs text-indigo-200 font-semibold block">Total Akumulasi Pemasukan Keuangan</span>
-                <span className="text-2xl font-black font-mono">
+              <div className="p-5 bg-surface-container text-on-surface rounded-lg border border-line-strong">
+                <span className="text-xs text-primary font-semibold block">Total Akumulasi Pemasukan Keuangan</span>
+                <span className="text-2xl font-bold font-mono text-brand-text mt-0.5 block">
                   {formatRp(reportData?.totalPemasukan || 0)}
                 </span>
               </div>
@@ -335,9 +330,9 @@ export default function LaporanKeuanganPage() {
 
             {reportData?.kasEntries?.length > 0 && (
               <div className="overflow-x-auto">
-                <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-2">Rincian Catatan Buku Kas</h3>
+                <h3 className="text-sm font-bold text-slate-800 mb-2">Rincian Catatan Buku Kas</h3>
                 <table className="w-full text-left border-collapse text-xs">
-                  <thead className="bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-300 font-bold border-b">
+                  <thead className="bg-subtle text-slate-600 font-bold border-b border-line">
                     <tr>
                       <th className="p-3">Tanggal</th>
                       <th className="p-3">Uraian / Keterangan</th>
@@ -345,13 +340,13 @@ export default function LaporanKeuanganPage() {
                       <th className="p-3">Jumlah (Rp)</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100 dark:divide-slate-700/60">
+                  <tbody className="divide-y divide-line/70">
                     {reportData.kasEntries.map((k: any) => (
-                      <tr key={k.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/30">
-                        <td className="p-3 font-mono">{new Date(k.tgl).toLocaleDateString('id-ID')}</td>
-                        <td className="p-3 font-semibold text-slate-900 dark:text-white">{k.uraian}</td>
-                        <td className="p-3 font-bold uppercase">{k.jenis}</td>
-                        <td className="p-3 font-mono font-bold text-emerald-600">
+                      <tr key={k.id} className="hover:bg-subtle/70">
+                        <td className="p-3 font-mono text-slate-500">{new Date(k.tgl).toLocaleDateString('id-ID')}</td>
+                        <td className="p-3 font-semibold text-slate-800">{k.uraian}</td>
+                        <td className="p-3 font-bold uppercase text-slate-600">{k.jenis}</td>
+                        <td className="p-3 font-mono font-bold text-sage">
                           {formatRp(k.jenis === 'masuk' ? k.pemasukan : k.pengeluaran)}
                         </td>
                       </tr>

@@ -1,10 +1,18 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { isAdminSession } from '@/lib/session';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 export async function GET() {
+  if (!isAdminSession()) {
+    return NextResponse.json(
+      { error: 'Akses ditolak. Hanya Administrator yang dapat mengakses pengaturan sistem.' },
+      { status: 403 }
+    );
+  }
+
   try {
     let settings = await prisma.pengaturan.findFirst({ where: { id: 1 } });
     if (!settings) {
@@ -17,6 +25,13 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  if (!isAdminSession()) {
+    return NextResponse.json(
+      { error: 'Akses ditolak. Hanya Administrator yang dapat mengubah pengaturan sistem.' },
+      { status: 403 }
+    );
+  }
+
   try {
     const body = await request.json();
 

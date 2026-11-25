@@ -35,9 +35,11 @@ export default function RootLayout({
   };
 
   useEffect(() => {
+    // Ensure legacy dark-mode class/storage is cleared for consistent soft-light theme
+    document.documentElement.classList.remove('dark');
+    localStorage.removeItem('theme');
     syncUserSession();
 
-    // Listen for storage events (e.g. login/logout)
     window.addEventListener('storage', syncUserSession);
     return () => window.removeEventListener('storage', syncUserSession);
   }, [pathname]);
@@ -82,7 +84,6 @@ export default function RootLayout({
   }, [isLoginPage]);
 
   useEffect(() => {
-    // Load academic years
     fetch('/api/master/tahun-ajaran')
       .then((res) => res.json())
       .then((data) => {
@@ -96,7 +97,7 @@ export default function RootLayout({
   }, []);
 
   return (
-    <html lang="id" className="light">
+    <html lang="id">
       <head>
         <title>SISMA - Sistem Informasi Keuangan Sekolah</title>
         <meta name="description" content="Aplikasi Kelola SPP & Keuangan Sekolah SMA Swasta Persiapan Stabat" />
@@ -105,7 +106,7 @@ export default function RootLayout({
         <link rel="shortcut icon" href="/logo_sisma.png" type="image/png" />
         <link rel="apple-touch-icon" href="/logo_sisma.png" />
       </head>
-      <body className="bg-slate-900 text-slate-900 dark:text-slate-100 h-screen w-screen overflow-hidden flex flex-col font-sans transition-colors duration-200">
+      <body className="bg-canvas text-slate-800 h-screen w-screen overflow-hidden flex flex-col font-sans">
         {!isLoginPage && (
           <Navbar
             onOpenCommandPalette={() => setCommandPaletteOpen(true)}
@@ -126,7 +127,7 @@ export default function RootLayout({
             />
           )}
 
-          <main className={`flex-1 overflow-y-auto ${isLoginPage ? 'p-0' : 'p-3 sm:p-4 md:p-6'} transition-all h-full max-w-full overflow-x-hidden`}>
+          <main className={`flex-1 overflow-y-auto bg-canvas ${isLoginPage ? 'p-0' : 'p-3 sm:p-4 md:p-6'} transition-all h-full max-w-full overflow-x-hidden`}>
             {children}
           </main>
         </div>

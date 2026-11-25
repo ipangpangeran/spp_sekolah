@@ -1,7 +1,6 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
-  darkMode: "class",
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -10,57 +9,86 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        primary: "#004ac6",
-        "on-primary": "#ffffff",
-        "primary-container": "#2563eb",
-        "on-primary-container": "#eeefff",
-        "primary-fixed": "#dbe1ff",
-        "primary-fixed-dim": "#b4c5ff",
-        "on-primary-fixed": "#00174b",
-        "on-primary-fixed-variant": "#003ea8",
-        
-        secondary: "#575e70",
-        "on-secondary": "#ffffff",
-        "secondary-container": "#d9dff5",
-        "on-secondary-container": "#5c6274",
-        "secondary-fixed": "#dce2f7",
-        "secondary-fixed-dim": "#c0c6db",
+        // Exact Stitch Sisma Enterprise Palette
+        surface: "#faf8ff",
+        "surface-dim": "#d8d9e7",
+        "surface-bright": "#faf8ff",
+        "surface-variant": "#e1e2ef",
+        "surface-container-lowest": "#ffffff",
+        "surface-container-low": "#f2f3ff",
+        "surface-container": "#ecedfb",
+        "surface-container-high": "#e6e7f5",
+        "surface-container-highest": "#e1e2ef",
+        "on-surface": "#191b25",
+        "on-surface-variant": "#414659",
+        outline: "#71768b",
+        "outline-variant": "#c1c5dd",
 
-        tertiary: "#006242",
+        primary: "#00677e",
+        "on-primary": "#ffffff",
+        "primary-container": "#b5ebff",
+        "on-primary-container": "#004e60",
+        "primary-fixed": "#b5ebff",
+        "primary-fixed-dim": "#5bd5fa",
+        "on-primary-fixed": "#001f28",
+        "on-primary-fixed-variant": "#004e60",
+
+        secondary: "#04677e",
+        "on-secondary": "#ffffff",
+        "secondary-container": "#b5ebff",
+        "on-secondary-container": "#004e60",
+        "secondary-fixed": "#b5ebff",
+        "secondary-fixed-dim": "#87d1eb",
+        "on-secondary-fixed": "#001f28",
+
+        tertiary: "#4b5c92",
         "on-tertiary": "#ffffff",
-        "tertiary-container": "#007d55",
-        "on-tertiary-container": "#bdffdb",
-        "tertiary-fixed": "#6ffbbe",
-        "tertiary-fixed-dim": "#4edea3",
-        
+        "tertiary-container": "#dbe1ff",
+        "on-tertiary-container": "#324478",
+        "tertiary-fixed": "#dbe1ff",
+
         error: "#ba1a1a",
         "on-error": "#ffffff",
         "error-container": "#ffdad6",
         "on-error-container": "#93000a",
 
-        surface: "#f7f9fb",
-        "on-surface": "#191c1e",
-        "surface-variant": "#e0e3e5",
-        "on-surface-variant": "#434655",
-        "surface-bright": "#f7f9fb",
-        "surface-dim": "#d8dadc",
-        "surface-tint": "#0053db",
+        // Stripe-inspired Stitch workspace tokens
+        "stripe-dark": "#0a2540",
+        "stripe-gray": "#f7f9fc",
+        "stripe-border": "#e3e8ee",
+        "stripe-blue": "#635bff",
 
-        "surface-container-lowest": "#ffffff",
-        "surface-container-low": "#f2f4f6",
-        "surface-container": "#eceef0",
-        "surface-container-high": "#e6e8ea",
-        "surface-container-highest": "#e0e3e5",
+        // Semantic aliases used across pages
+        canvas: "#f7f9fc",
+        panel: "#ffffff",
+        card: "#ffffff",
+        subtle: "#f4f6fb",
+        line: "#e2e8f0",
+        "line-strong": "#cbd5e1",
+        sidebar: "#001f28",
 
-        "inverse-surface": "#2d3133",
-        "inverse-on-surface": "#eff1f3",
-        "inverse-primary": "#b4c5ff",
-
-        background: "#f7f9fb",
-        "on-background": "#191c1e",
-
-        outline: "#737686",
-        "outline-variant": "#c3c6d7",
+        brand: {
+          DEFAULT: "#00677e",
+          hover: "#004e60",
+          bright: "#5bd5fa",
+          soft: "#e6f6fc",
+          border: "#b5ebff",
+          text: "#004e60",
+        },
+        sage: {
+          DEFAULT: "#059669",
+          hover: "#047857",
+          soft: "#ecfdf5",
+          border: "#a7f3d0",
+          text: "#065f46",
+        },
+        brick: {
+          DEFAULT: "#ba1a1a",
+          hover: "#93000a",
+          soft: "#ffdad6",
+          border: "#f5b8b2",
+          text: "#93000a",
+        },
       },
       borderRadius: {
         DEFAULT: "0.25rem",
@@ -73,6 +101,10 @@ const config: Config = {
       fontFamily: {
         sans: ["Inter", "sans-serif"],
         mono: ["JetBrains Mono", "monospace"],
+      },
+      boxShadow: {
+        stripe: "0 2px 5px -1px rgba(50, 50, 93, 0.05), 0 1px 3px -1px rgba(0, 0, 0, 0.05)",
+        premium: "0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.04)",
       },
     },
   },

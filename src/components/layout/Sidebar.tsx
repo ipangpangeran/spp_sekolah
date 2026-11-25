@@ -69,20 +69,20 @@ export default function Sidebar({
     {
       group: 'PENGATURAN',
       items: [
-        { name: 'Pengaturan Sistem', href: '/pengaturan', icon: Settings, roles: ['admin', 'bendahara'] },
+        { name: 'Pengaturan Sistem', href: '/pengaturan', icon: Settings, roles: ['admin'] },
       ],
     },
   ];
 
   const renderNavContent = () => (
-    <div className="flex-1 overflow-y-auto py-4 px-3 space-y-6">
+    <div className="flex-1 overflow-y-auto py-4 px-3 space-y-5">
       {navigation.map((group, idx) => {
         const filteredItems = group.items.filter((item) => item.roles.includes(userRole));
         if (filteredItems.length === 0) return null;
 
         return (
           <div key={idx}>
-            <h2 className="text-[11px] font-semibold text-slate-500 tracking-wider uppercase px-3 mb-2">
+            <h2 className="text-[10px] font-semibold text-[#87d1eb]/65 tracking-wider uppercase px-3 mb-1.5">
               {group.group}
             </h2>
             <div className="space-y-1">
@@ -95,13 +95,13 @@ export default function Sidebar({
                     key={item.href}
                     href={item.href}
                     onClick={() => onCloseMobile && onCloseMobile()}
-                    className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium transition-all group relative ${
+                    className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs transition-all duration-200 group ${
                       isActive
-                        ? 'bg-blue-600/10 text-blue-400 font-bold border-l-4 border-blue-500 pl-2 shadow-sm'
-                        : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
+                        ? 'bg-[#00677e]/35 text-[#5bd5fa] font-semibold border border-[#5bd5fa]/20'
+                        : 'text-[#b5ebff]/80 font-medium hover:bg-[#b5ebff]/10 hover:text-white'
                     }`}
                   >
-                    <Icon className={`w-4 h-4 ${isActive ? 'text-blue-400' : 'text-slate-400 group-hover:text-slate-200'}`} />
+                    <Icon className={`w-[18px] h-[18px] shrink-0 ${isActive ? 'text-[#5bd5fa]' : 'text-[#87d1eb]/75 group-hover:text-white'}`} />
                     <span>{item.name}</span>
                   </Link>
                 );
@@ -115,15 +115,15 @@ export default function Sidebar({
 
   return (
     <>
-      {/* DESKTOP SIDEBAR */}
-      <aside className="hidden md:flex w-64 shrink-0 bg-slate-950 text-slate-300 border-r border-slate-800 flex-col h-full select-none z-20">
+      {/* DESKTOP SIDEBAR: #001f28 Stitch Midnight Teal */}
+      <aside className="hidden md:flex w-[260px] shrink-0 bg-[#001f28] text-white border-r border-[#003443] flex-col h-full select-none z-20 shadow-lg">
         {renderNavContent()}
-        <div className="p-3 border-t border-slate-800 bg-slate-900/50 text-[11px] text-slate-500">
+        <div className="p-3.5 border-t border-[#004e60]/60 bg-[#001820] text-[11px] text-[#87d1eb]/80">
           <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-            <span>Internal System</span>
+            <div className="w-2 h-2 rounded-full bg-[#5bd5fa]"></div>
+            <span className="font-medium text-white">Sistem Internal Aktif</span>
           </div>
-          <p className="mt-1 m-0 text-[10px] text-slate-600">
+          <p className="mt-0.5 m-0 text-[10px] text-[#87d1eb]/60">
             SMA Persiapan Stabat &copy; 2026
           </p>
         </div>
@@ -133,15 +133,15 @@ export default function Sidebar({
       {isOpenMobile && (
         <div className="fixed inset-0 z-50 md:hidden flex">
           <div
-            className="fixed inset-0 bg-slate-900/80 backdrop-blur-sm transition-opacity"
+            className="fixed inset-0 bg-slate-900/45 backdrop-blur-sm transition-opacity"
             onClick={onCloseMobile}
           />
-          <div className="relative w-64 max-w-[80vw] bg-slate-950 text-slate-300 h-full flex flex-col shadow-2xl border-r border-slate-800 z-50">
-            <div className="p-4 border-b border-slate-800 flex items-center justify-between">
+          <div className="relative w-[260px] max-w-[80vw] bg-[#001f28] text-white h-full flex flex-col shadow-xl border-r border-[#004e60] z-50">
+            <div className="p-4 border-b border-[#004e60]/60 flex items-center justify-between bg-[#001820]">
               <span className="text-xs font-bold text-white uppercase tracking-wider">Navigasi SISMA</span>
               <button
                 onClick={onCloseMobile}
-                className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800"
+                className="p-1 rounded-lg text-[#87d1eb] hover:text-white hover:bg-white/10"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -149,8 +149,8 @@ export default function Sidebar({
 
             {renderNavContent()}
 
-            <div className="p-3 border-t border-slate-800 bg-slate-900/50 text-[11px] text-slate-500">
-              <p className="m-0 text-[10px] text-slate-500">SMA Persiapan Stabat &copy; 2026</p>
+            <div className="p-3 border-t border-[#004e60]/60 bg-[#001820] text-[11px] text-[#87d1eb]/80">
+              <p className="m-0 text-[10px] text-[#87d1eb]/70">SMA Persiapan Stabat &copy; 2026</p>
             </div>
           </div>
         </div>

@@ -14,7 +14,6 @@ export default function MasterKelasPage() {
   const [namaKelas, setNamaKelas] = useState('');
   const [keterangan, setKeterangan] = useState('');
 
-  // Import State
   const [importFile, setImportFile] = useState<File | null>(null);
   const [importing, setImporting] = useState(false);
 
@@ -100,22 +99,10 @@ export default function MasterKelasPage() {
 
   const handleDownloadTemplate = () => {
     const templateData = [
-      {
-        'Nama Kelas': 'X IPA 1',
-        Keterangan: 'Kelas X MIPA Unggulan 1',
-      },
-      {
-        'Nama Kelas': 'X IPA 2',
-        Keterangan: 'Kelas X MIPA Unggulan 2',
-      },
-      {
-        'Nama Kelas': 'XI SAINTEK I',
-        Keterangan: 'Kelas XI Saintek 1',
-      },
-      {
-        'Nama Kelas': 'XII IPS 1',
-        Keterangan: 'Kelas XII Soshum 1',
-      },
+      { 'Nama Kelas': 'X IPA 1', Keterangan: 'Kelas X MIPA Unggulan 1' },
+      { 'Nama Kelas': 'X IPA 2', Keterangan: 'Kelas X MIPA Unggulan 2' },
+      { 'Nama Kelas': 'XI SAINTEK I', Keterangan: 'Kelas XI Saintek 1' },
+      { 'Nama Kelas': 'XII IPS 1', Keterangan: 'Kelas XII Soshum 1' },
     ];
 
     const worksheet = XLSX.utils.json_to_sheet(templateData);
@@ -159,15 +146,15 @@ export default function MasterKelasPage() {
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
       {/* Header Bar */}
-      <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-card p-5 rounded-2xl border border-line shadow-[0_1px_2px_rgba(15,23,42,0.03)] flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <GraduationCap className="w-5 h-5 text-blue-600" />
-            <h1 className="text-xl font-bold text-slate-900 dark:text-white m-0">
+            <GraduationCap className="w-5 h-5 text-brand" />
+            <h1 className="text-xl font-bold text-slate-800 m-0">
               Master Data Kelas (Cohorts)
             </h1>
           </div>
-          <p className="text-xs text-slate-500 dark:text-slate-400 m-0">
+          <p className="text-xs text-slate-500 m-0 mt-0.5">
             Kelola kelompok kelas siswa SMA Swasta Persiapan Stabat &amp; Impor Batch via Excel.
           </p>
         </div>
@@ -175,7 +162,7 @@ export default function MasterKelasPage() {
         <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={() => setShowImportModal(true)}
-            className="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow-sm flex items-center gap-1.5 transition-all"
+            className="bg-sage hover:bg-sage-hover text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow-sm flex items-center gap-1.5 transition-all"
           >
             <Upload className="w-4 h-4" />
             <span>Import Excel Kelas</span>
@@ -183,7 +170,7 @@ export default function MasterKelasPage() {
 
           <button
             onClick={openAddModal}
-            className="bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold px-4 py-2 rounded-xl shadow-sm flex items-center gap-1.5 transition-all"
+            className="bg-brand hover:bg-brand-hover text-white text-xs font-bold px-4 py-2 rounded-xl shadow-sm flex items-center gap-1.5 transition-all"
           >
             <Plus className="w-4 h-4" />
             <span>Tambah Kelas Baru</span>
@@ -193,52 +180,56 @@ export default function MasterKelasPage() {
 
       {/* Grid Class Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {kelasList.map((k) => (
-          <div
-            key={k.id}
-            className="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-3 flex flex-col justify-between"
-          >
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-base font-bold text-slate-900 dark:text-white">
-                  {k.namaKelas}
-                </span>
-                <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 flex items-center gap-1">
-                  <Users className="w-3.5 h-3.5" />
-                  <span>{k._count?.siswa || 0} Siswa</span>
-                </span>
+        {loading ? (
+          <div className="col-span-full p-8 text-center text-xs text-slate-500">Memuat data kelas...</div>
+        ) : (
+          kelasList.map((k) => (
+            <div
+              key={k.id}
+              className="bg-card p-5 rounded-2xl border border-line shadow-[0_1px_2px_rgba(15,23,42,0.03)] space-y-3 flex flex-col justify-between"
+            >
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-base font-bold text-slate-800">
+                    {k.namaKelas}
+                  </span>
+                  <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-brand-soft text-brand-text border border-brand-border flex items-center gap-1">
+                    <Users className="w-3.5 h-3.5" />
+                    <span>{k._count?.siswa || 0} Siswa</span>
+                  </span>
+                </div>
+                <p className="text-xs text-slate-500 m-0">
+                  {k.keterangan || 'Tidak ada deskripsi'}
+                </p>
               </div>
-              <p className="text-xs text-slate-500 dark:text-slate-400 m-0">
-                {k.keterangan || 'Tidak ada deskripsi'}
-              </p>
-            </div>
 
-            <div className="flex items-center justify-end gap-1.5 pt-2 border-t border-slate-100 dark:border-slate-700/60">
-              <button
-                onClick={() => openEditModal(k)}
-                className="px-2.5 py-1 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 text-xs font-semibold flex items-center gap-1 transition-colors"
-              >
-                <Edit2 className="w-3.5 h-3.5" />
-                <span>Edit</span>
-              </button>
-              <button
-                onClick={() => handleDelete(k.id, k.namaKelas)}
-                className="px-2.5 py-1 rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-100 text-xs font-semibold flex items-center gap-1 transition-colors"
-              >
-                <Trash2 className="w-3.5 h-3.5" />
-                <span>Hapus</span>
-              </button>
+              <div className="flex items-center justify-end gap-1.5 pt-2 border-t border-line/70">
+                <button
+                  onClick={() => openEditModal(k)}
+                  className="px-2.5 py-1 rounded-lg bg-brand-soft text-brand hover:bg-brand-border/50 text-xs font-semibold flex items-center gap-1 transition-colors"
+                >
+                  <Edit2 className="w-3.5 h-3.5" />
+                  <span>Edit</span>
+                </button>
+                <button
+                  onClick={() => handleDelete(k.id, k.namaKelas)}
+                  className="px-2.5 py-1 rounded-lg bg-brick-soft text-brick hover:bg-brick-border/50 text-xs font-semibold flex items-center gap-1 transition-colors"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                  <span>Hapus</span>
+                </button>
+              </div>
             </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
 
       {/* MODAL 1: Tambah / Edit Kelas Manual */}
       {showModal && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 max-w-md w-full p-6 space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
-              <h3 className="text-sm font-bold text-slate-900 dark:text-white m-0">
+        <div className="fixed inset-0 z-50 bg-slate-700/35 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-card rounded-2xl shadow-xl border border-line max-w-md w-full p-6 space-y-4">
+            <div className="flex items-center justify-between border-b border-line pb-3">
+              <h3 className="text-sm font-bold text-slate-800 m-0">
                 {editItem ? `Edit Kelas '${editItem.namaKelas}'` : 'Tambah Kelas Baru'}
               </h3>
               <button onClick={() => setShowModal(false)} className="text-slate-400 hover:text-slate-600">
@@ -248,7 +239,7 @@ export default function MasterKelasPage() {
 
             <form onSubmit={handleSave} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                <label className="block text-xs font-semibold text-slate-600 mb-1">
                   Nama Kelas *
                 </label>
                 <input
@@ -257,12 +248,12 @@ export default function MasterKelasPage() {
                   value={namaKelas}
                   onChange={(e) => setNamaKelas(e.target.value)}
                   placeholder="Misal: X IPA 1, XI IPS 2, XII SAINTEK"
-                  className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-xs"
+                  className="w-full px-3.5 py-2.5 bg-subtle border border-line rounded-xl text-xs text-slate-800 focus:outline-none focus:bg-card focus:border-brand"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                <label className="block text-xs font-semibold text-slate-600 mb-1">
                   Keterangan (Opsional)
                 </label>
                 <input
@@ -270,7 +261,7 @@ export default function MasterKelasPage() {
                   value={keterangan}
                   onChange={(e) => setKeterangan(e.target.value)}
                   placeholder="Keterangan singkat kelas"
-                  className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-xs"
+                  className="w-full px-3.5 py-2.5 bg-subtle border border-line rounded-xl text-xs text-slate-800 focus:outline-none focus:bg-card focus:border-brand"
                 />
               </div>
 
@@ -278,13 +269,13 @@ export default function MasterKelasPage() {
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-semibold"
+                  className="px-4 py-2 bg-subtle hover:bg-[#e2e8f2] border border-line text-slate-700 rounded-xl text-xs font-semibold"
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold"
+                  className="px-4 py-2 bg-brand hover:bg-brand-hover text-white rounded-xl text-xs font-bold"
                 >
                   Simpan Kelas
                 </button>
@@ -296,12 +287,12 @@ export default function MasterKelasPage() {
 
       {/* MODAL 2: Import Excel Kelas */}
       {showImportModal && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 max-w-md w-full p-6 space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+        <div className="fixed inset-0 z-50 bg-slate-700/35 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-card rounded-2xl shadow-xl border border-line max-w-md w-full p-6 space-y-4">
+            <div className="flex items-center justify-between border-b border-line pb-3">
               <div className="flex items-center gap-2">
-                <FileSpreadsheet className="w-5 h-5 text-emerald-600" />
-                <h3 className="text-sm font-bold text-slate-900 dark:text-white m-0">
+                <FileSpreadsheet className="w-5 h-5 text-sage" />
+                <h3 className="text-sm font-bold text-slate-800 m-0">
                   Import Batch Data Kelas Excel
                 </h3>
               </div>
@@ -311,14 +302,14 @@ export default function MasterKelasPage() {
             </div>
 
             <form onSubmit={handleImportExcel} className="space-y-4">
-              <div className="p-3 bg-emerald-50/60 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800/60 rounded-xl flex items-center justify-between">
-                <span className="text-xs text-slate-700 dark:text-slate-300 font-medium">
+              <div className="p-3 bg-sage-soft border border-sage-border rounded-xl flex items-center justify-between">
+                <span className="text-xs text-sage-text font-medium">
                   Belum punya template Excel Kelas?
                 </span>
                 <button
                   type="button"
                   onClick={handleDownloadTemplate}
-                  className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold flex items-center gap-1 shadow-sm"
+                  className="px-3 py-1.5 bg-sage hover:bg-sage-hover text-white rounded-lg text-xs font-bold flex items-center gap-1 shadow-sm"
                 >
                   <Download className="w-3.5 h-3.5" />
                   <span>Download Template</span>
@@ -326,7 +317,7 @@ export default function MasterKelasPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                <label className="block text-xs font-semibold text-slate-600 mb-1.5">
                   Pilih Berkas Excel (.xlsx / .xls)
                 </label>
                 <input
@@ -334,7 +325,7 @@ export default function MasterKelasPage() {
                   accept=".xlsx, .xls"
                   required
                   onChange={(e) => setImportFile(e.target.files?.[0] || null)}
-                  className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-xs"
+                  className="w-full px-3 py-2 bg-subtle border border-line rounded-xl text-xs text-slate-800"
                 />
               </div>
 
@@ -342,14 +333,14 @@ export default function MasterKelasPage() {
                 <button
                   type="button"
                   onClick={() => setShowImportModal(false)}
-                  className="px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-semibold"
+                  className="px-4 py-2 bg-subtle hover:bg-[#e2e8f2] border border-line text-slate-700 rounded-xl text-xs font-semibold"
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
                   disabled={importing}
-                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white rounded-xl text-xs font-bold shadow-sm"
+                  className="px-4 py-2 bg-sage hover:bg-sage-hover disabled:opacity-50 text-white rounded-xl text-xs font-bold shadow-sm"
                 >
                   {importing ? 'Mengimpor...' : 'Proses Import Excel'}
                 </button>

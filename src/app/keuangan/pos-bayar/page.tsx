@@ -91,22 +91,22 @@ export default function PosBayarPage() {
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
-      <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-card p-5 rounded-2xl border border-line shadow-[0_1px_2px_rgba(15,23,42,0.03)] flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <Layers className="w-5 h-5 text-blue-600" />
-            <h1 className="text-xl font-bold text-slate-900 dark:text-white m-0">
+            <Layers className="w-5 h-5 text-brand" />
+            <h1 className="text-xl font-bold text-slate-800 m-0">
               Pos Bayar (Kategori Biaya Sekolah)
             </h1>
           </div>
-          <p className="text-xs text-slate-500 dark:text-slate-400 m-0">
+          <p className="text-xs text-slate-500 m-0 mt-0.5">
             Definisi pos penerimaan keuangan seperti SPP, Uang Pembangunan, Seragam, dan Uang Ujian.
           </p>
         </div>
 
         <button
           onClick={openAddModal}
-          className="bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold px-4 py-2 rounded-xl shadow-sm flex items-center gap-1.5 transition-all"
+          className="bg-brand hover:bg-brand-hover text-white text-xs font-bold px-4 py-2 rounded-xl shadow-sm flex items-center gap-1.5 transition-all"
         >
           <Plus className="w-4 h-4" />
           <span>Tambah Pos Bayar</span>
@@ -117,28 +117,28 @@ export default function PosBayarPage() {
         {posList.map((p) => (
           <div
             key={p.id}
-            className="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-3 flex flex-col justify-between"
+            className="bg-card p-5 rounded-2xl border border-line shadow-[0_1px_2px_rgba(15,23,42,0.03)] space-y-3 flex flex-col justify-between"
           >
             <div className="space-y-1">
-              <h3 className="text-base font-bold text-slate-900 dark:text-white m-0">
+              <h3 className="text-base font-bold text-slate-800 m-0">
                 {p.namaPosBayar}
               </h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 m-0">
+              <p className="text-xs text-slate-500 m-0">
                 {p.keterangan || 'Tidak ada keterangan tambahan.'}
               </p>
             </div>
 
-            <div className="flex items-center justify-end gap-1.5 pt-2 border-t border-slate-100 dark:border-slate-700/60">
+            <div className="flex items-center justify-end gap-1.5 pt-2 border-t border-line/70">
               <button
                 onClick={() => openEditModal(p)}
-                className="px-2.5 py-1 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 text-xs font-semibold flex items-center gap-1 transition-colors"
+                className="px-2.5 py-1 rounded-lg bg-brand-soft text-brand hover:bg-brand-border/50 text-xs font-semibold flex items-center gap-1 transition-colors"
               >
                 <Edit2 className="w-3.5 h-3.5" />
                 <span>Edit</span>
               </button>
               <button
                 onClick={() => handleDelete(p.id, p.namaPosBayar)}
-                className="px-2.5 py-1 rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-100 text-xs font-semibold flex items-center gap-1 transition-colors"
+                className="px-2.5 py-1 rounded-lg bg-brick-soft text-brick hover:bg-brick-border/50 text-xs font-semibold flex items-center gap-1 transition-colors"
               >
                 <Trash2 className="w-3.5 h-3.5" />
                 <span>Hapus</span>
@@ -149,10 +149,10 @@ export default function PosBayarPage() {
       </div>
 
       {showModal && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 max-w-md w-full p-6 space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
-              <h3 className="text-sm font-bold text-slate-900 dark:text-white m-0">
+        <div className="fixed inset-0 z-50 bg-slate-700/35 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-card rounded-2xl shadow-xl border border-line max-w-md w-full p-6 space-y-4">
+            <div className="flex items-center justify-between border-b border-line pb-3">
+              <h3 className="text-sm font-bold text-slate-800 m-0">
                 {editItem ? 'Edit Pos Bayar' : 'Tambah Pos Bayar'}
               </h3>
               <button onClick={() => setShowModal(false)} className="text-slate-400 hover:text-slate-600">
@@ -162,32 +162,32 @@ export default function PosBayarPage() {
 
             <form onSubmit={handleSave} className="space-y-3">
               <div>
-                <label className="block text-xs font-semibold text-slate-500 mb-1">Nama Pos Bayar *</label>
+                <label className="block text-xs font-semibold text-slate-600 mb-1">Nama Pos Bayar *</label>
                 <input
                   type="text"
                   required
                   value={namaPosBayar}
                   onChange={(e) => setNamaPosBayar(e.target.value)}
                   placeholder="misal: SPP Bulanan"
-                  className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-xs text-slate-900 dark:text-white"
+                  className="w-full px-3 py-2 bg-subtle border border-line rounded-xl text-xs text-slate-800 focus:outline-none focus:bg-card focus:border-brand"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-500 mb-1">Keterangan</label>
+                <label className="block text-xs font-semibold text-slate-600 mb-1">Keterangan</label>
                 <input
                   type="text"
                   value={keterangan}
                   onChange={(e) => setKeterangan(e.target.value)}
                   placeholder="misal: Sumbangan Pembinaan Pendidikan"
-                  className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-xs text-slate-900 dark:text-white"
+                  className="w-full px-3 py-2 bg-subtle border border-line rounded-xl text-xs text-slate-800 focus:outline-none focus:bg-card focus:border-brand"
                 />
               </div>
 
               <div className="pt-2">
                 <button
                   type="submit"
-                  className="w-full py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold shadow-sm"
+                  className="w-full py-2.5 bg-brand hover:bg-brand-hover text-white rounded-xl text-xs font-bold shadow-sm"
                 >
                   Simpan Pos Bayar
                 </button>

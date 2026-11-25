@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Search, X, User, ArrowRight, CreditCard, LayoutDashboard, FileSpreadsheet } from 'lucide-react';
+import { Search, X, ArrowRight, CreditCard, LayoutDashboard, FileSpreadsheet } from 'lucide-react';
 
 interface CommandPaletteProps {
   isOpen: boolean;
@@ -19,7 +19,7 @@ export default function CommandPalette({ isOpen, onClose }: CommandPaletteProps)
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault();
-        isOpen ? onClose() : null; // Toggle in parent if needed
+        if (isOpen) onClose();
       }
       if (e.key === 'Escape' && isOpen) {
         onClose();
@@ -65,18 +65,18 @@ export default function CommandPalette({ isOpen, onClose }: CommandPaletteProps)
   ];
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-start justify-center pt-20 px-4 animate-fade-in">
-      <div className="w-full max-w-xl bg-white dark:bg-slate-900 rounded-xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden">
+    <div className="fixed inset-0 z-50 bg-slate-700/35 backdrop-blur-sm flex items-start justify-center pt-20 px-4">
+      <div className="w-full max-w-xl bg-card rounded-2xl shadow-xl border border-line overflow-hidden">
         {/* Search Bar */}
-        <div className="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center gap-3">
-          <Search className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+        <div className="p-4 border-b border-line bg-panel flex items-center gap-3">
+          <Search className="w-5 h-5 text-brand" />
           <input
             type="text"
             autoFocus
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Cari NIS, NISN, atau Nama Siswa... (misal: ABDUL)"
-            className="w-full bg-transparent text-sm focus:outline-none text-slate-800 dark:text-white placeholder-slate-400"
+            className="w-full bg-transparent text-sm focus:outline-none text-slate-800 placeholder-slate-400"
           />
           {query && (
             <button onClick={() => setQuery('')} className="text-slate-400 hover:text-slate-600">
@@ -86,7 +86,7 @@ export default function CommandPalette({ isOpen, onClose }: CommandPaletteProps)
         </div>
 
         {/* Results / Suggestions */}
-        <div className="p-3 max-h-96 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800">
+        <div className="p-3 max-h-96 overflow-y-auto divide-y divide-line/60">
           {loading && (
             <div className="py-6 text-center text-xs text-slate-500">Mencari data siswa...</div>
           )}
@@ -104,22 +104,22 @@ export default function CommandPalette({ isOpen, onClose }: CommandPaletteProps)
                 <button
                   key={s.id}
                   onClick={() => navigateToStudent(s.nis)}
-                  className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-blue-50 dark:hover:bg-slate-800 text-left transition-colors group"
+                  className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-brand-soft/60 text-left transition-colors group"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 flex items-center justify-center font-bold text-xs">
+                    <div className="w-8 h-8 rounded-full bg-brand-soft text-brand-text border border-brand-border flex items-center justify-center font-bold text-xs">
                       {s.namaSiswa.charAt(0)}
                     </div>
                     <div>
-                      <p className="text-xs font-semibold text-slate-800 dark:text-slate-100 m-0">
+                      <p className="text-xs font-semibold text-slate-800 m-0">
                         {s.namaSiswa}
                       </p>
-                      <p className="text-[11px] text-slate-500 dark:text-slate-400 m-0">
-                        NIS: {s.nis} | Kelas: {s.kelas?.namaKelas}
+                      <p className="text-[11px] text-slate-500 m-0">
+                        NIS: {s.nis || '-'} | Kelas: {s.kelas?.namaKelas}
                       </p>
                     </div>
                   </div>
-                  <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-blue-600 transition-transform group-hover:translate-x-1" />
+                  <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-brand transition-transform group-hover:translate-x-1" />
                 </button>
               ))}
             </div>
@@ -139,11 +139,11 @@ export default function CommandPalette({ isOpen, onClose }: CommandPaletteProps)
                       onClose();
                       router.push(link.path);
                     }}
-                    className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-left transition-colors"
+                    className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-subtle text-left transition-colors"
                   >
                     <div className="flex items-center gap-3">
-                      <Icon className="w-4 h-4 text-slate-500 dark:text-slate-400" />
-                      <span className="text-xs font-medium text-slate-700 dark:text-slate-200">
+                      <Icon className="w-4 h-4 text-brand" />
+                      <span className="text-xs font-medium text-slate-700">
                         {link.title}
                       </span>
                     </div>
@@ -155,7 +155,7 @@ export default function CommandPalette({ isOpen, onClose }: CommandPaletteProps)
           )}
         </div>
 
-        <div className="p-3 bg-slate-50 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 text-[10px] text-slate-500 flex items-center justify-between">
+        <div className="p-3 bg-panel border-t border-line text-[10px] text-slate-500 flex items-center justify-between">
           <span>Gunakan panah untuk memilih</span>
           <span>ESC untuk menutup</span>
         </div>

@@ -105,22 +105,22 @@ export default function JenisBayarPage() {
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
-      <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-card p-5 rounded-2xl border border-line shadow-[0_1px_2px_rgba(15,23,42,0.03)] flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <Receipt className="w-5 h-5 text-blue-600" />
-            <h1 className="text-xl font-bold text-slate-900 dark:text-white m-0">
+            <Receipt className="w-5 h-5 text-brand" />
+            <h1 className="text-xl font-bold text-slate-800 m-0">
               Jenis Pembayaran (Tipe Tagihan Per Tahun)
             </h1>
           </div>
-          <p className="text-xs text-slate-500 dark:text-slate-400 m-0">
+          <p className="text-xs text-slate-500 m-0 mt-0.5">
             Mapping antara Pos Bayar, Tahun Ajaran, dan Tipe (Bulanan vs Bebas Flexible).
           </p>
         </div>
 
         <button
           onClick={openAddModal}
-          className="bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold px-4 py-2 rounded-xl shadow-sm flex items-center gap-1.5 transition-all"
+          className="bg-brand hover:bg-brand-hover text-white text-xs font-bold px-4 py-2 rounded-xl shadow-sm flex items-center gap-1.5 transition-all"
         >
           <Plus className="w-4 h-4" />
           <span>Setting Jenis Pembayaran</span>
@@ -131,40 +131,40 @@ export default function JenisBayarPage() {
         {jenisList.map((j) => (
           <div
             key={j.id}
-            className="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-3 flex flex-col justify-between"
+            className="bg-card p-5 rounded-2xl border border-line shadow-[0_1px_2px_rgba(15,23,42,0.03)] space-y-3 flex flex-col justify-between"
           >
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-base font-bold text-slate-900 dark:text-white">
+                <span className="text-base font-bold text-slate-800">
                   {j.posBayar?.namaPosBayar}
                 </span>
                 <span
-                  className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase ${
+                  className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase border ${
                     j.tipeBayar === 'bulanan'
-                      ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300'
-                      : 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300'
+                      ? 'bg-brand-soft text-brand-text border-brand-border'
+                      : 'bg-[#ebe8f7] text-[#4c438a] border-[#d3cef0]'
                   }`}
                 >
                   {j.tipeBayar}
                 </span>
               </div>
 
-              <p className="text-xs text-slate-500 dark:text-slate-400 m-0">
-                Tahun Ajaran: <span className="font-semibold text-slate-700 dark:text-slate-300">{j.tahunAjaran?.tahunAjaran}</span>
+              <p className="text-xs text-slate-500 m-0">
+                Tahun Ajaran: <span className="font-semibold text-slate-700">{j.tahunAjaran?.tahunAjaran}</span>
               </p>
             </div>
 
-            <div className="flex items-center justify-end gap-1.5 pt-2 border-t border-slate-100 dark:border-slate-700/60">
+            <div className="flex items-center justify-end gap-1.5 pt-2 border-t border-line/70">
               <button
                 onClick={() => openEditModal(j)}
-                className="px-2.5 py-1 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 text-xs font-semibold flex items-center gap-1 transition-colors"
+                className="px-2.5 py-1 rounded-lg bg-brand-soft text-brand hover:bg-brand-border/50 text-xs font-semibold flex items-center gap-1 transition-colors"
               >
                 <Edit2 className="w-3.5 h-3.5" />
                 <span>Edit</span>
               </button>
               <button
                 onClick={() => handleDelete(j.id, j.posBayar?.namaPosBayar)}
-                className="px-2.5 py-1 rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-100 text-xs font-semibold flex items-center gap-1 transition-colors"
+                className="px-2.5 py-1 rounded-lg bg-brick-soft text-brick hover:bg-brick-border/50 text-xs font-semibold flex items-center gap-1 transition-colors"
               >
                 <Trash2 className="w-3.5 h-3.5" />
                 <span>Hapus</span>
@@ -175,10 +175,10 @@ export default function JenisBayarPage() {
       </div>
 
       {showModal && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 max-w-md w-full p-6 space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
-              <h3 className="text-sm font-bold text-slate-900 dark:text-white m-0">
+        <div className="fixed inset-0 z-50 bg-slate-700/35 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-card rounded-2xl shadow-xl border border-line max-w-md w-full p-6 space-y-4">
+            <div className="flex items-center justify-between border-b border-line pb-3">
+              <h3 className="text-sm font-bold text-slate-800 m-0">
                 {editItem ? 'Edit Jenis Pembayaran' : 'Setting Jenis Pembayaran'}
               </h3>
               <button onClick={() => setShowModal(false)} className="text-slate-400 hover:text-slate-600">
@@ -188,11 +188,11 @@ export default function JenisBayarPage() {
 
             <form onSubmit={handleSave} className="space-y-3">
               <div>
-                <label className="block text-xs font-semibold text-slate-500 mb-1">Pos Bayar *</label>
+                <label className="block text-xs font-semibold text-slate-600 mb-1">Pos Bayar *</label>
                 <select
                   value={idPosBayar}
                   onChange={(e) => setIdPosBayar(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-xs text-slate-900 dark:text-white"
+                  className="w-full px-3 py-2 bg-subtle border border-line rounded-xl text-xs text-slate-800 focus:outline-none focus:bg-card focus:border-brand"
                 >
                   {posList.map((p) => (
                     <option key={p.id} value={p.id}>
@@ -203,11 +203,11 @@ export default function JenisBayarPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-500 mb-1">Tahun Ajaran *</label>
+                <label className="block text-xs font-semibold text-slate-600 mb-1">Tahun Ajaran *</label>
                 <select
                   value={idTahunAjaran}
                   onChange={(e) => setIdTahunAjaran(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-xs text-slate-900 dark:text-white"
+                  className="w-full px-3 py-2 bg-subtle border border-line rounded-xl text-xs text-slate-800 focus:outline-none focus:bg-card focus:border-brand"
                 >
                   {taList.map((t) => (
                     <option key={t.id} value={t.id}>
@@ -218,11 +218,11 @@ export default function JenisBayarPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-500 mb-1">Tipe Pembayaran *</label>
+                <label className="block text-xs font-semibold text-slate-600 mb-1">Tipe Pembayaran *</label>
                 <select
                   value={tipeBayar}
                   onChange={(e) => setTipeBayar(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-xs text-slate-900 dark:text-white"
+                  className="w-full px-3 py-2 bg-subtle border border-line rounded-xl text-xs text-slate-800 focus:outline-none focus:bg-card focus:border-brand"
                 >
                   <option value="bulanan">Bulanan (SPP 12 Bulan Matrix)</option>
                   <option value="bebas">Bebas (Non-Recurring / Flexible Installment)</option>
@@ -232,7 +232,7 @@ export default function JenisBayarPage() {
               <div className="pt-2">
                 <button
                   type="submit"
-                  className="w-full py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold shadow-sm"
+                  className="w-full py-2.5 bg-brand hover:bg-brand-hover text-white rounded-xl text-xs font-bold shadow-sm"
                 >
                   Simpan Jenis Pembayaran
                 </button>
