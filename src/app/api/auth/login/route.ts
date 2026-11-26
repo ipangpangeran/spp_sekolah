@@ -1,7 +1,17 @@
+import crypto from 'node:crypto';
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { checkRateLimit } from '@/lib/rateLimit';
 import { sanitizeInput } from '@/lib/security';
+
+function verifyPassword(input: string, stored: string): boolean {
+  if (stored === input) return true;
+  if (/^[a-f0-9]{32}$/i.test(stored)) {
+    const md5 = crypto.createHash('md5').update(input).digest('hex');
+    return md5 === stored.toLowerCase();
+  }
+  return false;
+}
 
 export async function POST(request: Request) {
   try {
@@ -31,7 +41,7 @@ export async function POST(request: Request) {
       include: { tahunAjaran: true },
     });
 
-    if (!user || user.password !== password) {
+    if (!user || !verifyPassword(password, user.password)) {
       return NextResponse.json({ error: 'Username atau Password salah' }, { status: 401 });
     }
 
