@@ -2,8 +2,9 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getWibDateStr } from '@/lib/date';
 import { getSessionFromCookies } from '@/lib/session';
+import { withApiLogging } from '@/lib/api-logger';
 
-export async function POST(request: Request) {
+async function handlePost(request: Request) {
   try {
     const body = await request.json();
     const { idTagihanBebas, jumlahBayar, keterangan, idUser } = body;
@@ -90,3 +91,5 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+
+export const POST = withApiLogging(handlePost, 'PAY_BEBAS');

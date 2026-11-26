@@ -35,6 +35,10 @@ model Siswa {
   statusSiswa    String           @default("AKTIF") // "AKTIF" | "LULUS" | "PINDAH" | "ALUMNI"
   tagihanBulanan TagihanBulanan[]
   tagihanBebas   TagihanBebas[]
+
+  @@index([statusSiswa, idKelas])
+  @@index([namaSiswa])
+  @@index([nisn])
 }
 
 model User {
@@ -80,6 +84,9 @@ model TagihanBulanan {
   tarif             Float               @default(0)
   statusBayar       String              @default("BELUM_BAYAR") // "BELUM_BAYAR" | "LUNAS"
   pembayaranBulanan PembayaranBulanan[]
+
+  @@index([idSiswa, statusBayar])
+  @@index([idJenisPembayaran, idSiswa, urutanBulan])
 }
 
 model PembayaranBulanan {
@@ -91,6 +98,9 @@ model PembayaranBulanan {
   idUser           Int
   user             User           @relation(fields: [idUser], references: [id])
   noRef            String         @unique
+
+  @@index([tglBayar])
+  @@index([idTagihanBulanan])
 }
 
 model TagihanBebas {
@@ -103,6 +113,9 @@ model TagihanBebas {
   terbayar          Float             @default(0)
   statusBayar       String            @default("BELUM_LUNAS") // "BELUM_LUNAS" | "LUNAS"
   pembayaranBebas   PembayaranBebas[]
+
+  @@index([idSiswa, statusBayar])
+  @@index([idJenisPembayaran, idSiswa])
 }
 
 model PembayaranBebas {
@@ -115,6 +128,9 @@ model PembayaranBebas {
   idUser         Int
   user           User         @relation(fields: [idUser], references: [id])
   noRef          String       @unique
+
+  @@index([tglBayar])
+  @@index([idTagihanBebas])
 }
 
 model Kas {
@@ -128,6 +144,9 @@ model Kas {
   user        User     @relation(fields: [idUser], references: [id])
   idPosBayar  Int?
   posBayar    PosBayar? @relation(fields: [idPosBayar], references: [id])
+
+  @@index([jenis, tgl])
+  @@index([tgl])
 }
 
 model Pengaturan {

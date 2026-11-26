@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { isAdminSession } from '@/lib/session';
+import { withApiLogging } from '@/lib/api-logger';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -24,7 +25,7 @@ export async function GET() {
   }
 }
 
-export async function POST(request: Request) {
+async function handlePost(request: Request) {
   if (!isAdminSession()) {
     return NextResponse.json(
       { error: 'Akses ditolak. Hanya Administrator yang dapat mengubah pengaturan sistem.' },
@@ -59,3 +60,5 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: error.message || 'Gagal menyimpan pengaturan' }, { status: 500 });
   }
 }
+
+export const POST = withApiLogging(handlePost, 'SETTINGS_UPDATE');

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getSessionFromCookies, isAdminSession } from '@/lib/session';
+import { withApiLogging } from '@/lib/api-logger';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -35,7 +36,7 @@ export async function GET(request: Request) {
   }
 }
 
-export async function POST(request: Request) {
+async function handlePost(request: Request) {
   try {
     const body = await request.json();
     // Support multi-row or single row entry
@@ -76,7 +77,7 @@ export async function POST(request: Request) {
   }
 }
 
-export async function PUT(request: Request) {
+async function handlePut(request: Request) {
   try {
     if (!isAdminSession()) {
       return NextResponse.json(
@@ -117,7 +118,7 @@ export async function PUT(request: Request) {
   }
 }
 
-export async function DELETE(request: Request) {
+async function handleDelete(request: Request) {
   try {
     if (!isAdminSession()) {
       return NextResponse.json(
@@ -138,3 +139,7 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+
+export const POST = withApiLogging(handlePost, 'KAS_CREATE');
+export const PUT = withApiLogging(handlePut, 'KAS_UPDATE');
+export const DELETE = withApiLogging(handleDelete, 'KAS_DELETE');

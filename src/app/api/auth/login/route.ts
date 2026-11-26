@@ -1,26 +1,30 @@
-import crypto from 'node:crypto';
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { checkRateLimit } from '@/lib/rateLimit';
 import { sanitizeInput } from '@/lib/security';
-
-function verifyPassword(input: string, stored: string): boolean {
-  if (stored === input) return true;
-  if (/^[a-f0-9]{32}$/i.test(stored)) {
-    const md5 = crypto.createHash('md5').update(input).digest('hex');
-    return md5 === stored.toLowerCase();
-  }
-  return false;
-}
+import { verifyPassword } from '@/lib/password';
+import { signSessionToken } from '@/lib/auth-token';
+import { writeAppLog } from '@/lib/logger';
+import { getClientIp } from '@/lib/api-logger';
 
 export async function POST(request: Request) {
+  const start = Date.now();
+  const ip = getClientIp(request);
   try {
-    // 1. Rate Limiting Check (Anti Brute-Force)
-    const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || '127.0.0.1';
+    // 1. Rate Limiting Check (Anti Brute-Force, Cloudflare-aware)
     const rateLimit = checkRateLimit(`login_${ip}`, 5, 60 * 1000); // 5 attempts per 60s
 
     if (!rateLimit.success) {
       const waitSeconds = Math.ceil((rateLimit.resetTime - Date.now()) / 1000);
+      writeAppLog({
+        level: 'WARN',
+        event: 'AUTH_RATE_LIMIT',
+        method: 'POST',
+        path: '/api/auth/login',
+        status: 429,
+        durationMs: Date.now() - start,
+        ip,
+      });
       return NextResponse.json(
         { error: `Terlalu banyak percobaan login gagal. Harap tunggu ${waitSeconds} detik lagi.` },
         { status: 429 }
@@ -42,6 +46,16 @@ export async function POST(request: Request) {
     });
 
     if (!user || !verifyPassword(password, user.password)) {
+      writeAppLog({
+        level: 'WARN',
+        event: 'AUTH_LOGIN_FAILED',
+        method: 'POST',
+        path: '/api/auth/login',
+        status: 401,
+        durationMs: Date.now() - start,
+        username,
+        ip,
+      });
       return NextResponse.json({ error: 'Username atau Password salah' }, { status: 401 });
     }
 
@@ -58,19 +72,35 @@ export async function POST(request: Request) {
       },
     });
 
-    // 3. Set Secure Session Cookie
-    response.cookies.set('sisma_session', JSON.stringify({
+    // 3. Set Signed HttpOnly Session Cookie
+    const signedToken = await signSessionToken({
       id: user.id,
       username: user.username,
       namaLengkap: user.namaLengkap,
       level: user.level,
       idTahunAjaran: activeTa?.id || user.idTahunAjaran,
       createdAt: Date.now(),
-    }), {
-      httpOnly: false, // Accessible by Next.js edge middleware & client state sync
+    });
+
+    response.cookies.set('sisma_session', signedToken, {
+      httpOnly: true,
       sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
       path: '/',
       maxAge: 60 * 60 * 24 * 7,
+    });
+
+    writeAppLog({
+      level: 'INFO',
+      event: 'AUTH_LOGIN_SUCCESS',
+      method: 'POST',
+      path: '/api/auth/login',
+      status: 200,
+      durationMs: Date.now() - start,
+      userId: user.id,
+      username: user.username,
+      role: user.level,
+      ip,
     });
 
     return response;

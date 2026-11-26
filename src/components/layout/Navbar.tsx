@@ -29,9 +29,13 @@ export default function Navbar({
 }: NavbarProps) {
   const router = useRouter();
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     localStorage.removeItem('sisma_user');
-    document.cookie = 'sisma_session=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+    } catch {
+      // Ignore network error on logout
+    }
     router.push('/login');
   };
 

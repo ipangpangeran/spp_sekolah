@@ -1,15 +1,22 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { getSessionFromCookies } from '@/lib/session';
+import { withApiLogging } from '@/lib/api-logger';
 
-export async function POST(request: Request) {
+async function handlePost(request: Request) {
   try {
     const body = await request.json();
     const { idPembayaranBulanan, idPembayaranBebas, idUser } = body;
 
     let userId = idUser;
     if (!userId) {
-      const defaultUser = await prisma.user.findFirst({ where: { level: 'admin' } });
-      userId = defaultUser?.id || 1;
+      const session = getSessionFromCookies();
+      if (session?.id) {
+        userId = session.id;
+      } else {
+        const defaultUser = await prisma.user.findFirst({ where: { level: 'admin' } });
+        userId = defaultUser?.id || 1;
+      }
     }
 
     if (idPembayaranBulanan) {
@@ -104,3 +111,5 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+
+export const POST = withApiLogging(handlePost, 'BATAL_PEMBAYARAN');

@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { hashPassword } from '@/lib/password';
+import { withApiLogging } from '@/lib/api-logger';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -7,7 +9,14 @@ export const revalidate = 0;
 export async function GET() {
   try {
     const users = await prisma.user.findMany({
-      include: { tahunAjaran: true },
+      select: {
+        id: true,
+        username: true,
+        namaLengkap: true,
+        level: true,
+        idTahunAjaran: true,
+        tahunAjaran: true,
+      },
       orderBy: { username: 'asc' },
     });
     return NextResponse.json({ users });
@@ -16,7 +25,7 @@ export async function GET() {
   }
 }
 
-export async function POST(request: Request) {
+async function handlePost(request: Request) {
   try {
     const body = await request.json();
     const { username, password, namaLengkap, level } = body;
@@ -35,11 +44,12 @@ export async function POST(request: Request) {
     const user = await prisma.user.create({
       data: {
         username,
-        password,
+        password: hashPassword(String(password)),
         namaLengkap,
         level: level || 'bendahara',
         idTahunAjaran: activeTa?.id || null,
       },
+      select: { id: true, username: true, namaLengkap: true, level: true, idTahunAjaran: true },
     });
 
     return NextResponse.json({ user });
@@ -48,7 +58,7 @@ export async function POST(request: Request) {
   }
 }
 
-export async function PUT(request: Request) {
+async function handlePut(request: Request) {
   try {
     const body = await request.json();
     const { id, username, password, namaLengkap, level } = body;
@@ -64,12 +74,13 @@ export async function PUT(request: Request) {
     };
 
     if (password) {
-      updateData.password = password;
+      updateData.password = hashPassword(String(password));
     }
 
     const user = await prisma.user.update({
       where: { id: parseInt(id) },
       data: updateData,
+      select: { id: true, username: true, namaLengkap: true, level: true, idTahunAjaran: true },
     });
 
     return NextResponse.json({ user });
@@ -78,7 +89,7 @@ export async function PUT(request: Request) {
   }
 }
 
-export async function DELETE(request: Request) {
+async function handleDelete(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
@@ -100,3 +111,7 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+
+export const POST = withApiLogging(handlePost, 'USER_CREATE');
+export const PUT = withApiLogging(handlePut, 'USER_UPDATE');
+export const DELETE = withApiLogging(handleDelete, 'USER_DELETE');

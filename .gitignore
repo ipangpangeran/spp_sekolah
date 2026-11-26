@@ -41,5 +41,8 @@ prisma/*.db-shm
 prisma/*.db.bak
 prisma/backups/
 
+# Application Logs
+logs/
+
 # Scratch
 scratch/

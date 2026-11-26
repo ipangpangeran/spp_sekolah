@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { verifySessionToken } from '@/lib/auth-token';
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Allow static files, next internal assets, public logo, and auth API
@@ -13,20 +14,14 @@ export function middleware(request: NextRequest) {
     pathname.startsWith('/logo_sisma.png') ||
     pathname.startsWith('/Logo_SmaPersiapan.png') ||
     pathname === '/login' ||
-    pathname === '/api/auth/login'
+    pathname === '/api/auth/login' ||
+    pathname === '/api/auth/logout'
   ) {
     return NextResponse.next();
   }
 
   const sessionCookie = request.cookies.get('sisma_session');
-  let sessionUser: { level?: string } | null = null;
-  if (sessionCookie?.value) {
-    try {
-      sessionUser = JSON.parse(sessionCookie.value);
-    } catch {
-      sessionUser = null;
-    }
-  }
+  const sessionUser = await verifySessionToken(sessionCookie?.value);
   const isAuthenticated = Boolean(sessionUser);
 
   // If requesting API endpoint without valid session cookie -> return 401 Unauthorized

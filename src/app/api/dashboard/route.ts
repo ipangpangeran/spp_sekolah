@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { buildWibDateRange, getWibStartOfDay } from '@/lib/date';
+import { withApiLogging } from '@/lib/api-logger';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -23,7 +24,7 @@ async function ensureEpochDates() {
   datesNormalized = true;
 }
 
-export async function GET(request: Request) {
+async function handleGet(request: Request) {
   try {
     await ensureEpochDates();
 
@@ -202,3 +203,5 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+
+export const GET = withApiLogging(handleGet);
