@@ -4,6 +4,26 @@ import { prisma } from '@/lib/prisma';
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
+const studentDetailInclude = {
+  kelas: true,
+  tagihanBulanan: {
+    orderBy: { urutanBulan: 'asc' as const },
+    include: {
+      jenisPembayaran: { include: { posBayar: true } },
+      pembayaranBulanan: { include: { user: true } },
+    },
+  },
+  tagihanBebas: {
+    include: {
+      jenisPembayaran: { include: { posBayar: true } },
+      pembayaranBebas: {
+        orderBy: { tglBayar: 'desc' as const },
+        include: { user: true },
+      },
+    },
+  },
+};
+
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
@@ -11,44 +31,70 @@ export async function GET(request: Request) {
     const nis = searchParams.get('nis');
     const id = searchParams.get('id');
 
-    // 1. Single student detail lookup by ID or NIS or NISN
+    // 1. Single student detail lookup by ID, NIS, NISN, or Name
     if (id || nis) {
-      let whereCondition: any = {};
-      if (id) {
-        whereCondition = { id: parseInt(id) };
-      } else if (nis) {
-        const numId = parseInt(nis);
-        whereCondition = {
-          OR: [
-            { nis: nis },
-            { nisn: nis },
-            ...(isNaN(numId) ? [] : [{ id: numId }]),
-          ],
-        };
-      }
+      const term = (id || nis || '').trim();
+      let siswa = null;
 
-      const siswa = await prisma.siswa.findFirst({
-        where: whereCondition,
-        include: {
-          kelas: true,
-          tagihanBulanan: {
-            orderBy: { urutanBulan: 'asc' },
-            include: {
-              jenisPembayaran: { include: { posBayar: true } },
-              pembayaranBulanan: { include: { user: true } },
-            },
+      if (id) {
+        const parsedId = parseInt(id, 10);
+        if (!isNaN(parsedId)) {
+          siswa = await prisma.siswa.findUnique({
+            where: { id: parsedId },
+            include: studentDetailInclude,
+          });
+        }
+      } else if (term) {
+        const isPureDigits = /^\d+$/.test(term);
+        const numId = isPureDigits ? Number(term) : NaN;
+        const canMatchId = Number.isSafeInteger(numId) && numId > 0 && numId <= 2147483647;
+
+        siswa = await prisma.siswa.findFirst({
+          where: {
+            OR: [
+              { nis: term },
+              { nisn: term },
+              ...(canMatchId ? [{ id: numId }] : []),
+            ],
           },
-          tagihanBebas: {
-            include: {
-              jenisPembayaran: { include: { posBayar: true } },
-              pembayaranBebas: {
-                orderBy: { tglBayar: 'desc' },
-                include: { user: true },
-              },
+          include: studentDetailInclude,
+        });
+
+        // Fallback: search by namaSiswa (or partial NIS/NISN)
+        if (!siswa) {
+          const matches = await prisma.siswa.findMany({
+            where: {
+              OR: [
+                { namaSiswa: { contains: term } },
+                { nis: { contains: term } },
+                { nisn: { contains: term } },
+              ],
             },
-          },
-        },
-      });
+            take: 20,
+            include: { kelas: true },
+            orderBy: { namaSiswa: 'asc' },
+          });
+
+          if (matches.length === 1) {
+            siswa = await prisma.siswa.findUnique({
+              where: { id: matches[0].id },
+              include: studentDetailInclude,
+            });
+          } else if (matches.length > 1) {
+            const exactNameMatches = matches.filter(
+              (m) => m.namaSiswa.trim().toLowerCase() === term.toLowerCase()
+            );
+            if (exactNameMatches.length === 1) {
+              siswa = await prisma.siswa.findUnique({
+                where: { id: exactNameMatches[0].id },
+                include: studentDetailInclude,
+              });
+            } else {
+              return NextResponse.json({ matches });
+            }
+          }
+        }
+      }
 
       if (!siswa) {
         return NextResponse.json({ error: 'Siswa tidak ditemukan' }, { status: 404 });

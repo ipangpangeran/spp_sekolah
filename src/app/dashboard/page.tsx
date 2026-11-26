@@ -131,15 +131,17 @@ export default function DashboardPage() {
 
         <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-premium space-y-3 min-w-0 hover:border-slate-300 transition-colors">
           <div className="flex items-center justify-between gap-2">
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 truncate">Total Kas Pemasukan</span>
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 truncate">Total Pemasukan Pembayaran</span>
             <span className="w-8 h-8 rounded-md bg-[#b5ebff]/60 text-[#004e60] flex items-center justify-center shrink-0">
               <Wallet className="w-4 h-4" />
             </span>
           </div>
           <div className="text-xl font-semibold text-slate-900 font-mono-data truncate">
-            {formatRp(data?.netBalance || 0)}
+            {formatRp(data?.totalPaymentIncome || 0)}
           </div>
-          <p className="text-[11px] text-slate-500 m-0 truncate">Total Penerimaan Masuk</p>
+          <p className="text-[11px] text-slate-500 m-0 truncate">
+            SPP &amp; Bebas • Kas: {formatRp(data?.totalKasIncome || 0)}
+          </p>
         </div>
       </div>
 

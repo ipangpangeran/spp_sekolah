@@ -37,6 +37,7 @@ function PembayaranSiswaContent() {
 
   const [hasSearched, setHasSearched] = useState(false);
   const [lastSearchedQuery, setLastSearchedQuery] = useState('');
+  const [searchMatches, setSearchMatches] = useState<any[]>([]);
 
   // Modals
   const [showReceiptModal, setShowReceiptModal] = useState(false);
@@ -75,27 +76,37 @@ function PembayaranSiswaContent() {
     }
   }, []);
 
-  const fetchStudentData = async (targetNis: string) => {
+  const fetchStudentData = async (targetNis: string, byId = false) => {
     if (!targetNis || !targetNis.trim()) {
       setStudent(null);
+      setSearchMatches([]);
       setHasSearched(false);
       return;
     }
     setLoading(true);
     setHasSearched(true);
-    setLastSearchedQuery(targetNis.trim());
+    if (!byId) {
+      setLastSearchedQuery(targetNis.trim());
+    }
     try {
-      const res = await fetch(`/api/pembayaran/lookup?nis=${encodeURIComponent(targetNis.trim())}`);
+      const paramKey = byId ? 'id' : 'nis';
+      const res = await fetch(`/api/pembayaran/lookup?${paramKey}=${encodeURIComponent(targetNis.trim())}`);
       const data = await res.json();
       if (res.ok && data.siswa) {
         setStudent(data.siswa);
+        setSearchMatches([]);
         setSelectedMonths([]);
+      } else if (res.ok && Array.isArray(data.matches) && data.matches.length > 0) {
+        setStudent(null);
+        setSearchMatches(data.matches);
       } else {
         setStudent(null);
+        setSearchMatches([]);
       }
     } catch (err) {
       console.error(err);
       setStudent(null);
+      setSearchMatches([]);
     } finally {
       setLoading(false);
       setTimeout(() => {
@@ -295,8 +306,47 @@ function PembayaranSiswaContent() {
         </div>
       )}
 
-      {/* State 2: Not Found */}
-      {!loading && !student && hasSearched && (
+      {/* State 2: Multiple Name Matches Picker */}
+      {!loading && !student && searchMatches.length > 0 && (
+        <div className="bg-card p-6 rounded-2xl border border-line shadow-sm space-y-3">
+          <div>
+            <h2 className="text-sm font-bold text-slate-800 m-0">
+              Ditemukan {searchMatches.length} Siswa untuk &quot;{lastSearchedQuery}&quot;
+            </h2>
+            <p className="text-xs text-slate-500 m-0 mt-0.5">
+              Klik salah satu siswa di bawah untuk membuka tagihan SPP:
+            </p>
+          </div>
+          <div className="divide-y divide-line border border-line rounded-xl overflow-hidden">
+            {searchMatches.map((m) => (
+              <button
+                key={m.id}
+                type="button"
+                onClick={() => fetchStudentData(String(m.id), true)}
+                className="w-full text-left px-4 py-3 bg-card hover:bg-subtle transition-colors flex items-center justify-between gap-4"
+              >
+                <div>
+                  <span className="font-bold text-xs text-slate-800 block">{m.namaSiswa}</span>
+                  <span className="text-[11px] text-slate-500 font-mono">
+                    NIS: {m.nis || '-'} | NISN: {m.nisn || '-'}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <span className="text-xs font-semibold text-[#00677e] bg-[#e6f6fc] px-2.5 py-1 rounded-lg border border-[#b5ebff]">
+                    {m.kelas?.namaKelas || '-'}
+                  </span>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-subtle text-slate-600 border border-line">
+                    {m.statusSiswa}
+                  </span>
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* State 3: Not Found */}
+      {!loading && !student && hasSearched && searchMatches.length === 0 && (
         <div className="bg-card p-10 rounded-2xl border border-brick-border text-center space-y-3 shadow-sm">
           <User className="w-10 h-10 text-brick mx-auto" />
           <h2 className="text-sm font-bold text-slate-800 m-0">
