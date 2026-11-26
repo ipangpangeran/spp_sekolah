@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { getWibDateStr } from '@/lib/date';
+import { getSessionFromCookies } from '@/lib/session';
 
 export async function POST(request: Request) {
   try {
@@ -25,16 +27,22 @@ export async function POST(request: Request) {
 
     let userId = idUser;
     if (!userId) {
-      const defaultUser = await prisma.user.findFirst({ where: { level: 'bendahara' } });
-      userId = defaultUser?.id || 1;
+      const session = getSessionFromCookies();
+      if (session?.id) {
+        userId = session.id;
+      } else {
+        const defaultUser = await prisma.user.findFirst({ where: { level: 'bendahara' } });
+        userId = defaultUser?.id || 1;
+      }
     }
 
     const newTerbayar = tagihan.terbayar + amount;
     const isLunas = newTerbayar >= tagihan.totalTagihan;
 
-    const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+    const dateStr = getWibDateStr();
     const randomSuffix = Math.floor(1000 + Math.random() * 9000);
-    const noRef = `GBB-${dateStr}${randomSuffix}-${tagihan.siswa.nis}`;
+    const studentCode = tagihan.siswa.nis || tagihan.siswa.nisn || `ID${tagihan.siswa.id}`;
+    const noRef = `GBB-${dateStr}${randomSuffix}-${studentCode}`;
 
     // Update TagihanBebas status & terbayar
     await prisma.tagihanBebas.update({
@@ -61,7 +69,7 @@ export async function POST(request: Request) {
     await prisma.kas.create({
       data: {
         tgl: new Date(),
-        uraian: `Pembayaran ${tagihan.jenisPembayaran.posBayar.namaPosBayar} a.n ${tagihan.siswa.namaSiswa} (${tagihan.siswa.nis}) - ${keterangan || 'Cicilan'}`,
+        uraian: `Pembayaran ${tagihan.jenisPembayaran.posBayar.namaPosBayar} a.n ${tagihan.siswa.namaSiswa} (${studentCode}) - ${keterangan || 'Cicilan'}`,
         pemasukan: amount,
         pengeluaran: 0,
         jenis: 'masuk',

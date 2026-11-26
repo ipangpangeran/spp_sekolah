@@ -266,7 +266,6 @@ export default function LaporanKeuanganPage() {
                   <th className="p-3">Kelas</th>
                   <th className="p-3">Bulan SPP Menunggak</th>
                   <th className="p-3">Total Tunggakan (Rp)</th>
-                  <th className="p-3">Aksi WA Reminder</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-line/70">
@@ -280,23 +279,6 @@ export default function LaporanKeuanganPage() {
                       {r.unpaidMonths?.join(', ') || 'Lunas SPP'}
                     </td>
                     <td className="p-3 font-mono font-bold text-brick">{formatRp(r.totalTunggakan)}</td>
-                    <td className="p-3">
-                      {r.hpOrtu && (
-                        <a
-                          href={`https://wa.me/${r.hpOrtu.replace(/^0/, '62')}?text=${encodeURIComponent(
-                            `Pemberitahuan Tagihan SPP a.n ${r.namaSiswa} (${r.kelas}) sebesar ${formatRp(
-                              r.totalTunggakan
-                            )}. Mohon menyelesaikan pembayaran ke Bendahara Sekolah.`
-                          )}`}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="px-2.5 py-1 bg-sage hover:bg-sage-hover text-white rounded-lg text-[11px] font-bold inline-flex items-center gap-1"
-                        >
-                          <MessageSquare className="w-3 h-3" />
-                          <span>Kirim WA Billing</span>
-                        </a>
-                      )}
-                    </td>
                   </tr>
                 ))}
               </tbody>

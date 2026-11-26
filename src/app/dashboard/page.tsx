@@ -14,21 +14,43 @@ import {
   ArrowDownRight,
   CheckCircle2,
   Clock,
+  ChevronLeft,
+  ChevronRight,
+  Calendar,
 } from 'lucide-react';
 
 export default function DashboardPage() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [txLoading, setTxLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const [period, setPeriod] = useState('all');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
 
   useEffect(() => {
-    fetch('/api/dashboard')
+    const params = new URLSearchParams({
+      page: String(page),
+      limit: '10',
+      period,
+    });
+    if (period === 'custom') {
+      if (startDate) params.set('startDate', startDate);
+      if (endDate) params.set('endDate', endDate);
+    }
+
+    if (data) setTxLoading(true);
+    fetch(`/api/dashboard?${params.toString()}`)
       .then((res) => res.json())
       .then((resData) => {
         setData(resData);
       })
       .catch((err) => console.error(err))
-      .finally(() => setLoading(false));
-  }, []);
+      .finally(() => {
+        setLoading(false);
+        setTxLoading(false);
+      });
+  }, [page, period, startDate, endDate]);
 
   const formatRp = (num: number) => {
     return new Intl.NumberFormat('id-ID', {
@@ -149,23 +171,80 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left 2 Cols: Transaksi Terbaru */}
         <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-200 shadow-premium overflow-hidden flex flex-col">
-          <div className="p-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/70">
-            <div className="flex items-center gap-2">
-              <Clock className="w-4 h-4 text-[#00677e]" />
-              <h2 className="text-sm font-semibold text-slate-900 m-0">
-                Transaksi Terbaru
-              </h2>
+          <div className="p-4 border-b border-slate-100 bg-slate-50/70 space-y-3">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <Clock className="w-4 h-4 text-[#00677e]" />
+                <h2 className="text-sm font-semibold text-slate-900 m-0">
+                  Transaksi Terbaru
+                </h2>
+                {data?.latestTransactionDate && (
+                  <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-[#e6f6fc] text-[#004e60] border border-[#b5ebff]">
+                    Terakhir:{' '}
+                    {new Date(data.latestTransactionDate).toLocaleDateString('id-ID', {
+                      day: '2-digit',
+                      month: 'short',
+                      year: 'numeric',
+                    })}
+                  </span>
+                )}
+              </div>
+              <Link
+                href="/laporan"
+                className="text-xs text-[#00677e] font-semibold hover:underline flex items-center gap-1"
+              >
+                <span>Lihat Laporan</span>
+                <ArrowUpRight className="w-3.5 h-3.5" />
+              </Link>
             </div>
-            <Link
-              href="/kas"
-              className="text-xs text-[#00677e] font-semibold hover:underline flex items-center gap-1"
-            >
-              <span>Lihat Semua</span>
-              <ArrowUpRight className="w-3.5 h-3.5" />
-            </Link>
+
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="flex items-center gap-1.5 text-xs text-slate-500">
+                <Calendar className="w-3.5 h-3.5 text-slate-400" />
+                <select
+                  value={period}
+                  onChange={(e) => {
+                    setPeriod(e.target.value);
+                    setPage(1);
+                  }}
+                  className="bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-700 focus:outline-none focus:border-[#00677e]"
+                >
+                  <option value="all">Semua Tanggal</option>
+                  <option value="today">Hari Ini</option>
+                  <option value="7d">7 Hari Terakhir</option>
+                  <option value="30d">30 Hari Terakhir</option>
+                  <option value="month">Bulan Ini</option>
+                  <option value="custom">Rentang Tanggal</option>
+                </select>
+              </div>
+
+              {period === 'custom' && (
+                <div className="flex flex-wrap items-center gap-1.5 text-xs">
+                  <input
+                    type="date"
+                    value={startDate}
+                    onChange={(e) => {
+                      setStartDate(e.target.value);
+                      setPage(1);
+                    }}
+                    className="bg-white border border-slate-200 rounded-lg px-2 py-1 text-xs text-slate-700 focus:outline-none focus:border-[#00677e]"
+                  />
+                  <span className="text-slate-400">s/d</span>
+                  <input
+                    type="date"
+                    value={endDate}
+                    onChange={(e) => {
+                      setEndDate(e.target.value);
+                      setPage(1);
+                    }}
+                    className="bg-white border border-slate-200 rounded-lg px-2 py-1 text-xs text-slate-700 focus:outline-none focus:border-[#00677e]"
+                  />
+                </div>
+              )}
+            </div>
           </div>
 
-          <div className="divide-y divide-slate-100 flex-1 overflow-y-auto">
+          <div className={`divide-y divide-slate-100 flex-1 ${txLoading ? 'opacity-60' : ''}`}>
             {data?.recentTransactions && data.recentTransactions.length > 0 ? (
               data.recentTransactions.map((tx: any) => (
                 <div
@@ -198,9 +277,53 @@ export default function DashboardPage() {
                 </div>
               ))
             ) : (
-              <div className="p-8 text-center text-xs text-slate-500">Belum ada transaksi penerimaan tercatat.</div>
+              <div className="p-8 text-center text-xs text-slate-500">
+                Tidak ada transaksi penerimaan pada periode yang dipilih.
+              </div>
             )}
           </div>
+
+          {data?.pagination && data.pagination.totalTransactions > 0 && (
+            <div className="px-4 py-3 border-t border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+              <span className="text-slate-500">
+                Menampilkan{' '}
+                <strong className="text-slate-700">
+                  {(data.pagination.page - 1) * data.pagination.limit + 1}
+                </strong>
+                –
+                <strong className="text-slate-700">
+                  {Math.min(
+                    data.pagination.page * data.pagination.limit,
+                    data.pagination.totalTransactions
+                  )}
+                </strong>{' '}
+                dari <strong className="text-slate-700">{data.pagination.totalTransactions}</strong> transaksi
+              </span>
+              <div className="flex items-center gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  disabled={data.pagination.page <= 1 || txLoading}
+                  className="px-2.5 py-1 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1 font-medium"
+                >
+                  <ChevronLeft className="w-3.5 h-3.5" />
+                  <span>Prev</span>
+                </button>
+                <span className="px-2 text-slate-600 font-medium">
+                  Hal {data.pagination.page} / {data.pagination.totalPages}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setPage((p) => Math.min(data.pagination.totalPages, p + 1))}
+                  disabled={data.pagination.page >= data.pagination.totalPages || txLoading}
+                  className="px-2.5 py-1 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1 font-medium"
+                >
+                  <span>Next</span>
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Right 1 Col: Quick Links & School Info */}

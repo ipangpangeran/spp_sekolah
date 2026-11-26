@@ -1,5 +1,9 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { getSessionFromCookies, isAdminSession } from '@/lib/session';
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export async function GET(request: Request) {
   try {
@@ -40,8 +44,13 @@ export async function POST(request: Request) {
 
     let userId = idUser;
     if (!userId) {
-      const defaultUser = await prisma.user.findFirst({ where: { level: 'bendahara' } });
-      userId = defaultUser?.id || 1;
+      const session = getSessionFromCookies();
+      if (session?.id) {
+        userId = session.id;
+      } else {
+        const defaultUser = await prisma.user.findFirst({ where: { level: 'bendahara' } });
+        userId = defaultUser?.id || 1;
+      }
     }
 
     const createdEntries = [];
@@ -62,6 +71,69 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json({ success: true, createdEntries });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
+export async function PUT(request: Request) {
+  try {
+    if (!isAdminSession()) {
+      return NextResponse.json(
+        { error: 'Akses ditolak. Hanya Administrator yang dapat mengubah data kas.' },
+        { status: 403 }
+      );
+    }
+
+    const body = await request.json();
+    const id = parseInt(body.id, 10);
+    if (!id || Number.isNaN(id)) {
+      return NextResponse.json({ error: 'ID kas tidak valid' }, { status: 400 });
+    }
+
+    const uraian = String(body.uraian || '').trim();
+    if (!uraian) {
+      return NextResponse.json({ error: 'Uraian transaksi wajib diisi' }, { status: 400 });
+    }
+
+    const pemasukan = Number(body.pemasukan ?? 0);
+    const idPosBayar = body.idPosBayar ? parseInt(body.idPosBayar, 10) : null;
+    const tgl = body.tgl ? new Date(body.tgl) : undefined;
+
+    const updated = await prisma.kas.update({
+      where: { id },
+      data: {
+        uraian,
+        pemasukan: Number.isNaN(pemasukan) ? 0 : pemasukan,
+        idPosBayar: idPosBayar && !Number.isNaN(idPosBayar) ? idPosBayar : null,
+        ...(tgl && !Number.isNaN(tgl.getTime()) ? { tgl } : {}),
+      },
+      include: { user: true, posBayar: true },
+    });
+
+    return NextResponse.json({ success: true, entry: updated });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
+export async function DELETE(request: Request) {
+  try {
+    if (!isAdminSession()) {
+      return NextResponse.json(
+        { error: 'Akses ditolak. Hanya Administrator yang dapat menghapus data kas.' },
+        { status: 403 }
+      );
+    }
+
+    const { searchParams } = new URL(request.url);
+    const id = parseInt(searchParams.get('id') || '', 10);
+    if (!id || Number.isNaN(id)) {
+      return NextResponse.json({ error: 'ID kas tidak valid' }, { status: 400 });
+    }
+
+    await prisma.kas.delete({ where: { id } });
+    return NextResponse.json({ success: true });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

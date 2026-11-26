@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { getWibDateStr } from '@/lib/date';
+import { getSessionFromCookies } from '@/lib/session';
 
 export async function POST(request: Request) {
   try {
@@ -12,11 +14,16 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Tagihan bulanan tidak valid' }, { status: 400 });
     }
 
-    // Find default user if idUser not supplied
+    // Find active operator from session or fallback
     let userId = idUser;
     if (!userId) {
-      const defaultUser = await prisma.user.findFirst({ where: { level: 'bendahara' } });
-      userId = defaultUser?.id || 1;
+      const session = getSessionFromCookies();
+      if (session?.id) {
+        userId = session.id;
+      } else {
+        const defaultUser = await prisma.user.findFirst({ where: { level: 'bendahara' } });
+        userId = defaultUser?.id || 1;
+      }
     }
 
     const processedPayments = [];
@@ -36,10 +43,11 @@ export async function POST(request: Request) {
         continue;
       }
 
-      // Generate Ref Number
-      const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+      // Generate Ref Number (GMT+7 date, safe student identifier without null)
+      const dateStr = getWibDateStr();
       const randomSuffix = Math.floor(1000 + Math.random() * 9000);
-      const noRef = `SYR-${dateStr}${randomSuffix}-${tagihan.siswa.nis}`;
+      const studentCode = tagihan.siswa.nis || tagihan.siswa.nisn || `ID${tagihan.siswa.id}`;
+      const noRef = `SYR-${dateStr}${randomSuffix}-${studentCode}`;
 
       // Mark tagihan as LUNAS
       await prisma.tagihanBulanan.update({
@@ -62,7 +70,7 @@ export async function POST(request: Request) {
       await prisma.kas.create({
         data: {
           tgl: new Date(),
-          uraian: `Pembayaran ${tagihan.jenisPembayaran.posBayar.namaPosBayar} Bulan ${tagihan.bulan} a.n ${tagihan.siswa.namaSiswa} (${tagihan.siswa.nis})`,
+          uraian: `Pembayaran ${tagihan.jenisPembayaran.posBayar.namaPosBayar} Bulan ${tagihan.bulan} a.n ${tagihan.siswa.namaSiswa} (${studentCode})`,
           pemasukan: tagihan.tarif,
           pengeluaran: 0,
           jenis: 'masuk',

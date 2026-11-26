@@ -9,7 +9,6 @@ import {
   CreditCard,
   CheckCircle2,
   Printer,
-  MessageSquare,
   CheckSquare,
   Square,
   X,
@@ -42,8 +41,6 @@ function PembayaranSiswaContent() {
   // Modals
   const [showReceiptModal, setShowReceiptModal] = useState(false);
   const [receiptData, setReceiptData] = useState<any>(null);
-  const [showWaModal, setShowWaModal] = useState(false);
-  const [waMessage, setWaMessage] = useState('');
 
   // Tagihan Bebas Modal
   const [showBebasModal, setShowBebasModal] = useState(false);
@@ -157,16 +154,12 @@ function PembayaranSiswaContent() {
       const refNo = paidItems[0]?.noRef || `SYR-${Date.now()}`;
       setReceiptData({
         noRef: refNo,
-        tgl: new Date().toLocaleDateString('id-ID', { dateStyle: 'full' }),
+        tgl: new Date().toLocaleDateString('id-ID', { timeZone: 'Asia/Jakarta', dateStyle: 'full' }),
         siswa: student,
         items: paidItems,
         totalPaid,
         petugas: activePetugasName,
       });
-
-      setWaMessage(
-        `Terima kasih, pembayaran SPP bulan ${paidItems.map((i: any) => i.bulan).join(', ')} 2026 a.n ${student.namaSiswa} (${student.kelas?.namaKelas}) sebesar Rp ${totalPaid.toLocaleString('id-ID')} telah diterima pada ${new Date().toLocaleDateString('id-ID')}. No. Ref: ${refNo}.`
-      );
 
       setShowReceiptModal(true);
     } catch (err: any) {
@@ -615,38 +608,38 @@ function PembayaranSiswaContent() {
               </button>
             </div>
 
-            <div className="p-6 space-y-4 printable-area text-slate-800 text-xs">
-              <div className="text-center border-b border-line pb-3">
-                <div className="w-10 h-10 mx-auto mb-1">
-                  <Image src="/logo_sisma.png" alt="Logo" width={40} height={40} className="object-contain" />
+            <div className="p-6 md:p-8 space-y-5 printable-area text-slate-800 text-sm">
+              <div className="text-center border-b border-line pb-4">
+                <div className="w-20 h-20 mx-auto mb-2">
+                  <Image src="/Logo_SmaPersiapan.png" alt="Logo SMA Persiapan Stabat" width={80} height={80} className="w-20 h-20 object-contain mx-auto" />
                 </div>
-                <h4 className="font-bold text-sm text-slate-800 uppercase m-0">
+                <h4 className="font-bold text-lg text-slate-900 uppercase m-0 tracking-wide">
                   SMA SWASTA PERSIAPAN STABAT
                 </h4>
-                <p className="text-[10px] text-slate-500 m-0">
+                <p className="text-xs text-slate-600 m-0 mt-0.5">
                   Jl. HIB Tembeleng, Kec. Stabat, Kab. Langkat
                 </p>
-                <p className="text-[10px] font-mono text-brand font-bold m-0 mt-1">
+                <p className="text-xs font-mono text-brand font-bold m-0 mt-1.5 tracking-wider">
                   KWITANSI / SLIP PEMBAYARAN SPP
                 </p>
               </div>
 
-              <div className="space-y-1 text-[11px] font-mono">
-                <div className="flex justify-between">
+              <div className="space-y-1.5 text-sm font-mono">
+                <div className="flex justify-between gap-4">
                   <span className="text-slate-500">No. Ref:</span>
-                  <span className="font-bold">{receiptData.noRef}</span>
+                  <span className="font-bold text-slate-900">{receiptData.noRef}</span>
                 </div>
-                <div className="flex justify-between">
+                <div className="flex justify-between gap-4">
                   <span className="text-slate-500">Tanggal:</span>
                   <span>{receiptData.tgl}</span>
                 </div>
-                <div className="flex justify-between">
+                <div className="flex justify-between gap-4">
                   <span className="text-slate-500">Nama Siswa:</span>
-                  <span className="font-bold text-slate-800">
+                  <span className="font-bold text-slate-900">
                     {receiptData.siswa?.namaSiswa}
                   </span>
                 </div>
-                <div className="flex justify-between">
+                <div className="flex justify-between gap-4">
                   <span className="text-slate-500">NIS / Kelas:</span>
                   <span>
                     {receiptData.siswa?.nis || '-'} ({receiptData.siswa?.kelas?.namaKelas})
@@ -655,20 +648,20 @@ function PembayaranSiswaContent() {
               </div>
 
               <div className="border border-line rounded-lg overflow-hidden">
-                <table className="w-full text-left border-collapse text-[11px]">
+                <table className="w-full text-left border-collapse text-sm">
                   <thead className="bg-subtle font-bold text-slate-700">
                     <tr>
-                      <th className="p-2 border-b border-line">Uraian Pembayaran</th>
-                      <th className="p-2 border-b border-line text-right">Jumlah</th>
+                      <th className="p-2.5 border-b border-line">Uraian Pembayaran</th>
+                      <th className="p-2.5 border-b border-line text-right">Jumlah</th>
                     </tr>
                   </thead>
                   <tbody>
                     {receiptData.items?.map((it: any, idx: number) => (
                       <tr key={idx} className="border-b border-line/60 last:border-0">
-                        <td className="p-2">
+                        <td className="p-2.5">
                           {it.posBayar || 'SPP'} Bulan {it.bulan}
                         </td>
-                        <td className="p-2 text-right font-mono font-semibold">
+                        <td className="p-2.5 text-right font-mono font-semibold">
                           {formatRp(it.tarif)}
                         </td>
                       </tr>
@@ -677,12 +670,12 @@ function PembayaranSiswaContent() {
                 </table>
               </div>
 
-              <div className="flex justify-between items-center text-sm font-bold pt-1 border-t border-line">
+              <div className="flex justify-between items-center text-base font-bold pt-2 border-t border-line">
                 <span>TOTAL DIBAYAR:</span>
-                <span className="text-sage font-mono">{formatRp(receiptData.totalPaid)}</span>
+                <span className="text-sage font-mono text-lg">{formatRp(receiptData.totalPaid)}</span>
               </div>
 
-              <div className="text-[10px] text-center text-slate-400 pt-2">
+              <div className="text-xs text-center text-slate-500 pt-2">
                 Petugas: {receiptData.petugas} • Simpan bukti ini sebagai tanda terima sah.
               </div>
             </div>
@@ -693,11 +686,11 @@ function PembayaranSiswaContent() {
                   setShowReceiptModal(false);
                   setReceiptData(null);
                 }}
-                className="w-full sm:w-auto py-2.5 px-3.5 bg-subtle hover:bg-[#e2e8f2] text-slate-700 border border-line rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all"
-                title="Selesai tanpa cetak & tanpa kirim WA"
+                className="w-full sm:w-auto py-2.5 px-4 bg-subtle hover:bg-[#e2e8f2] text-slate-700 border border-line rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all"
+                title="Selesai tanpa cetak"
               >
                 <CheckCircle2 className="w-4 h-4 text-sage" />
-                <span>Catat Pembayaran</span>
+                <span>Selesai</span>
               </button>
 
               <button
@@ -705,69 +698,7 @@ function PembayaranSiswaContent() {
                 className="w-full sm:flex-1 py-2.5 bg-brand hover:bg-brand-hover text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-sm transition-all"
               >
                 <Printer className="w-4 h-4" />
-                <span>Cetak</span>
-              </button>
-
-              <button
-                onClick={() => {
-                  setShowReceiptModal(false);
-                  setShowWaModal(true);
-                }}
-                className="w-full sm:w-auto py-2.5 px-4 bg-sage hover:bg-sage-hover text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-sm transition-all"
-              >
-                <MessageSquare className="w-4 h-4" />
-                <span>Kirim WA</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* MODAL 2: WhatsApp Notification Modal */}
-      {showWaModal && (
-        <div className="fixed inset-0 z-50 bg-slate-700/35 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-card rounded-2xl shadow-xl border border-line max-w-md w-full p-6 space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <MessageSquare className="w-5 h-5 text-sage" />
-                <h3 className="text-sm font-bold text-slate-800 m-0">
-                  Notifikasi WhatsApp Kwitansi
-                </h3>
-              </div>
-              <button onClick={() => setShowWaModal(false)} className="text-slate-400 hover:text-slate-600">
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1">Pesan WhatsApp:</label>
-              <textarea
-                rows={4}
-                value={waMessage}
-                onChange={(e) => setWaMessage(e.target.value)}
-                className="w-full p-3 bg-subtle border border-line rounded-xl text-xs text-slate-800 focus:outline-none focus:bg-card focus:border-brand"
-              ></textarea>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <a
-                href={`https://wa.me/${student?.hpOrtu?.replace(/^0/, '62')}?text=${encodeURIComponent(
-                  waMessage
-                )}`}
-                target="_blank"
-                rel="noreferrer"
-                className="flex-1 py-2.5 bg-sage hover:bg-sage-hover text-white rounded-xl text-xs font-bold text-center flex items-center justify-center gap-2 shadow-sm"
-              >
-                <span>Kirim via WhatsApp Web</span>
-              </a>
-              <button
-                onClick={() => {
-                  navigator.clipboard.writeText(waMessage);
-                  alert('Pesan berhasil disalin!');
-                }}
-                className="py-2.5 px-4 bg-subtle hover:bg-[#e2e8f2] border border-line text-slate-700 rounded-xl text-xs font-semibold"
-              >
-                Salin Teks
+                <span>Cetak Kwitansi</span>
               </button>
             </div>
           </div>

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { BookOpen, Plus, Trash2, Wallet } from 'lucide-react';
+import { BookOpen, Plus, Trash2, Wallet, Edit2, X } from 'lucide-react';
 
 export default function KasPemasukanPage() {
   const [kasList, setKasList] = useState<any[]>([]);
@@ -12,6 +12,25 @@ export default function KasPemasukanPage() {
   const [rows, setRows] = useState([
     { uraian: '', pemasukan: '', idPosBayar: '' },
   ]);
+
+  const [editEntry, setEditEntry] = useState<any>(null);
+  const [editUraian, setEditUraian] = useState('');
+  const [editPemasukan, setEditPemasukan] = useState('');
+  const [editPosId, setEditPosId] = useState('');
+  const [savingEdit, setSavingEdit] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('sisma_user');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        setIsAdmin(parsed?.level === 'admin');
+      }
+    } catch {
+      setIsAdmin(false);
+    }
+  }, []);
 
   const loadData = async () => {
     setLoading(true);
@@ -84,6 +103,51 @@ export default function KasPemasukanPage() {
 
   const formatRp = (n: number) =>
     new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(n || 0);
+
+  const openEditModal = (k: any) => {
+    setEditEntry(k);
+    setEditUraian(k.uraian || '');
+    setEditPemasukan(String(k.pemasukan || 0));
+    setEditPosId(k.idPosBayar ? String(k.idPosBayar) : '');
+  };
+
+  const handleSaveEdit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editEntry) return;
+    setSavingEdit(true);
+    try {
+      const res = await fetch('/api/kas', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: editEntry.id,
+          uraian: editUraian,
+          pemasukan: parseFloat(editPemasukan) || 0,
+          idPosBayar: editPosId ? parseInt(editPosId, 10) : null,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Gagal menyimpan perubahan');
+      setEditEntry(null);
+      loadData();
+    } catch (err: any) {
+      alert(err.message || 'Gagal memperbarui data kas');
+    } finally {
+      setSavingEdit(false);
+    }
+  };
+
+  const handleDeleteKas = async (k: any) => {
+    if (!confirm(`Hapus transaksi kas "${k.uraian}" (${formatRp(k.pemasukan)})?`)) return;
+    try {
+      const res = await fetch(`/api/kas?id=${k.id}`, { method: 'DELETE' });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Gagal menghapus transaksi kas');
+      loadData();
+    } catch (err: any) {
+      alert(err.message || 'Gagal menghapus data kas');
+    }
+  };
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
@@ -182,23 +246,32 @@ export default function KasPemasukanPage() {
           <table className="w-full text-left border-collapse text-xs">
             <thead className="bg-subtle text-slate-600 font-semibold border-b border-line">
               <tr>
-                <th className="p-3">Tanggal</th>
+                <th className="p-3">Tanggal (WIB)</th>
                 <th className="p-3">Uraian Transaksi Pemasukan</th>
                 <th className="p-3">Pos Bayar</th>
                 <th className="p-3 text-right">Nominal Pemasukan (Debet)</th>
                 <th className="p-3">Petugas Kasir</th>
+                {isAdmin && <th className="p-3 text-right">Aksi</th>}
               </tr>
             </thead>
             <tbody className="divide-y divide-line/70">
               {loading ? (
                 <tr>
-                  <td colSpan={5} className="p-8 text-center text-slate-500">Memuat buku kas...</td>
+                  <td colSpan={isAdmin ? 6 : 5} className="p-8 text-center text-slate-500">Memuat buku kas...</td>
+                </tr>
+              ) : kasList.length === 0 ? (
+                <tr>
+                  <td colSpan={isAdmin ? 6 : 5} className="p-8 text-center text-slate-500">Belum ada catatan kas pemasukan.</td>
                 </tr>
               ) : (
                 kasList.map((k) => (
                   <tr key={k.id} className="hover:bg-subtle/70">
                     <td className="p-3 font-mono text-slate-500">
-                      {new Date(k.tgl).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })}
+                      {new Date(k.tgl).toLocaleString('id-ID', {
+                        timeZone: 'Asia/Jakarta',
+                        dateStyle: 'medium',
+                        timeStyle: 'short',
+                      })}
                     </td>
                     <td className="p-3 font-semibold text-slate-800">{k.uraian}</td>
                     <td className="p-3 font-medium text-slate-500">{k.posBayar?.namaPosBayar || '-'}</td>
@@ -206,6 +279,26 @@ export default function KasPemasukanPage() {
                       +{formatRp(k.pemasukan)}
                     </td>
                     <td className="p-3 text-slate-500">{k.user?.namaLengkap || 'System'}</td>
+                    {isAdmin && (
+                      <td className="p-3 text-right space-x-1 whitespace-nowrap">
+                        <button
+                          type="button"
+                          onClick={() => openEditModal(k)}
+                          className="p-1.5 rounded-lg bg-brand-soft text-brand hover:bg-brand-border/50 transition-colors"
+                          title="Edit Kas"
+                        >
+                          <Edit2 className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteKas(k)}
+                          className="p-1.5 rounded-lg bg-brick-soft text-brick hover:bg-brick-border/50 transition-colors"
+                          title="Hapus Kas"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </td>
+                    )}
                   </tr>
                 ))
               )}
@@ -213,6 +306,77 @@ export default function KasPemasukanPage() {
           </table>
         </div>
       </div>
+
+      {/* Edit Kas Modal */}
+      {editEntry && (
+        <div className="fixed inset-0 z-50 bg-slate-700/35 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-card rounded-2xl shadow-xl border border-line max-w-md w-full p-6 space-y-4">
+            <div className="flex items-center justify-between border-b border-line pb-3">
+              <h3 className="text-sm font-bold text-slate-800 m-0">Edit Transaksi Kas</h3>
+              <button
+                type="button"
+                onClick={() => setEditEntry(null)}
+                className="text-slate-400 hover:text-slate-600"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <form onSubmit={handleSaveEdit} className="space-y-3">
+              <div>
+                <label className="block text-xs font-semibold text-slate-600 mb-1">Uraian Transaksi</label>
+                <input
+                  type="text"
+                  required
+                  value={editUraian}
+                  onChange={(e) => setEditUraian(e.target.value)}
+                  className="w-full px-3 py-2 bg-subtle border border-line rounded-xl text-xs text-slate-800 focus:outline-none focus:bg-card focus:border-brand"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-slate-600 mb-1">Pos Bayar (Opsional)</label>
+                <select
+                  value={editPosId}
+                  onChange={(e) => setEditPosId(e.target.value)}
+                  className="w-full px-3 py-2 bg-subtle border border-line rounded-xl text-xs text-slate-800 focus:outline-none focus:bg-card focus:border-brand"
+                >
+                  <option value="">Tanpa Pos Bayar</option>
+                  {posList.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.namaPosBayar}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-slate-600 mb-1">Nominal Pemasukan (Rp)</label>
+                <input
+                  type="number"
+                  required
+                  value={editPemasukan}
+                  onChange={(e) => setEditPemasukan(e.target.value)}
+                  className="w-full px-3 py-2 bg-subtle border border-line rounded-xl text-xs font-mono font-bold text-slate-800 focus:outline-none focus:bg-card focus:border-brand"
+                />
+              </div>
+              <div className="flex items-center justify-end gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setEditEntry(null)}
+                  className="px-4 py-2 rounded-xl bg-subtle hover:bg-[#e2e8f2] border border-line text-slate-700 text-xs font-semibold"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  disabled={savingEdit}
+                  className="px-4 py-2 rounded-xl bg-brand hover:bg-brand-hover text-white text-xs font-bold disabled:opacity-50"
+                >
+                  {savingEdit ? 'Menyimpan...' : 'Simpan Perubahan'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
