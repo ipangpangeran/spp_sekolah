@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   Users,
   Search,
@@ -10,8 +10,12 @@ import {
   Edit2,
   Trash2,
   X,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 import * as XLSX from 'xlsx';
+
+const PAGE_SIZE = 10;
 
 export default function MasterSiswaPage() {
   const [siswaList, setSiswaList] = useState<any[]>([]);
@@ -23,6 +27,7 @@ export default function MasterSiswaPage() {
   const [search, setSearch] = useState('');
   const [selectedClass, setSelectedClass] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
 
   const [showAddModal, setShowAddModal] = useState(false);
   const [editItem, setEditItem] = useState<any>(null);
@@ -66,8 +71,39 @@ export default function MasterSiswaPage() {
   };
 
   useEffect(() => {
+    setCurrentPage(1);
     loadData();
   }, [search, selectedClass, selectedStatus]);
+
+  const sortedSiswa = useMemo(() => {
+    return [...siswaList].sort((a, b) =>
+      String(a.namaSiswa || '').localeCompare(String(b.namaSiswa || ''), 'id', {
+        sensitivity: 'base',
+      })
+    );
+  }, [siswaList]);
+
+  const totalItems = sortedSiswa.length;
+  const totalPages = Math.max(1, Math.ceil(totalItems / PAGE_SIZE));
+  const safePage = Math.min(currentPage, totalPages);
+  const startIndex = (safePage - 1) * PAGE_SIZE;
+  const paginatedSiswa = sortedSiswa.slice(startIndex, startIndex + PAGE_SIZE);
+
+  const pageNumbers = useMemo(() => {
+    const pages: (number | 'ellipsis')[] = [];
+    if (totalPages <= 7) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+      return pages;
+    }
+    pages.push(1);
+    if (safePage > 3) pages.push('ellipsis');
+    const start = Math.max(2, safePage - 1);
+    const end = Math.min(totalPages - 1, safePage + 1);
+    for (let i = start; i <= end; i++) pages.push(i);
+    if (safePage < totalPages - 2) pages.push('ellipsis');
+    pages.push(totalPages);
+    return pages;
+  }, [totalPages, safePage]);
 
   const handleSaveStudent = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -231,7 +267,7 @@ export default function MasterSiswaPage() {
             </h1>
           </div>
           <p className="text-xs text-slate-500 m-0 mt-0.5">
-            Kelola data induk siswa, impor batch Excel (Super Admin), serta cetak direktori.
+            Kelola data induk siswa.
           </p>
         </div>
 
@@ -329,8 +365,8 @@ export default function MasterSiswaPage() {
                 <tr>
                   <td colSpan={7} className="p-8 text-center text-slate-500">Memuat direktori siswa...</td>
                 </tr>
-              ) : siswaList.length > 0 ? (
-                siswaList.map((s) => (
+              ) : paginatedSiswa.length > 0 ? (
+                paginatedSiswa.map((s) => (
                   <tr key={s.id} className="hover:bg-subtle/70 transition-colors">
                     <td className="p-3 font-mono font-semibold">
                       <span className="text-brand">{s.nis || '-'}</span>
@@ -350,11 +386,10 @@ export default function MasterSiswaPage() {
                     </td>
                     <td className="p-3">
                       <span
-                        className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${
-                          s.statusSiswa === 'AKTIF'
-                            ? 'bg-sage-soft text-sage-text border-sage-border'
-                            : 'bg-subtle text-slate-600 border-line'
-                        }`}
+                        className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${s.statusSiswa === 'AKTIF'
+                          ? 'bg-sage-soft text-sage-text border-sage-border'
+                          : 'bg-subtle text-slate-600 border-line'
+                          }`}
                       >
                         {s.statusSiswa}
                       </span>
@@ -387,6 +422,63 @@ export default function MasterSiswaPage() {
             </tbody>
           </table>
         </div>
+
+        {/* Pagination Footer */}
+        {!loading && totalItems > 0 && (
+          <div className="px-4 py-3 border-t border-line bg-subtle/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+            <p className="text-slate-600 m-0">
+              Menampilkan{' '}
+              <span className="font-semibold text-slate-800">{startIndex + 1}</span>
+              {'–'}
+              <span className="font-semibold text-slate-800">
+                {Math.min(startIndex + PAGE_SIZE, totalItems)}
+              </span>{' '}
+              dari <span className="font-semibold text-slate-800">{totalItems}</span> siswa (urut A–Z)
+            </p>
+
+            <div className="flex items-center gap-1 flex-wrap">
+              <button
+                type="button"
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                disabled={safePage <= 1}
+                className="px-2.5 py-1.5 rounded-lg border border-line bg-card text-slate-700 hover:bg-subtle disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1 font-medium transition-colors"
+              >
+                <ChevronLeft className="w-3.5 h-3.5" />
+                <span>Prev</span>
+              </button>
+
+              {pageNumbers.map((item, idx) =>
+                item === 'ellipsis' ? (
+                  <span key={`e-${idx}`} className="px-2 py-1 text-slate-400">
+                    ...
+                  </span>
+                ) : (
+                  <button
+                    key={item}
+                    type="button"
+                    onClick={() => setCurrentPage(item)}
+                    className={`min-w-[30px] h-[30px] px-2 rounded-lg text-xs font-semibold transition-colors ${item === safePage
+                      ? 'bg-[#00677e] text-white border border-[#00677e]'
+                      : 'bg-card text-slate-700 border border-line hover:bg-subtle'
+                      }`}
+                  >
+                    {item}
+                  </button>
+                )
+              )}
+
+              <button
+                type="button"
+                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                disabled={safePage >= totalPages}
+                className="px-2.5 py-1.5 rounded-lg border border-line bg-card text-slate-700 hover:bg-subtle disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1 font-medium transition-colors"
+              >
+                <span>Next</span>
+                <ChevronRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* MODAL 1: Add / Edit Student Modal */}

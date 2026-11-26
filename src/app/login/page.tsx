@@ -75,19 +75,19 @@ function LoginContent() {
 
         <div className="relative z-10 space-y-6">
           {/* Header Brand */}
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-lg bg-white p-1 flex items-center justify-center shrink-0 shadow-sm">
+          <div className="flex items-center gap-4">
+            <div className="w-16 h-16 rounded-xl bg-white p-1.5 flex items-center justify-center shrink-0 shadow-sm">
               <Image
                 src="/logo_sisma.png"
                 alt="SISMA Logo"
-                width={42}
-                height={42}
+                width={56}
+                height={56}
                 className="object-contain"
               />
             </div>
             <div>
-              <h1 className="text-lg font-semibold text-white leading-none m-0">SISMA</h1>
-              <p className="text-xs text-white/70 m-0 mt-1">SMA Swasta Persiapan Stabat</p>
+              <h1 className="text-2xl font-bold text-white tracking-tight leading-none m-0">SISMA</h1>
+              <p className="text-sm text-white/80 m-0 mt-1">SMA Swasta Persiapan Stabat</p>
             </div>
           </div>
 
@@ -171,14 +171,14 @@ function LoginContent() {
       <div className="flex-1 flex flex-col justify-center items-center p-6 md:p-12 bg-[#faf8ff] overflow-y-auto">
         <div className="w-full max-w-md space-y-5">
           <div className="bg-white border border-slate-200/80 rounded-xl p-8 shadow-[0_4px_12px_rgba(0,0,0,0.05)] space-y-6">
-            <div className="text-center md:text-left space-y-3">
-              <div className="flex justify-center md:justify-start">
+            <div className="text-center space-y-3">
+              <div className="flex justify-center">
                 <Image
                   src="/Logo_SmaPersiapan.png"
                   alt="Logo SMA Persiapan Stabat"
-                  width={96}
-                  height={96}
-                  className="w-24 h-24 object-contain"
+                  width={160}
+                  height={160}
+                  className="w-36 h-36 object-contain"
                 />
               </div>
 

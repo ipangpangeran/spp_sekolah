@@ -46,9 +46,7 @@ export default function Sidebar({
       items: [
         { name: 'Data Siswa', href: '/master/siswa', icon: Users, roles: ['admin', 'bendahara', 'operator'] },
         { name: 'Data Kelas', href: '/master/kelas', icon: GraduationCap, roles: ['admin', 'bendahara', 'operator'] },
-        { name: 'Arsip Kelas & Siswa', href: '/master/arsip-kelas', icon: Archive, roles: ['admin', 'bendahara'] },
         { name: 'Tahun Ajaran', href: '/master/tahun-ajaran', icon: Award, roles: ['admin', 'bendahara'] },
-        { name: 'Data Pengguna', href: '/master/users', icon: Shield, roles: ['admin'] },
       ],
     },
     {
@@ -67,8 +65,10 @@ export default function Sidebar({
       ],
     },
     {
-      group: 'PENGATURAN',
+      group: 'PENGATURAN & SETUP',
       items: [
+        { name: 'Arsip Data & Kelas', href: '/master/arsip-kelas', icon: Archive, roles: ['admin'] },
+        { name: 'Data Pengguna', href: '/master/users', icon: Shield, roles: ['admin'] },
         { name: 'Pengaturan Sistem', href: '/pengaturan', icon: Settings, roles: ['admin'] },
       ],
     },

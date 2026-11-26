@@ -36,7 +36,7 @@ export default function Navbar({
   };
 
   return (
-    <header className="sticky top-0 z-30 h-16 bg-white/90 backdrop-blur-md text-slate-900 border-b border-slate-200 flex items-center justify-between select-none px-2 sm:px-4 md:px-0">
+    <header className="sticky top-0 z-30 h-16 md:h-24 bg-white/90 backdrop-blur-md text-slate-900 border-b border-slate-200 flex items-center justify-between select-none px-2 sm:px-4 md:px-0">
       {/* Left Section: Mobile Menu Toggle + Brand Logo Box */}
       <div className="flex items-center h-full">
         <button
@@ -48,21 +48,21 @@ export default function Navbar({
         </button>
 
         {/* Brand Logo Box aligned with 260px Sidebar (#001f28 Stitch Midnight Teal) */}
-        <div className="w-auto md:w-[260px] h-full shrink-0 border-r-0 md:border-r border-[#003443] px-2 md:px-4 flex items-center gap-2.5 md:gap-3 md:bg-[#001f28]">
-          <div className="w-10 h-10 rounded-xl bg-white p-1 shadow-sm flex items-center justify-center shrink-0">
+        <div className="w-auto md:w-[260px] h-full shrink-0 border-r-0 md:border-r border-[#003443] px-2 md:px-5 flex items-center gap-3 md:gap-3.5 md:bg-[#001f28]">
+          <div className="w-11 h-11 md:w-16 md:h-16 rounded-xl bg-white p-1.5 shadow-sm flex items-center justify-center shrink-0">
             <Image
               src="/logo_sisma.png"
               alt="SISMA Logo"
-              width={40}
-              height={40}
+              width={60}
+              height={60}
               className="object-contain"
             />
           </div>
           <div className="flex-1 min-w-0">
-            <h1 className="font-bold text-slate-900 md:text-white text-lg md:text-xl tracking-tight leading-none m-0">
+            <h1 className="font-bold text-slate-900 md:text-white text-lg md:text-2xl tracking-tight leading-none m-0">
               SISMA
             </h1>
-            <p className="text-[10px] md:text-[11px] text-[#00677e] md:text-[#87d1eb] font-medium tracking-tight m-0 mt-0.5 truncate">
+            <p className="text-[10px] md:text-xs text-[#00677e] md:text-[#87d1eb] font-medium tracking-tight m-0 mt-1 leading-snug">
               SMA Persiapan Stabat
             </p>
           </div>

@@ -151,11 +151,11 @@ export default function MasterKelasPage() {
           <div className="flex items-center gap-2">
             <GraduationCap className="w-5 h-5 text-brand" />
             <h1 className="text-xl font-bold text-slate-800 m-0">
-              Master Data Kelas (Cohorts)
+              Master Data Kelas
             </h1>
           </div>
           <p className="text-xs text-slate-500 m-0 mt-0.5">
-            Kelola kelompok kelas siswa SMA Swasta Persiapan Stabat &amp; Impor Batch via Excel.
+            Kelola kelompok kelas siswa.
           </p>
         </div>
 

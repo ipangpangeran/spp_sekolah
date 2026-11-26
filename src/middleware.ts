@@ -38,10 +38,13 @@ export function middleware(request: NextRequest) {
       );
     }
 
-    // Restrict /api/pengaturan* strictly to admin role
-    if (pathname.startsWith('/api/pengaturan') && sessionUser?.level !== 'admin') {
+    // Restrict admin-only setup APIs
+    if (
+      (pathname.startsWith('/api/pengaturan') || pathname.startsWith('/api/master/users')) &&
+      sessionUser?.level !== 'admin'
+    ) {
       return NextResponse.json(
-        { error: 'Akses ditolak. Hanya Administrator yang dapat mengakses pengaturan sistem.' },
+        { error: 'Akses ditolak. Hanya Administrator yang dapat mengakses menu pengaturan & setup.' },
         { status: 403 }
       );
     }
@@ -55,8 +58,13 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  // Restrict /pengaturan page strictly to admin role
-  if (pathname.startsWith('/pengaturan') && sessionUser?.level !== 'admin') {
+  // Restrict admin-only setup pages
+  if (
+    (pathname.startsWith('/pengaturan') ||
+      pathname.startsWith('/master/arsip-kelas') ||
+      pathname.startsWith('/master/users')) &&
+    sessionUser?.level !== 'admin'
+  ) {
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 
