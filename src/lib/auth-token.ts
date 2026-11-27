@@ -58,6 +58,15 @@ export async function signSessionToken(payload: SignedSessionPayload): Promise<s
   return `${payloadB64}.${sigB64}`;
 }
 
+function timingSafeEqualStr(a: string, b: string): boolean {
+  if (a.length !== b.length) return false;
+  let diff = 0;
+  for (let i = 0; i < a.length; i++) {
+    diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  }
+  return diff === 0;
+}
+
 /**
  * Verifies an HMAC-SHA256 signed session token (Edge & Node compatible).
  */
@@ -73,15 +82,9 @@ export async function verifySessionToken(token: string | undefined): Promise<Sig
   try {
     const enc = new TextEncoder();
     const key = await getHmacKey(getSessionSecret());
-    const sigBytes = fromBase64Url(sigB64);
-    const sigBuffer = sigBytes.buffer.slice(sigBytes.byteOffset, sigBytes.byteOffset + sigBytes.byteLength) as ArrayBuffer;
-    const valid = await crypto.subtle.verify(
-      'HMAC',
-      key,
-      sigBuffer,
-      enc.encode(payloadB64)
-    );
-    if (!valid) return null;
+    const expectedSigBuf = await crypto.subtle.sign('HMAC', key, enc.encode(payloadB64));
+    const expectedSigB64 = toBase64Url(new Uint8Array(expectedSigBuf));
+    if (!timingSafeEqualStr(expectedSigB64, sigB64)) return null;
 
     const payloadJson = new TextDecoder().decode(fromBase64Url(payloadB64));
     const parsed = JSON.parse(payloadJson) as SignedSessionPayload;
