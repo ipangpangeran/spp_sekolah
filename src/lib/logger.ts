@@ -2,8 +2,9 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 export type LogLevel = 'INFO' | 'WARN' | 'ERROR';
+export type LogChannel = 'audit' | 'access' | 'error';
 
-export interface AppLogEntry {
+export interface BaseLogEntry {
   ts?: string;
   tsWib?: string;
   level: LogLevel;
@@ -17,21 +18,28 @@ export interface AppLogEntry {
   username?: string | null;
   role?: string | null;
   ip?: string | null;
+  source?: 'backend' | 'frontend';
   detail?: Record<string, unknown>;
   error?: string;
+  stack?: string;
 }
 
 const WIB_OFFSET_MS = 7 * 60 * 60 * 1000;
 const LOG_DIR = process.env.LOG_DIR || path.join(process.cwd(), 'logs');
-const ACTIVE_LOG_FILE = path.join(LOG_DIR, 'sisma.log');
 const MAX_RETENTION_DAYS = 30;
 
-function getWibDateKey(date = new Date()): string {
+const CHANNELS: Record<LogChannel, { active: string; prefix: string }> = {
+  audit: { active: 'sisma_audit.log', prefix: 'sisma_audit_' },
+  access: { active: 'sisma_access.log', prefix: 'sisma_access_' },
+  error: { active: 'sisma_error.log', prefix: 'sisma_error_' },
+};
+
+function getWibCompactDateKey(date = new Date()): string {
   const wib = new Date(date.getTime() + WIB_OFFSET_MS);
   const y = wib.getUTCFullYear();
   const m = String(wib.getUTCMonth() + 1).padStart(2, '0');
   const d = String(wib.getUTCDate()).padStart(2, '0');
-  return `${y}-${m}-${d}`;
+  return `${y}${m}${d}`;
 }
 
 function formatWibTimestamp(date = new Date()): string {
@@ -72,7 +80,7 @@ function pruneOldLogs() {
     ensureLogDir();
     const cutoff = Date.now() - MAX_RETENTION_DAYS * 86400000;
     for (const file of fs.readdirSync(LOG_DIR)) {
-      if (!/^sisma-\d{4}-\d{2}-\d{2}\.log$/.test(file)) continue;
+      if (!/^sisma_(audit|access|error)_\d{8}\.log$/.test(file)) continue;
       const fullPath = path.join(LOG_DIR, file);
       const stat = fs.statSync(fullPath);
       if (stat.mtimeMs < cutoff) {
@@ -84,35 +92,44 @@ function pruneOldLogs() {
   }
 }
 
-let currentLogDateKey = getWibDateKey();
+let currentLogDateKey = getWibCompactDateKey();
 let rotationScheduled = false;
 
 /**
- * Rotates `logs/sisma.log` -> `logs/sisma-YYYY-MM-DD.log` using the previous WIB date.
+ * Rotates a single channel file: `sisma_<channel>.log` -> `sisma_<channel>_YYYYMMDD.log`.
  */
-export function rotateLogIfNeeded(targetArchiveDate?: string) {
+export function rotateChannelIfNeeded(channel: LogChannel, targetArchiveDate?: string) {
   try {
     ensureLogDir();
-    if (!fs.existsSync(ACTIVE_LOG_FILE)) return;
-    const stat = fs.statSync(ACTIVE_LOG_FILE);
+    const cfg = CHANNELS[channel];
+    const activePath = path.join(LOG_DIR, cfg.active);
+    if (!fs.existsSync(activePath)) return;
+    const stat = fs.statSync(activePath);
     if (stat.size === 0) return;
 
-    const archiveKey = targetArchiveDate || getWibDateKey(stat.mtime);
-    const rotatedPath = path.join(LOG_DIR, `sisma-${archiveKey}.log`);
+    const archiveKey = targetArchiveDate || getWibCompactDateKey(stat.mtime);
+    const rotatedPath = path.join(LOG_DIR, `${cfg.prefix}${archiveKey}.log`);
 
     if (fs.existsSync(rotatedPath)) {
-      // Append if archive for that date already exists (e.g. restart mid-day)
-      const existingContent = fs.readFileSync(ACTIVE_LOG_FILE);
+      const existingContent = fs.readFileSync(activePath);
       fs.appendFileSync(rotatedPath, existingContent);
-      fs.truncateSync(ACTIVE_LOG_FILE, 0);
+      fs.truncateSync(activePath, 0);
     } else {
-      fs.renameSync(ACTIVE_LOG_FILE, rotatedPath);
+      fs.renameSync(activePath, rotatedPath);
     }
-
-    pruneOldLogs();
   } catch {
     // Never crash request handling due to log rotation
   }
+}
+
+/**
+ * Rotates all 3 channels (`audit`, `access`, `error`) and prunes old archives.
+ */
+export function rotateAllChannels(targetArchiveDate?: string) {
+  rotateChannelIfNeeded('audit', targetArchiveDate);
+  rotateChannelIfNeeded('access', targetArchiveDate);
+  rotateChannelIfNeeded('error', targetArchiveDate);
+  pruneOldLogs();
 }
 
 function scheduleMidnightRotation() {
@@ -123,8 +140,8 @@ function scheduleMidnightRotation() {
     const delay = msUntilNextWibMidnightPlus1s();
     const timer = setTimeout(() => {
       const prevKey = currentLogDateKey;
-      currentLogDateKey = getWibDateKey();
-      rotateLogIfNeeded(prevKey);
+      currentLogDateKey = getWibCompactDateKey();
+      rotateAllChannels(prevKey);
       arm();
     }, delay);
     if (typeof timer.unref === 'function') {
@@ -135,28 +152,38 @@ function scheduleMidnightRotation() {
   arm();
 }
 
-/**
- * Writes a structured JSONL log entry to `logs/sisma.log` with automatic 00:00:01 WIB rotation.
- */
-export function writeAppLog(entry: AppLogEntry) {
+function writeToChannel(channel: LogChannel, entry: BaseLogEntry) {
   try {
     scheduleMidnightRotation();
     const now = new Date();
-    const todayKey = getWibDateKey(now);
+    const todayKey = getWibCompactDateKey(now);
     if (todayKey !== currentLogDateKey) {
       const prevKey = currentLogDateKey;
       currentLogDateKey = todayKey;
-      rotateLogIfNeeded(prevKey);
+      rotateAllChannels(prevKey);
     }
 
     ensureLogDir();
-    const record: AppLogEntry = {
+    const activePath = path.join(LOG_DIR, CHANNELS[channel].active);
+    const record: BaseLogEntry = {
       ts: now.toISOString(),
       tsWib: formatWibTimestamp(now),
       ...entry,
     };
-    fs.appendFileSync(ACTIVE_LOG_FILE, JSON.stringify(record) + '\n', 'utf8');
+    fs.appendFileSync(activePath, JSON.stringify(record) + '\n', 'utf8');
   } catch {
     // Never throw from logger
   }
+}
+
+export function writeAuditLog(entry: BaseLogEntry) {
+  writeToChannel('audit', entry);
+}
+
+export function writeAccessLog(entry: BaseLogEntry) {
+  writeToChannel('access', entry);
+}
+
+export function writeErrorLog(entry: BaseLogEntry) {
+  writeToChannel('error', entry);
 }

@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import Navbar from '@/components/layout/Navbar';
 import Sidebar from '@/components/layout/Sidebar';
 import CommandPalette from '@/components/CommandPalette';
+import ClientErrorReporter from '@/components/ClientErrorReporter';
 import '@/app/globals.css';
 
 export default function RootLayout({
@@ -136,6 +137,7 @@ export default function RootLayout({
           isOpen={commandPaletteOpen}
           onClose={() => setCommandPaletteOpen(false)}
         />
+        <ClientErrorReporter />
       </body>
     </html>
   );

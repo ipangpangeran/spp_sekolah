@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { prisma } from '@/lib/prisma';
 import { isAdminSession } from '@/lib/session';
+import { withApiLogging } from '@/lib/api-logger';
 
 export const dynamic = 'force-dynamic';
 
@@ -16,7 +17,7 @@ const SQLITE_MAGIC = 'SQLite format 3\0';
  * - ?info=1 : returns DB size, mtime, and live record counts
  * - default : streams a clean SQLite binary backup (.db)
  */
-export async function GET(request: Request) {
+async function handleGet(request: Request) {
   if (!isAdminSession()) {
     return NextResponse.json(
       { error: 'Akses ditolak. Hanya Administrator yang dapat mengakses backup database.' },
@@ -87,7 +88,7 @@ export async function GET(request: Request) {
  * POST /api/pengaturan/backup
  * Restores a valid SQLite .db file atomically with automatic rollback safety snapshot.
  */
-export async function POST(request: Request) {
+async function handlePost(request: Request) {
   if (!isAdminSession()) {
     return NextResponse.json(
       { error: 'Akses ditolak. Hanya Administrator yang dapat melakukan restore database.' },
@@ -190,3 +191,6 @@ export async function POST(request: Request) {
     );
   }
 }
+
+export const GET = withApiLogging(handleGet);
+export const POST = withApiLogging(handlePost, 'DB_RESTORE');

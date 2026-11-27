@@ -15,7 +15,8 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith('/Logo_SmaPersiapan.png') ||
     pathname === '/login' ||
     pathname === '/api/auth/login' ||
-    pathname === '/api/auth/logout'
+    pathname === '/api/auth/logout' ||
+    pathname === '/api/client-error'
   ) {
     return NextResponse.next();
   }
